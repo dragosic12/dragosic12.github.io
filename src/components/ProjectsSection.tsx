@@ -27,7 +27,7 @@ export function ProjectsSection({ locale, theme, projects, ui }: ProjectsSection
           const mediaSrc = project.images[0];
           const isVideo = /\.(mp4|webm|ogg)$/i.test(mediaSrc);
           const darkVariantSrc = mediaSrc.replace(/\.svg$/i, '-dark.svg');
-          const usingDarkVariant = theme === 'dark' && /\.svg$/i.test(mediaSrc) && !missingDarkAssetBySource[mediaSrc];
+          const usingDarkVariant = theme === 'light' && /\.svg$/i.test(mediaSrc) && !missingDarkAssetBySource[mediaSrc];
           const resolvedMediaSrc = usingDarkVariant ? darkVariantSrc : mediaSrc;
 
           return (
