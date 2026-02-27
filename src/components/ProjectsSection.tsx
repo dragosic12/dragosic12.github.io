@@ -22,15 +22,31 @@ export function ProjectsSection({ locale, projects, ui }: ProjectsSectionProps) 
       <div className="mt-8 grid gap-5 lg:grid-cols-2">
         {projects.items.map((project) => {
           const expanded = expandedId === project.id;
+          const mediaSrc = project.images[0];
+          const isVideo = /\.(mp4|webm|ogg)$/i.test(mediaSrc);
 
           return (
             <article key={project.id} className="project-card">
-              <img
-                src={project.images[0]}
-                alt={`${t(project.title, locale)} visual`}
-                className="h-44 w-full rounded-2xl border border-[var(--line)] object-cover"
-                loading="lazy"
-              />
+              <div className="project-media-shell">
+                {isVideo ? (
+                  <video
+                    src={mediaSrc}
+                    className="project-media"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    preload="metadata"
+                  />
+                ) : (
+                  <img
+                    src={mediaSrc}
+                    alt={`${t(project.title, locale)} visual`}
+                    className="project-media"
+                    loading="lazy"
+                  />
+                )}
+              </div>
 
               <h3 className="mt-4 font-display text-xl font-semibold text-[var(--title)]">{t(project.title, locale)}</h3>
               <p className="mt-2 text-sm leading-relaxed text-[var(--text)]">{t(project.summary, locale)}</p>

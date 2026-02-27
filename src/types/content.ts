@@ -60,6 +60,21 @@ export interface AboutContent {
   paragraphs: LocalizedText[];
 }
 
+export interface ExperienceEntry {
+  id: string;
+  role: LocalizedText;
+  organization: LocalizedText;
+  period: LocalizedText;
+  summary: LocalizedText;
+  tools: string[];
+}
+
+export interface ExperienceContent {
+  title: LocalizedText;
+  intro: LocalizedText;
+  items: ExperienceEntry[];
+}
+
 export interface ProjectsContent {
   title: LocalizedText;
   intro: LocalizedText;
@@ -147,6 +162,7 @@ export interface PortfolioContent {
   seo: SeoContent;
   profile: ProfileContent;
   about: AboutContent;
+  experience: ExperienceContent;
   projects: ProjectsContent;
   imageLab: ImageLabContent;
   skills: SkillsContent;

@@ -35,7 +35,35 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
       .slice(0, 4)
       .join(',');
 
-    return tags || 'design,creative,abstract';
+    return tags || 'animals,car,pet';
+  }
+
+  function buildInlineSvgFallback(rawPrompt: string, styleName: string) {
+    const safePrompt = rawPrompt.replace(/[<>&]/g, '').slice(0, 80);
+    const safeStyle = styleName.replace(/[<>&]/g, '').slice(0, 30);
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f0d6cf" />
+            <stop offset="1" stop-color="#d6ddec" />
+          </linearGradient>
+        </defs>
+        <rect width="1024" height="1024" fill="url(#g)" />
+        <circle cx="812" cy="194" r="90" fill="#ffffff66" />
+        <circle cx="200" cy="844" r="108" fill="#ffffff4a" />
+        <rect x="132" y="160" width="760" height="704" rx="40" fill="#ffffffcc" />
+        <text x="182" y="270" font-family="Inter, Arial, sans-serif" font-size="46" fill="#6f4e5c" font-weight="700">Preview fallback</text>
+        <text x="182" y="336" font-family="JetBrains Mono, monospace" font-size="28" fill="#755a67">Style: ${safeStyle}</text>
+        <foreignObject x="182" y="392" width="660" height="350">
+          <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Inter, Arial, sans-serif; font-size:30px; line-height:1.35; color:#6a515f;">
+            Prompt: ${safePrompt}
+          </div>
+        </foreignObject>
+      </svg>
+    `;
+
+    return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
   }
 
   function handleGenerate() {
@@ -54,9 +82,9 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
     const craftedPrompt = `${cleanPrompt}, ${style} style, high quality`;
     const primaryUrl = `${IMAGE_API_PRIMARY}/${encodeURIComponent(craftedPrompt)}?model=flux&width=1024&height=1024&nologo=true&seed=${seed}`;
     const fallbackCategory = buildFallbackCategory(cleanPrompt);
-    const fallbackImageUrl = `${IMAGE_API_FALLBACK}/1024/1024/${fallbackCategory}?lock=${seed}`;
+    const secondaryUrl = `${IMAGE_API_FALLBACK}/1024/1024/${fallbackCategory}?lock=${seed}`;
 
-    setFallbackUrl(fallbackImageUrl);
+    setFallbackUrl(secondaryUrl);
     setImageUrl(primaryUrl);
     setDownloadName(`dragos-ai-${seed}.png`);
   }
@@ -77,14 +105,14 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
     if (usedFallback) {
       setProviderNotice(
         locale === 'es'
-          ? 'El proveedor principal no respondió. Se ha mostrado una alternativa visual.'
+          ? 'El proveedor principal no respondio. Se ha mostrado una alternativa visual.'
           : 'Main provider did not respond. A visual fallback has been displayed.'
       );
     }
 
     if ('Notification' in window && Notification.permission === 'granted') {
       new Notification('Image ready', {
-        body: locale === 'es' ? 'Tu imagen está lista para descargar.' : 'Your image is ready to download.',
+        body: locale === 'es' ? 'Tu imagen esta lista para descargar.' : 'Your image is ready to download.',
       });
     }
   }
@@ -96,8 +124,15 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
       return;
     }
 
+    setUsedFallback(true);
+    setImageUrl(buildInlineSvgFallback(prompt.trim() || 'image generation', style));
+    setProviderNotice(
+      locale === 'es'
+        ? 'El proveedor principal y el fallback remoto han fallado. Se muestra una vista local.'
+        : 'Main provider and remote fallback failed. A local preview is shown.'
+    );
+    setError('');
     setIsLoading(false);
-    setError(t(imageLab.apiErrorPrefix, locale));
   }
 
   return (

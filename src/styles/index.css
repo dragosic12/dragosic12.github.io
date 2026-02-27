@@ -118,6 +118,30 @@ body {
   box-shadow: 0 22px 36px rgba(28, 16, 12, 0.2);
 }
 
+.project-media-shell {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.1rem;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--card) 82%, var(--bg-soft) 18%);
+}
+
+.project-media-shell::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 72px;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(20, 12, 11, 0.12), transparent);
+}
+
+.project-media {
+  display: block;
+  width: 100%;
+  height: 13.5rem;
+  object-fit: cover;
+}
+
 .chip {
   border-radius: 999px;
   border: 1px solid var(--line);

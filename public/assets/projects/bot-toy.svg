@@ -1,0 +1,47 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFE7EC"/>
+      <stop offset="1" stop-color="#F4D8C9"/>
+    </linearGradient>
+    <linearGradient id="robot" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#FFD4E0"/>
+      <stop offset="1" stop-color="#E7A389"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="700" rx="28" fill="url(#bg)"/>
+  <circle cx="1030" cy="90" r="44" fill="#FAD7E2" opacity="0.8"/>
+  <circle cx="150" cy="610" r="58" fill="#EAC7B6" opacity="0.7"/>
+
+  <rect x="520" y="150" width="480" height="320" rx="24" fill="#FFF4F7" stroke="#E4B9A9" stroke-width="4"/>
+  <rect x="560" y="196" width="390" height="18" rx="9" fill="#ECC5B6"/>
+  <rect x="560" y="232" width="330" height="18" rx="9" fill="#F1D5CA"/>
+  <rect x="560" y="268" width="360" height="18" rx="9" fill="#F4E2D8"/>
+  <rect x="560" y="316" width="180" height="66" rx="14" fill="#DC8B72"/>
+  <text x="598" y="357" fill="#FFF8F5" font-family="Space Grotesk, Inter, sans-serif" font-size="26" font-weight="700">RUN</text>
+
+  <g transform="translate(180 210)">
+    <rect x="0" y="90" width="250" height="220" rx="52" fill="url(#robot)" stroke="#C67D66" stroke-width="5"/>
+    <rect x="42" y="0" width="168" height="132" rx="38" fill="#FFDDE7" stroke="#C67D66" stroke-width="5"/>
+    <circle cx="90" cy="60" r="16" fill="#6D4860"/>
+    <circle cx="160" cy="60" r="16" fill="#6D4860"/>
+    <rect x="88" y="94" width="74" height="12" rx="6" fill="#B56F5B"/>
+    <rect x="-46" y="140" width="60" height="26" rx="13" fill="#EAA791" stroke="#C67D66" stroke-width="4"/>
+    <rect x="236" y="140" width="60" height="26" rx="13" fill="#EAA791" stroke="#C67D66" stroke-width="4"/>
+    <rect x="54" y="296" width="54" height="20" rx="10" fill="#B06A58"/>
+    <rect x="144" y="296" width="54" height="20" rx="10" fill="#B06A58"/>
+    <circle cx="86" cy="338" r="28" fill="#584552"/>
+    <circle cx="170" cy="338" r="28" fill="#584552"/>
+    <rect x="120" y="-20" width="12" height="20" rx="6" fill="#B56F5B"/>
+    <circle cx="126" cy="-30" r="12" fill="#E39179"/>
+  </g>
+
+  <path d="M430 360C505 300 540 290 560 300" stroke="#D98A70" stroke-width="8" stroke-linecap="round" stroke-dasharray="14 14"/>
+  <circle cx="470" cy="332" r="11" fill="#D98A70"/>
+  <circle cx="512" cy="316" r="11" fill="#D98A70"/>
+  <circle cx="548" cy="306" r="11" fill="#D98A70"/>
+
+  <text x="70" y="84" fill="#9F5F4D" font-family="Space Grotesk, Inter, sans-serif" font-size="38" font-weight="700">Job Bot Companion</text>
+  <text x="74" y="126" fill="#B67D6A" font-family="Inter, sans-serif" font-size="22">Bot visual friendly para alertas de ofertas</text>
+</svg>

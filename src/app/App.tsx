@@ -1,6 +1,7 @@
 ﻿import { useEffect } from 'react';
 import { HeroSection } from '../components/HeroSection';
 import { AboutSection } from '../components/AboutSection';
+import { ExperienceSection } from '../components/ExperienceSection';
 import { ProjectsSection } from '../components/ProjectsSection';
 import { ImageLabSection } from '../components/ImageLabSection';
 import { SkillsSection } from '../components/SkillsSection';
@@ -58,6 +59,7 @@ export function App() {
       <main id="main-content" className="mx-auto w-full max-w-6xl px-4 pb-6 sm:px-6">
         <HeroSection locale={locale} profile={portfolioContent.profile} ui={portfolioContent.ui} cvUrl={portfolioContent.social.cv} />
         <AboutSection locale={locale} about={portfolioContent.about} />
+        <ExperienceSection locale={locale} experience={portfolioContent.experience} />
         <ProjectsSection locale={locale} projects={portfolioContent.projects} ui={portfolioContent.ui} />
         <ImageLabSection locale={locale} imageLab={portfolioContent.imageLab} />
         <SkillsSection locale={locale} skills={portfolioContent.skills} />

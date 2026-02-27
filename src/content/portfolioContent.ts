@@ -3,12 +3,12 @@ import type { PortfolioContent } from '../types/content';
 export const portfolioContent: PortfolioContent = {
   seo: {
     title: {
-      es: 'Dragos Camarasan | Portfolio Técnico',
+      es: 'Dragos Camarasan | Portfolio Tecnico',
       en: 'Dragos Camarasan | Technical Portfolio',
     },
     description: {
-      es: 'Portfolio bilingüe con proyectos reales, experiencia actual en Icaria Technology e integración de un generador de imágenes.',
-      en: 'Bilingual portfolio with real projects, current experience at Icaria Technology, and an integrated image generator.',
+      es: 'Portfolio bilingue con experiencia real en Icaria Technology, proyectos seleccionados y generador de imagenes integrado.',
+      en: 'Bilingual portfolio with real experience at Icaria Technology, selected projects, and an integrated image generator.',
     },
   },
   profile: {
@@ -18,58 +18,126 @@ export const portfolioContent: PortfolioContent = {
       en: 'Junior Implantation Software at Icaria Technology',
     },
     location: {
-      es: 'Madrid, España',
+      es: 'Madrid, Espana',
       en: 'Madrid, Spain',
     },
     headline: {
-      es: 'Ingeniería de software aplicada a producto y cliente real.',
+      es: 'Ingenieria de software aplicada a producto y cliente real.',
       en: 'Software engineering applied to product and real client delivery.',
     },
     subheadline: {
-      es: 'Actualmente en Icaria (entorno TDN/TDM), trabajando con GDPR, Java y Docker, con foco en calidad técnica y ejecución.',
-      en: 'Currently at Icaria (TDN/TDM environment), working with GDPR, Java, and Docker, focused on technical quality and execution.',
+      es: 'Actualmente en Icaria, trabajando con Icaria TDM, modulos GDPR, Java y Docker con foco en calidad tecnica.',
+      en: 'Currently at Icaria, working with Icaria TDM, GDPR modules, Java, and Docker with a strong technical quality focus.',
     },
     shortBio: {
-      es: 'Graduado en Ingeniería Informática por la UCM. Mi etapa actual está centrada en implantación software en Icaria Technology, y la combino con proyectos de desarrollo full-stack, testing y automatización.',
-      en: 'Computer Engineering graduate from UCM. My current stage is focused on software implementation at Icaria Technology, combined with full-stack, testing, and automation projects.',
+      es: 'Graduado en Ingenieria Informatica por la UCM. Combino implantacion software, integracion tecnica y proyectos de desarrollo web con testing.',
+      en: 'Computer Engineering graduate from UCM. I combine software implementation, technical integration, and web development projects with testing.',
     },
     photo: '/assets/profile/Imagen-CV.png',
     insightLines: [
       {
-        es: 'Implementación técnica en cliente con foco en fiabilidad y entrega.',
-        en: 'Client-facing technical implementation focused on reliability and delivery.',
+        es: 'Trabajo actual en Icaria Technology dentro del area de implantacion software.',
+        en: 'Current role at Icaria Technology in software implementation.',
       },
       {
-        es: 'Trabajo diario con Icaria TDN/TDM, módulos GDPR, Java y Docker.',
-        en: 'Daily work with Icaria TDN/TDM, GDPR modules, Java, and Docker.',
+        es: 'Herramientas principales: Icaria TDM, GDPR, Java, Docker y YouTrack.',
+        en: 'Main tooling: Icaria TDM, GDPR, Java, Docker, and YouTrack.',
       },
       {
-        es: 'Perfil mixto entre desarrollo, validación funcional y soporte de negocio.',
-        en: 'Hybrid profile across development, functional validation, and business support.',
+        es: 'Perfil mixto: desarrollo, validacion funcional y resolucion de incidencias.',
+        en: 'Mixed profile: development, functional validation, and incident resolution.',
       },
       {
-        es: 'Base sólida en TypeScript/JavaScript para frontend moderno.',
-        en: 'Strong TypeScript/JavaScript foundation for modern frontend work.',
+        es: 'Base solida en TypeScript y JavaScript para frontend moderno.',
+        en: 'Strong TypeScript and JavaScript foundation for modern frontend work.',
       },
     ],
   },
   about: {
     title: {
-      es: 'Sobre mí',
+      es: 'Sobre mi',
       en: 'About me',
     },
     paragraphs: [
       {
-        es: 'Mi perfil está orientado a construir software útil para negocio, con una combinación de base técnica sólida y capacidad de adaptación a entornos de cliente.',
-        en: 'My profile is focused on building software that is useful for business, combining strong technical foundations with client-environment adaptability.',
+        es: 'Mi objetivo es construir software util para negocio, con buena base tecnica y una ejecucion real orientada a cliente.',
+        en: 'My goal is to build software that is useful for business, with strong technical foundations and real client-oriented execution.',
       },
       {
-        es: 'Actualmente trabajo en Icaria Technology como Junior Implantation Software, participando en implantaciones y tareas de integración con herramientas como Icaria TDN/TDM, módulos GDPR, Java y Docker.',
-        en: 'I currently work at Icaria Technology as Junior Implantation Software, participating in deployments and integration tasks with tools such as Icaria TDN/TDM, GDPR modules, Java, and Docker.',
+        es: 'Estoy enfocado en seguir creciendo en Icaria Technology y escalar hacia responsabilidades de producto e integracion cada vez mas completas.',
+        en: 'I am focused on growing at Icaria Technology and moving toward broader product and integration responsibilities.',
+      },
+    ],
+  },
+  experience: {
+    title: {
+      es: 'Experiencia',
+      en: 'Experience',
+    },
+    intro: {
+      es: 'Resumen de experiencia profesional y tecnica mas relevante.',
+      en: 'Summary of the most relevant professional and technical experience.',
+    },
+    items: [
+      {
+        id: 'icaria-junior-implantation',
+        role: {
+          es: 'Junior Implantation Software',
+          en: 'Junior Implantation Software',
+        },
+        organization: {
+          es: 'Icaria Technology',
+          en: 'Icaria Technology',
+        },
+        period: {
+          es: 'Actualidad',
+          en: 'Current',
+        },
+        summary: {
+          es: 'Implantacion de soluciones en cliente, configuracion funcional y soporte tecnico en entorno productivo. Trabajo habitual con Icaria TDM, modulos GDPR, Java, Docker y seguimiento operativo en YouTrack.',
+          en: 'Client solution implementation, functional setup, and technical support in production environments. Daily work with Icaria TDM, GDPR modules, Java, Docker, and operational tracking in YouTrack.',
+        },
+        tools: ['Icaria TDM', 'GDPR', 'Java', 'Docker', 'YouTrack', 'Soporte a cliente'],
       },
       {
-        es: 'Además, desarrollo proyectos propios para reforzar arquitectura frontend, modelado de datos, pruebas automáticas y experiencia de usuario en web responsive.',
-        en: 'I also build personal projects to strengthen frontend architecture, data modeling, automated testing, and responsive web user experience.',
+        id: 'siemens-hmi-scada',
+        role: {
+          es: 'Practicas HMI/SCADA',
+          en: 'HMI/SCADA Internship',
+        },
+        organization: {
+          es: 'Siemens',
+          en: 'Siemens',
+        },
+        period: {
+          es: 'Etapa de practicas',
+          en: 'Internship period',
+        },
+        summary: {
+          es: 'Colaboracion en entorno industrial con WinCC Unified y SCADA, tareas de pruebas tecnicas, integracion y soporte a migraciones.',
+          en: 'Worked in an industrial environment with WinCC Unified and SCADA, supporting technical testing, integration, and migration tasks.',
+        },
+        tools: ['WinCC Unified', 'SCADA', 'Testing tecnico', 'Integracion', 'Soporte'],
+      },
+      {
+        id: 'ucm-lab-support',
+        role: {
+          es: 'Soporte Tecnico de Laboratorio',
+          en: 'IT Lab Technical Support',
+        },
+        organization: {
+          es: 'Universidad Complutense de Madrid',
+          en: 'Complutense University of Madrid',
+        },
+        period: {
+          es: 'Durante etapa universitaria',
+          en: 'During university stage',
+        },
+        summary: {
+          es: 'Gestion de incidencias, mantenimiento de equipos y apoyo en preparacion de aulas para docencia y evaluacion.',
+          en: 'Incident management, workstation maintenance, and classroom setup support for teaching and assessment.',
+        },
+        tools: ['Windows', 'Mantenimiento', 'Incidencias', 'Soporte tecnico'],
       },
     ],
   },
@@ -79,37 +147,37 @@ export const portfolioContent: PortfolioContent = {
       en: 'Projects',
     },
     intro: {
-      es: 'Proyectos seleccionados con más peso técnico y mejor alineados con mi perfil actual.',
-      en: 'Selected projects with stronger technical weight and better alignment with my current profile.',
+      es: 'Proyectos tecnicos seleccionados, con foco en desarrollo real y calidad de entrega.',
+      en: 'Selected technical projects focused on practical development and delivery quality.',
     },
     items: [
       {
         id: 'pwa-imagenes-ia',
         title: {
-          es: 'Generador de Imágenes (PWA)',
+          es: 'Generador de Imagenes (PWA)',
           en: 'Image Generator (PWA)',
         },
         summary: {
-          es: 'Aplicación web para generar imágenes desde prompt, con UX rápida, notificaciones y enfoque mobile-first.',
-          en: 'Web app to generate images from prompts, with fast UX, notifications, and mobile-first focus.',
+          es: 'Aplicacion web para generar imagenes desde prompt con experiencia optimizada en movil y escritorio.',
+          en: 'Web app to generate images from prompts with optimized mobile and desktop experience.',
         },
         context: {
-          es: 'Proyecto personal/académico orientado a consumo de servicios de imagen, gestión de estado en frontend y optimización de experiencia de uso.',
-          en: 'Personal/academic project focused on image-service consumption, frontend state management, and UX optimization.',
+          es: 'Proyecto orientado a consumo de servicios de imagen, estado en frontend y experiencia de usuario responsive.',
+          en: 'Project focused on image-service consumption, frontend state handling, and responsive UX.',
         },
-        stack: ['React', 'TypeScript', 'Vite', 'PWA', 'Service Worker', 'CSS responsive'],
+        stack: ['React', 'TypeScript', 'Vite', 'PWA', 'Service Worker', 'Responsive UI'],
         highlights: [
           {
-            es: 'Integrado como módulo real dentro del portfolio para que pueda probarse directamente.',
-            en: 'Integrated as a real module inside this portfolio so it can be tested directly.',
+            es: 'Modulo integrado en este portfolio para probarlo en vivo.',
+            en: 'Integrated module inside this portfolio for live testing.',
           },
           {
-            es: 'Flujo de generación, limpieza y descarga adaptado a escritorio y móvil.',
-            en: 'Generation, reset, and download flow adapted for desktop and mobile.',
+            es: 'Fallback multiple para evitar que falle la vista previa.',
+            en: 'Multi-level fallback to avoid preview failures.',
           },
           {
-            es: 'Fallback visual automático si el proveedor principal de imágenes falla.',
-            en: 'Automatic visual fallback if the main image provider fails.',
+            es: 'Flujo de generacion y descarga preparado para movil.',
+            en: 'Generation and download flow prepared for mobile usage.',
           },
         ],
         images: ['/assets/projects/pwa.svg'],
@@ -124,61 +192,61 @@ export const portfolioContent: PortfolioContent = {
           en: 'Job Offers Bot',
         },
         summary: {
-          es: 'Bot en Python para monitorizar ofertas y enviar alertas automáticas a Telegram.',
-          en: 'Python bot to monitor job offers and send automated Telegram alerts.',
+          es: 'Bot en Python para monitorizar ofertas y enviar alertas automaticas en Telegram.',
+          en: 'Python bot to monitor offers and send automated Telegram alerts.',
         },
         context: {
-          es: 'Proyecto de automatización enfocado a productividad personal. Actualmente no está desplegado en producción.',
-          en: 'Automation project focused on personal productivity. It is currently not deployed in production.',
+          es: 'Proyecto de automatizacion para productividad personal. Actualmente no esta desplegado en produccion.',
+          en: 'Automation project for personal productivity. It is currently not deployed in production.',
         },
         stack: ['Python', 'asyncio', 'requests', 'BeautifulSoup', 'Telegram Bot API'],
         highlights: [
           {
-            es: 'Extracción periódica de vacantes con control de duplicados.',
-            en: 'Periodic vacancy extraction with duplicate control.',
+            es: 'Extraccion periodica con control de duplicados.',
+            en: 'Periodic extraction with duplicate control.',
           },
           {
-            es: 'Diseño simple, fácil de mantener y ampliar.',
-            en: 'Simple design, easy to maintain and extend.',
+            es: 'Base para evolucion cloud con scheduler.',
+            en: 'Foundation for a future cloud scheduler version.',
           },
           {
-            es: 'Base para una futura versión cloud con scheduler.',
-            en: 'Foundation for a future cloud version with scheduler.',
+            es: 'Arquitectura simple y mantenible.',
+            en: 'Simple and maintainable architecture.',
           },
         ],
-        images: ['/assets/projects/bot.svg'],
+        images: ['/assets/projects/bot-toy.svg'],
         links: {},
       },
       {
         id: 'tfg-aps-fullstack',
         title: {
-          es: 'TFG - Aplicación web de soporte (UCM)',
-          en: 'Thesis - Support Web Platform (UCM)',
+          es: 'TFG - Aplicacion Web de Soporte (UCM)',
+          en: 'Thesis - Support Web App (UCM)',
         },
         summary: {
-          es: 'Proyecto full-stack orientado a gestión de datos, lógica de negocio y calidad de software.',
-          en: 'Full-stack project focused on data management, business logic, and software quality.',
+          es: 'Proyecto full-stack centrado en datos, logica de negocio y validacion con testing automatizado.',
+          en: 'Full-stack project focused on data, business logic, and validation with automated testing.',
         },
         context: {
-          es: 'Evolución de la plataforma ApS de la UCM con mejoras funcionales, trabajo de arquitectura y ampliación de cobertura de pruebas.',
-          en: 'Evolution of UCM ApS platform with functional improvements, architecture work, and expanded test coverage.',
+          es: 'Evolucion de plataforma universitaria con mejoras funcionales, arquitectura y cobertura de pruebas.',
+          en: 'Evolution of a university platform with functional improvements, architecture work, and broader test coverage.',
         },
         stack: ['Nuxt 3', 'Vue 3', 'TypeScript', 'Node.js', 'MySQL', 'Knex', 'Docker', 'TailwindCSS', 'Vitest', 'Playwright'],
         highlights: [
           {
-            es: 'Modelado y explotación de datos en MySQL con capa de acceso en Knex.',
-            en: 'Data modeling and querying in MySQL with a Knex data-access layer.',
+            es: 'Frontend y backend unificados en Nuxt con tipado TypeScript.',
+            en: 'Unified frontend and backend in Nuxt with TypeScript typing.',
           },
           {
-            es: 'Implementación frontend/backend en Nuxt con tipado TypeScript.',
-            en: 'Frontend/backend implementation in Nuxt with TypeScript typing.',
+            es: 'Modelado y acceso a datos en MySQL con Knex.',
+            en: 'Data modeling and access in MySQL with Knex.',
           },
           {
-            es: 'Validación con tests unitarios y e2e (Vitest + Playwright) y despliegue en entorno Docker.',
-            en: 'Validation with unit and e2e tests (Vitest + Playwright) and Docker-based deployment.',
+            es: 'Testing unitario y e2e con Vitest y Playwright.',
+            en: 'Unit and e2e testing with Vitest and Playwright.',
           },
         ],
-        images: ['/assets/projects/tfg-aps.png'],
+        images: ['/assets/projects/tfg-web-motion.svg'],
         links: {
           publicRepo: 'https://github.com/dragosic/TFG',
         },
@@ -187,20 +255,20 @@ export const portfolioContent: PortfolioContent = {
   },
   imageLab: {
     title: {
-      es: 'Generador de imágenes',
+      es: 'Generador de imagenes',
       en: 'Image generator',
     },
     intro: {
-      es: 'Escribe un prompt y genera imagen. Si el proveedor principal no responde, se activa un fallback automático para que la experiencia no se rompa.',
-      en: 'Write a prompt and generate an image. If the main provider fails, an automatic fallback is used so the experience remains functional.',
+      es: 'Genera imagen a partir de texto con fallback automatico para que siempre tengas resultado visible.',
+      en: 'Generate images from text with automatic fallback so you always get a visible result.',
     },
     tokenLabel: {
       es: 'Token interno',
       en: 'Internal token',
     },
     tokenHint: {
-      es: 'No necesitas introducir token para usar este módulo.',
-      en: 'You do not need to enter a token to use this module.',
+      es: 'No necesitas introducir token para usar este modulo.',
+      en: 'No token input is needed for this module.',
     },
     rememberTokenLabel: {
       es: 'Recordar token',
@@ -219,8 +287,8 @@ export const portfolioContent: PortfolioContent = {
       en: 'Prompt',
     },
     promptPlaceholder: {
-      es: 'Ejemplo: retrato editorial minimalista, luz suave, tonos cálidos, alta calidad...',
-      en: 'Example: minimalist editorial portrait, soft lighting, warm tones, high quality...',
+      es: 'Ejemplo: coche deportivo rojo en carretera al atardecer...',
+      en: 'Example: red sports car on a sunset road...',
     },
     styleLabel: {
       es: 'Estilo',
@@ -243,19 +311,19 @@ export const portfolioContent: PortfolioContent = {
       en: 'Download PNG',
     },
     note: {
-      es: 'Consejo: en móvil empieza con prompts breves y añade detalle en una segunda iteración.',
-      en: 'Tip: on mobile, start with short prompts and add detail in a second iteration.',
+      es: 'Prueba prompts simples: coches, motos, perros, gatos o animales.',
+      en: 'Try simple prompts: cars, bikes, dogs, cats, or animals.',
     },
     previewTitle: {
       es: 'Vista previa',
       en: 'Preview',
     },
     emptyPreviewText: {
-      es: 'Aquí aparecerá la imagen generada.',
+      es: 'Aqui aparecera la imagen generada.',
       en: 'Your generated image will appear here.',
     },
     missingTokenError: {
-      es: 'Servicio no disponible temporalmente.',
+      es: 'Servicio temporalmente no disponible.',
       en: 'Service temporarily unavailable.',
     },
     missingPromptError: {
@@ -263,8 +331,8 @@ export const portfolioContent: PortfolioContent = {
       en: 'Write a prompt before generating.',
     },
     apiErrorPrefix: {
-      es: 'No se pudo generar imagen con este prompt',
-      en: 'Image generation failed for this prompt',
+      es: 'No se pudo generar imagen con ese prompt',
+      en: 'Could not generate image with that prompt',
     },
     styleOptions: [
       {
@@ -273,11 +341,11 @@ export const portfolioContent: PortfolioContent = {
       },
       {
         value: 'illustration',
-        label: { es: 'Ilustración', en: 'Illustration' },
+        label: { es: 'Ilustracion', en: 'Illustration' },
       },
       {
         value: 'cinematic',
-        label: { es: 'Cinemático', en: 'Cinematic' },
+        label: { es: 'Cinematico', en: 'Cinematic' },
       },
       {
         value: 'minimal',
@@ -286,16 +354,24 @@ export const portfolioContent: PortfolioContent = {
     ],
     quickPrompts: [
       {
-        es: 'Paisaje urbano nocturno con reflejos de lluvia',
-        en: 'Night cityscape with rain reflections',
+        es: 'coche clasico azul en ciudad nocturna',
+        en: 'blue classic car in a night city',
       },
       {
-        es: 'Interior moderno con luz natural y tonos cálidos',
-        en: 'Modern interior with natural light and warm tones',
+        es: 'moto deportiva en carretera de montana',
+        en: 'sport bike on a mountain road',
       },
       {
-        es: 'Retrato creativo editorial con estilo fotográfico',
-        en: 'Creative editorial portrait in photographic style',
+        es: 'perro golden retriever en parque soleado',
+        en: 'golden retriever dog in a sunny park',
+      },
+      {
+        es: 'gato naranja durmiendo en una manta',
+        en: 'orange cat sleeping on a blanket',
+      },
+      {
+        es: 'manada de animales salvajes en sabana',
+        en: 'wild animal pack in savannah',
       },
     ],
   },
@@ -324,28 +400,28 @@ export const portfolioContent: PortfolioContent = {
           es: 'Backend y Datos',
           en: 'Backend and Data',
         },
-        items: ['Node.js', 'MySQL', 'Knex', 'TypeORM (base)', 'REST APIs', 'Modelado de datos'],
+        items: ['Node.js', 'MySQL', 'Knex', 'REST APIs', 'Modelado de datos', 'Docker'],
       },
       {
         name: {
           es: 'QA y Testing',
           en: 'QA and Testing',
         },
-        items: ['Vitest', 'Playwright', 'Testing unitario', 'Testing e2e', 'Smoke tests', 'Validación funcional'],
+        items: ['Vitest', 'Playwright', 'Testing unitario', 'Testing e2e', 'Smoke tests', 'Validacion funcional'],
       },
       {
         name: {
-          es: 'Implantación (Icaria)',
-          en: 'Implementation (Icaria)',
+          es: 'Implantacion en Icaria',
+          en: 'Implementation at Icaria',
         },
-        items: ['Icaria TDN/TDM', 'Módulos GDPR', 'Docker', 'Integración técnica', 'Soporte a cliente', 'Resolución de incidencias'],
+        items: ['Icaria TDM', 'GDPR', 'YouTrack', 'Integracion tecnica', 'Soporte a cliente', 'Resolucion de incidencias'],
       },
       {
         name: {
-          es: 'Trabajo de Equipo',
+          es: 'Trabajo en Equipo',
           en: 'Teamwork',
         },
-        items: ['SCRUM', 'Comunicación técnica', 'Priorización', 'Documentación', 'Mejora continua'],
+        items: ['SCRUM', 'Comunicacion tecnica', 'Priorizacion', 'Documentacion', 'Mejora continua'],
       },
     ],
   },
@@ -356,8 +432,8 @@ export const portfolioContent: PortfolioContent = {
     },
     paragraphs: [
       {
-        es: 'Mi foco actual está en consolidar mi etapa en Icaria Technology dentro del área de implantación software, crecer en responsabilidades técnicas (integración, calidad y automatización) y evolucionar hacia un rol de desarrollo de producto donde pueda aportar tanto en código como en ejecución real con cliente.',
-        en: 'My current focus is to consolidate my stage at Icaria Technology in software implementation, grow in technical responsibilities (integration, quality, and automation), and evolve toward a product development role where I can contribute both in code and real client execution.',
+        es: 'Mi foco principal es consolidar mi etapa en Icaria Technology dentro del area de implantacion software, creciendo en integracion, automatizacion, calidad tecnica y evolucion hacia desarrollo de producto con impacto real.',
+        en: 'My main focus is to consolidate my current stage at Icaria Technology in software implementation, growing in integration, automation, technical quality, and product development with real impact.',
       },
     ],
   },
@@ -367,8 +443,8 @@ export const portfolioContent: PortfolioContent = {
       en: 'Contact',
     },
     text: {
-      es: 'Si buscas un perfil junior con experiencia real en implantación, base de desarrollo y visión de calidad, hablamos.',
-      en: 'If you are looking for a junior profile with real implementation experience, development foundations, and a quality mindset, let us connect.',
+      es: 'Si buscas un perfil junior con experiencia real en implantacion, desarrollo y testing, hablamos.',
+      en: 'If you are looking for a junior profile with real implementation, development, and testing experience, let us connect.',
     },
     emailLabel: {
       es: 'Enviar email',
@@ -389,6 +465,7 @@ export const portfolioContent: PortfolioContent = {
     nav: [
       { id: 'home', label: { es: 'Inicio', en: 'Home' } },
       { id: 'about', label: { es: 'Perfil', en: 'Profile' } },
+      { id: 'experience', label: { es: 'Experiencia', en: 'Experience' } },
       { id: 'projects', label: { es: 'Proyectos', en: 'Projects' } },
       { id: 'image-lab', label: { es: 'Generador', en: 'Generator' } },
       { id: 'skills', label: { es: 'Skills', en: 'Skills' } },
@@ -407,7 +484,7 @@ export const portfolioContent: PortfolioContent = {
       details: { es: 'Ver detalle', en: 'Show details' },
       hide: { es: 'Ocultar', en: 'Hide' },
       highlights: { es: 'Logros clave', en: 'Key highlights' },
-      stack: { es: 'Stack técnico', en: 'Technical stack' },
+      stack: { es: 'Stack tecnico', en: 'Technical stack' },
       publicRepo: { es: 'Repositorio', en: 'Repository' },
       demo: { es: 'Demo', en: 'Demo' },
     },
@@ -421,7 +498,7 @@ export const portfolioContent: PortfolioContent = {
       downloadCv: { es: 'Descargar CV', en: 'Download CV' },
     },
     footer: {
-      es: 'Diseñado con React, Vite, TypeScript y Tailwind.',
+      es: 'Disenado con React, Vite, TypeScript y Tailwind.',
       en: 'Designed with React, Vite, TypeScript, and Tailwind.',
     },
   },

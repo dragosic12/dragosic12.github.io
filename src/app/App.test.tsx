@@ -12,7 +12,7 @@ describe('App', () => {
   it('renders home content in Spanish by default', () => {
     render(<App />);
 
-    expect(screen.getByRole('heading', { name: /Ingeniería de software aplicada a producto y cliente real/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Ingenier[ií]a de software aplicada a producto y cliente real/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Ver proyectos/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: /Generador de im[aá]genes/i })).toBeInTheDocument();
   });
