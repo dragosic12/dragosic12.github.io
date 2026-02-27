@@ -204,6 +204,23 @@ body {
   gap: 1rem;
 }
 
+.generator-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.generator-hero::before {
+  content: '';
+  position: absolute;
+  right: -32px;
+  top: -46px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 30%, transparent), transparent 70%);
+  pointer-events: none;
+}
+
 .generator-label {
   display: block;
   font-size: 0.74rem;
