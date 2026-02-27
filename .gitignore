@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+
+# builds
+dist/
+build/
+coverage/
+
+# tooling
+.playwright/
+playwright-report/
+test-results/
+.vite/
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+playwright.config.js
+playwright.config.d.ts
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# env
+.env
+.env.*
+!.env.example
+
+# misc
+.DS_Store

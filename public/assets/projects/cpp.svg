@@ -1,0 +1,11 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="700" rx="24" fill="#120E0A"/>
+  <rect x="68" y="68" width="1064" height="564" rx="20" fill="#1D1610" stroke="#5A4937"/>
+  <text x="110" y="144" fill="#FCD34D" font-family="IBM Plex Mono" font-size="28">c++_data_structures</text>
+  <rect x="110" y="182" width="980" height="404" rx="16" fill="#16110C" stroke="#6B4E2B"/>
+  <text x="150" y="250" fill="#FDE68A" font-family="IBM Plex Mono" font-size="22">TADs · Trees · Dictionaries · Complexity</text>
+  <text x="150" y="296" fill="#FDE68A" font-family="IBM Plex Mono" font-size="22">Algorithmic reasoning + optimization mindset</text>
+  <rect x="150" y="338" width="280" height="180" rx="12" fill="#2E241B"/>
+  <rect x="470" y="338" width="280" height="180" rx="12" fill="#2E241B"/>
+  <rect x="790" y="338" width="280" height="180" rx="12" fill="#2E241B"/>
+</svg>

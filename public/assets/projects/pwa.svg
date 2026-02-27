@@ -1,0 +1,13 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="700" rx="24" fill="#100A20"/>
+  <rect x="60" y="70" width="1080" height="560" rx="22" fill="#1E1133" stroke="#553C9A"/>
+  <text x="100" y="135" fill="#E9D5FF" font-family="IBM Plex Mono" font-size="28">ai_image_generator_pwa</text>
+  <rect x="100" y="170" width="420" height="390" rx="18" fill="#2B1B49"/>
+  <rect x="560" y="170" width="540" height="390" rx="18" fill="#261741"/>
+  <text x="128" y="232" fill="#A7F3D0" font-family="IBM Plex Mono" font-size="20">prompt =&gt; model =&gt; image</text>
+  <text x="128" y="276" fill="#93C5FD" font-family="IBM Plex Mono" font-size="20">notifications enabled</text>
+  <text x="128" y="320" fill="#FDE68A" font-family="IBM Plex Mono" font-size="20">service worker active</text>
+  <circle cx="830" cy="360" r="140" fill="#4F2A8A"/>
+  <circle cx="830" cy="360" r="98" fill="#7C3AED"/>
+  <circle cx="830" cy="360" r="54" fill="#C4B5FD"/>
+</svg>

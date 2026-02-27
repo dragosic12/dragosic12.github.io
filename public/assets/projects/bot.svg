@@ -1,0 +1,11 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="700" rx="24" fill="#07151A"/>
+  <rect x="74" y="78" width="1052" height="544" rx="22" fill="#0D222A" stroke="#285865"/>
+  <text x="116" y="152" fill="#5EEAD4" font-family="IBM Plex Mono" font-size="28">job_alert_bot.py</text>
+  <rect x="116" y="186" width="968" height="396" rx="14" fill="#061117" stroke="#1B4450"/>
+  <text x="150" y="250" fill="#A7F3D0" font-family="IBM Plex Mono" font-size="22">while True:</text>
+  <text x="190" y="292" fill="#99F6E4" font-family="IBM Plex Mono" font-size="22">offers = scrape_infojobs()</text>
+  <text x="190" y="334" fill="#99F6E4" font-family="IBM Plex Mono" font-size="22">notify_new_offers(offers)</text>
+  <text x="190" y="376" fill="#99F6E4" font-family="IBM Plex Mono" font-size="22">sleep(90)</text>
+  <text x="150" y="450" fill="#67E8F9" font-family="IBM Plex Mono" font-size="22">Telegram integration + duplicate filter</text>
+</svg>

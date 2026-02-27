@@ -1,0 +1,13 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="700" rx="24" fill="#09141A"/>
+  <rect x="60" y="70" width="1080" height="560" rx="18" fill="#0F1E26" stroke="#2B4552"/>
+  <circle cx="96" cy="108" r="8" fill="#FB7185"/>
+  <circle cx="124" cy="108" r="8" fill="#FBBF24"/>
+  <circle cx="152" cy="108" r="8" fill="#34D399"/>
+  <text x="184" y="114" fill="#93C5FD" font-family="IBM Plex Mono" font-size="20">siemens_hmi_scada</text>
+  <rect x="96" y="150" width="1008" height="430" rx="14" fill="#061015" stroke="#21404B"/>
+  <text x="130" y="214" fill="#34D399" font-family="IBM Plex Mono" font-size="24">WinCC Unified :: runtime status = OK</text>
+  <text x="130" y="266" fill="#A7F3D0" font-family="IBM Plex Mono" font-size="22">CWC dynamic SVG controls</text>
+  <text x="130" y="318" fill="#A7F3D0" font-family="IBM Plex Mono" font-size="22">SCADA migration checks</text>
+  <text x="130" y="370" fill="#A7F3D0" font-family="IBM Plex Mono" font-size="22">SQL / SQLite log integrity</text>
+</svg>
