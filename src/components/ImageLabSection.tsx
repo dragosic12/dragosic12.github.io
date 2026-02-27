@@ -5,8 +5,12 @@ import { SectionWrapper } from './SectionWrapper';
 
 const POLLINATIONS_API = 'https://image.pollinations.ai/prompt';
 const KEYWORD_FALLBACK_API = 'https://loremflickr.com';
-const PRIMARY_TIMEOUT_MS = 12000;
-const FALLBACK_TIMEOUT_MS = 9000;
+const SEEDED_FALLBACK_API = 'https://picsum.photos';
+const PRIMARY_TIMEOUT_MS = 5000;
+const SECONDARY_TIMEOUT_MS = 7000;
+const TERTIARY_TIMEOUT_MS = 9000;
+const POLLINATIONS_FAILURE_THRESHOLD = 1;
+const POLLINATIONS_COOLDOWN_MS = 5 * 60 * 1000;
 
 interface ImageLabSectionProps {
   locale: Locale;
@@ -14,9 +18,14 @@ interface ImageLabSectionProps {
 }
 
 interface ProviderCandidate {
-  id: 'pollinations-default' | 'keyword-fallback';
+  id: 'pollinations-default' | 'keyword-fallback' | 'seeded-fallback';
   url: string;
   timeoutMs: number;
+}
+
+interface PollinationsHealth {
+  consecutiveFailures: number;
+  cooldownUntil: number;
 }
 
 function preloadImage(url: string, timeoutMs: number) {
@@ -84,6 +93,17 @@ function buildInlineSvgFallback(rawPrompt: string, styleName: string) {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
+function hashText(value: string) {
+  let hash = 2166136261;
+
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+  }
+
+  return Math.abs(hash >>> 0);
+}
+
 export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
   const [prompt, setPrompt] = useState('');
   const [style, setStyle] = useState(imageLab.styleOptions[0]?.value ?? 'realistic');
@@ -93,7 +113,10 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
   const [imageUrl, setImageUrl] = useState('');
   const [downloadName, setDownloadName] = useState('dragos-ai-image.png');
   const requestIdRef = useRef(0);
-  const fallbackNoticeShownRef = useRef(false);
+  const pollinationsHealthRef = useRef<PollinationsHealth>({
+    consecutiveFailures: 0,
+    cooldownUntil: 0,
+  });
 
   const quickPrompts = useMemo(() => imageLab.quickPrompts.map((item) => t(item, locale)), [imageLab.quickPrompts, locale]);
 
@@ -115,45 +138,64 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
     const craftedPrompt = `${cleanPrompt}, ${style} style, high quality`;
     const promptWithParams = `${encodeURIComponent(craftedPrompt)}?width=1024&height=1024&nologo=true&seed=${seed}`;
     const fallbackCategory = buildFallbackCategory(cleanPrompt);
+    const fallbackSeed = hashText(`${cleanPrompt}|${style}|${seed}`);
     const localUrl = buildInlineSvgFallback(cleanPrompt, style);
+    const now = Date.now();
+    const canTryPollinations = now >= pollinationsHealthRef.current.cooldownUntil;
 
-    const providers: ProviderCandidate[] = [
-      {
+    const providers: ProviderCandidate[] = [];
+
+    if (canTryPollinations) {
+      providers.push({
         id: 'pollinations-default',
         url: `${POLLINATIONS_API}/${promptWithParams}`,
         timeoutMs: PRIMARY_TIMEOUT_MS,
+      });
+    }
+
+    providers.push(
+      {
+        id: 'seeded-fallback',
+        url: `${SEEDED_FALLBACK_API}/seed/${fallbackSeed}/1024/1024`,
+        timeoutMs: SECONDARY_TIMEOUT_MS,
       },
       {
         id: 'keyword-fallback',
         url: `${KEYWORD_FALLBACK_API}/1024/1024/${fallbackCategory}?lock=${seed}`,
-        timeoutMs: FALLBACK_TIMEOUT_MS,
-      },
-    ];
+        timeoutMs: TERTIARY_TIMEOUT_MS,
+      }
+    );
 
     for (const provider of providers) {
       try {
         await preloadImage(provider.url, provider.timeoutMs);
         if (requestId !== requestIdRef.current) return;
 
+        if (provider.id === 'pollinations-default') {
+          pollinationsHealthRef.current = {
+            consecutiveFailures: 0,
+            cooldownUntil: 0,
+          };
+        }
+
         setImageUrl(provider.url);
         setDownloadName(`dragos-ai-${seed}.png`);
         setError('');
-
-        if (provider.id === 'keyword-fallback' && !fallbackNoticeShownRef.current) {
-          fallbackNoticeShownRef.current = true;
-          setProviderNotice(
-            locale === 'es'
-              ? 'Se ha usado un proveedor alternativo para mantener la vista previa disponible.'
-              : 'An alternative provider was used to keep the preview available.'
-          );
-        } else {
-          setProviderNotice('');
-        }
+        setProviderNotice('');
 
         setIsLoading(false);
         return;
       } catch {
-        // Try next provider candidate.
+        if (provider.id === 'pollinations-default') {
+          const nextFailures = pollinationsHealthRef.current.consecutiveFailures + 1;
+          const cooldownUntil =
+            nextFailures >= POLLINATIONS_FAILURE_THRESHOLD ? Date.now() + POLLINATIONS_COOLDOWN_MS : 0;
+
+          pollinationsHealthRef.current = {
+            consecutiveFailures: nextFailures,
+            cooldownUntil,
+          };
+        }
       }
     }
 
