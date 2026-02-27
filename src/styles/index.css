@@ -303,6 +303,22 @@ body {
     color-mix(in srgb, var(--bg-soft) 76%, transparent);
 }
 
+.preview-style-realistic {
+  filter: none;
+}
+
+.preview-style-illustration {
+  filter: saturate(1.2) contrast(1.05) brightness(1.03);
+}
+
+.preview-style-cinematic {
+  filter: contrast(1.14) saturate(1.08) brightness(0.95) hue-rotate(-4deg);
+}
+
+.preview-style-minimal {
+  filter: saturate(0.6) contrast(1.05) brightness(1.04);
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(14px);

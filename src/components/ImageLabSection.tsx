@@ -61,6 +61,8 @@ interface OpenverseResponse {
   results?: OpenverseImageResult[];
 }
 
+type StyleVariant = 'realistic' | 'illustration' | 'cinematic' | 'minimal';
+
 function preloadImage(url: string, timeoutMs: number) {
   return new Promise<void>((resolve, reject) => {
     const img = new Image();
@@ -110,6 +112,14 @@ function buildInlineSvgFallback(rawPrompt: string, styleName: string) {
   `;
 
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+
+function normalizeStyleValue(styleValue: string): StyleVariant {
+  if (styleValue === 'illustration' || styleValue === 'cinematic' || styleValue === 'minimal') {
+    return styleValue;
+  }
+
+  return 'realistic';
 }
 
 function hashText(value: string) {
@@ -210,6 +220,22 @@ function buildSearchQueries(rawPrompt: string) {
   return [...new Set(queries.map((query) => query.trim()).filter(Boolean))];
 }
 
+function buildStyleHints(styleValue: StyleVariant) {
+  if (styleValue === 'illustration') {
+    return ['illustration drawing art', 'digital illustration', 'vector style artwork'];
+  }
+
+  if (styleValue === 'cinematic') {
+    return ['cinematic movie still', 'dramatic film lighting', 'cinematic scene wide shot'];
+  }
+
+  if (styleValue === 'minimal') {
+    return ['minimalist composition', 'minimal style simple', 'clean minimal design'];
+  }
+
+  return ['realistic photo', 'high detail photography'];
+}
+
 function scoreSemanticMatch(sourceText: string, queryTokens: string[]) {
   if (!sourceText) return 0;
 
@@ -227,8 +253,8 @@ function scoreSemanticMatch(sourceText: string, queryTokens: string[]) {
   return score;
 }
 
-async function searchOpenverseImage(rawPrompt: string, timeoutMs: number) {
-  const searchQueries = buildSearchQueries(rawPrompt);
+async function searchOpenverseImage(rawPrompt: string, styleValue: StyleVariant, timeoutMs: number) {
+  const searchQueries = [...buildSearchQueries(rawPrompt), ...buildStyleHints(styleValue)];
 
   for (const searchQuery of searchQueries) {
     const controller = new AbortController();
@@ -271,8 +297,8 @@ async function searchOpenverseImage(rawPrompt: string, timeoutMs: number) {
   throw new Error('openverse-no-results');
 }
 
-async function searchWikimediaImage(rawPrompt: string, timeoutMs: number) {
-  const searchQueries = buildSearchQueries(rawPrompt);
+async function searchWikimediaImage(rawPrompt: string, styleValue: StyleVariant, timeoutMs: number) {
+  const searchQueries = [...buildSearchQueries(rawPrompt), ...buildStyleHints(styleValue)];
 
   for (const searchQuery of searchQueries) {
     const controller = new AbortController();
@@ -320,6 +346,7 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
   const [error, setError] = useState('');
   const [providerNotice, setProviderNotice] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [previewStyle, setPreviewStyle] = useState<StyleVariant>('realistic');
   const [downloadName, setDownloadName] = useState('dragos-ai-image.png');
   const requestIdRef = useRef(0);
   const pollinationsHealthRef = useRef<PollinationsHealth>({
@@ -344,6 +371,7 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
     setProviderNotice('');
 
     const seed = Date.now();
+    const normalizedStyle = normalizeStyleValue(style);
     const craftedPrompt = `${cleanPrompt}, ${style} style, high quality`;
     const promptWithParams = `${encodeURIComponent(craftedPrompt)}?width=1024&height=1024&nologo=true&seed=${seed}`;
     const fallbackSeed = hashText(`${cleanPrompt}|${style}|${seed}`);
@@ -364,12 +392,12 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
     providers.push(
       {
         id: 'openverse',
-        resolveUrl: () => searchOpenverseImage(cleanPrompt, SEARCH_LOOKUP_TIMEOUT_MS),
+        resolveUrl: () => searchOpenverseImage(cleanPrompt, normalizedStyle, SEARCH_LOOKUP_TIMEOUT_MS),
         timeoutMs: SECONDARY_TIMEOUT_MS,
       },
       {
         id: 'wikimedia-commons',
-        resolveUrl: () => searchWikimediaImage(cleanPrompt, SEARCH_LOOKUP_TIMEOUT_MS),
+        resolveUrl: () => searchWikimediaImage(cleanPrompt, normalizedStyle, SEARCH_LOOKUP_TIMEOUT_MS),
         timeoutMs: SECONDARY_TIMEOUT_MS,
       },
       {
@@ -404,6 +432,7 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
         }
 
         setImageUrl(resolvedUrl);
+        setPreviewStyle(normalizedStyle);
         setDownloadName(`dragos-ai-${seed}.png`);
         setError('');
         setProviderNotice('');
@@ -427,6 +456,7 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
     if (requestId !== requestIdRef.current) return;
 
     setImageUrl(localUrl);
+    setPreviewStyle(normalizedStyle);
     setDownloadName(`dragos-ai-${seed}.png`);
     setProviderNotice(
       locale === 'es'
@@ -444,6 +474,7 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
     setProviderNotice('');
     setIsLoading(false);
     setImageUrl('');
+    setPreviewStyle(normalizeStyleValue(style));
   }
 
   function handlePreviewLoad() {
@@ -459,6 +490,7 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
   function handlePreviewError() {
     const localUrl = buildInlineSvgFallback(prompt.trim() || 'image generation', style);
     setImageUrl(localUrl);
+    setPreviewStyle(normalizeStyleValue(style));
     setProviderNotice(
       locale === 'es'
         ? 'La vista previa fallo en este navegador. Se ha cargado la version local.'
@@ -552,7 +584,7 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
               <img
                 src={imageUrl}
                 alt="Generated image preview"
-                className="h-full w-full object-contain"
+                className={`h-full w-full object-contain preview-style-${previewStyle}`}
                 onLoad={handlePreviewLoad}
                 onError={handlePreviewError}
               />
