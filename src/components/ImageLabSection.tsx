@@ -6,7 +6,6 @@ import { SectionWrapper } from './SectionWrapper';
 const POLLINATIONS_API = 'https://image.pollinations.ai/prompt';
 const KEYWORD_FALLBACK_API = 'https://loremflickr.com';
 const PRIMARY_TIMEOUT_MS = 12000;
-const SECONDARY_TIMEOUT_MS = 12000;
 const FALLBACK_TIMEOUT_MS = 9000;
 
 interface ImageLabSectionProps {
@@ -15,7 +14,7 @@ interface ImageLabSectionProps {
 }
 
 interface ProviderCandidate {
-  id: 'pollinations-default' | 'pollinations-flux' | 'keyword-fallback';
+  id: 'pollinations-default' | 'keyword-fallback';
   url: string;
   timeoutMs: number;
 }
@@ -123,11 +122,6 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
         id: 'pollinations-default',
         url: `${POLLINATIONS_API}/${promptWithParams}`,
         timeoutMs: PRIMARY_TIMEOUT_MS,
-      },
-      {
-        id: 'pollinations-flux',
-        url: `${POLLINATIONS_API}/${encodeURIComponent(craftedPrompt)}?model=flux&width=1024&height=1024&nologo=true&seed=${seed}`,
-        timeoutMs: SECONDARY_TIMEOUT_MS,
       },
       {
         id: 'keyword-fallback',
