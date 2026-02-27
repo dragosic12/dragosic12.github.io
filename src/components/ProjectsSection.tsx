@@ -42,7 +42,7 @@ export function ProjectsSection({ locale, projects, ui }: ProjectsSectionProps) 
                   <img
                     src={mediaSrc}
                     alt={`${t(project.title, locale)} visual`}
-                    className="project-media"
+                    className="project-media project-media-adaptive"
                     loading="lazy"
                   />
                 )}

@@ -3,14 +3,21 @@ import type { ImageLabContent, Locale } from '../types/content';
 import { t } from '../content/i18n';
 import { SectionWrapper } from './SectionWrapper';
 
-const IMAGE_API_PRIMARY = 'https://image.pollinations.ai/prompt';
-const IMAGE_API_FALLBACK = 'https://loremflickr.com';
+const POLLINATIONS_API = 'https://image.pollinations.ai/prompt';
+const KEYWORD_FALLBACK_API = 'https://loremflickr.com';
 const PRIMARY_TIMEOUT_MS = 12000;
+const SECONDARY_TIMEOUT_MS = 12000;
 const FALLBACK_TIMEOUT_MS = 9000;
 
 interface ImageLabSectionProps {
   locale: Locale;
   imageLab: ImageLabContent;
+}
+
+interface ProviderCandidate {
+  id: 'pollinations-default' | 'pollinations-flux' | 'keyword-fallback';
+  url: string;
+  timeoutMs: number;
 }
 
 function preloadImage(url: string, timeoutMs: number) {
@@ -40,24 +47,38 @@ function preloadImage(url: string, timeoutMs: number) {
   });
 }
 
+function buildFallbackCategory(rawPrompt: string) {
+  const tags = rawPrompt
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter((word) => word.length > 2)
+    .slice(0, 4)
+    .join(',');
+
+  return tags || 'animals,car,pet';
+}
+
 function buildInlineSvgFallback(rawPrompt: string, styleName: string) {
   const safePrompt = rawPrompt.replace(/[<>&]/g, '').slice(0, 80);
   const safeStyle = styleName.replace(/[<>&]/g, '').slice(0, 30);
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
       <defs>
-        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#f0d6cf" />
-          <stop offset="1" stop-color="#d6ddec" />
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f8edf1" />
+          <stop offset="1" stop-color="#f4e4ea" />
         </linearGradient>
       </defs>
-      <rect width="1024" height="1024" fill="url(#g)" />
+      <rect width="1024" height="1024" fill="url(#bg)" />
       <circle cx="812" cy="194" r="90" fill="#ffffff66" />
       <circle cx="200" cy="844" r="108" fill="#ffffff4a" />
-      <rect x="132" y="160" width="760" height="704" rx="40" fill="#ffffffcc" />
-      <text x="182" y="270" font-family="Inter, Arial, sans-serif" font-size="46" fill="#6f4e5c" font-weight="700">Preview fallback</text>
-      <text x="182" y="336" font-family="JetBrains Mono, monospace" font-size="28" fill="#755a67">Style: ${safeStyle}</text>
-      <text x="182" y="410" font-family="Inter, Arial, sans-serif" font-size="34" fill="#6a515f">Prompt: ${safePrompt}</text>
+      <rect x="132" y="160" width="760" height="704" rx="40" fill="#fffaf8" stroke="#d8b8ae" stroke-width="3" />
+      <text x="182" y="270" font-family="Inter, Arial, sans-serif" font-size="46" fill="#7a4656" font-weight="700">Preview fallback</text>
+      <text x="182" y="336" font-family="JetBrains Mono, monospace" font-size="28" fill="#7f5c66">Style: ${safeStyle}</text>
+      <text x="182" y="410" font-family="Inter, Arial, sans-serif" font-size="34" fill="#6d4752">Prompt: ${safePrompt}</text>
     </svg>
   `;
 
@@ -73,22 +94,9 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
   const [imageUrl, setImageUrl] = useState('');
   const [downloadName, setDownloadName] = useState('dragos-ai-image.png');
   const requestIdRef = useRef(0);
+  const fallbackNoticeShownRef = useRef(false);
 
   const quickPrompts = useMemo(() => imageLab.quickPrompts.map((item) => t(item, locale)), [imageLab.quickPrompts, locale]);
-
-  function buildFallbackCategory(rawPrompt: string) {
-    const tags = rawPrompt
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, ' ')
-      .split(/\s+/)
-      .filter((word) => word.length > 2)
-      .slice(0, 4)
-      .join(',');
-
-    return tags || 'animals,car,pet';
-  }
 
   async function handleGenerate() {
     const cleanPrompt = prompt.trim();
@@ -106,46 +114,63 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
 
     const seed = Date.now();
     const craftedPrompt = `${cleanPrompt}, ${style} style, high quality`;
-    const primaryUrl = `${IMAGE_API_PRIMARY}/${encodeURIComponent(craftedPrompt)}?model=flux&width=1024&height=1024&nologo=true&seed=${seed}`;
+    const promptWithParams = `${encodeURIComponent(craftedPrompt)}?width=1024&height=1024&nologo=true&seed=${seed}`;
     const fallbackCategory = buildFallbackCategory(cleanPrompt);
-    const secondaryUrl = `${IMAGE_API_FALLBACK}/1024/1024/${fallbackCategory}?lock=${seed}`;
     const localUrl = buildInlineSvgFallback(cleanPrompt, style);
 
-    try {
-      await preloadImage(primaryUrl, PRIMARY_TIMEOUT_MS);
-      if (requestId !== requestIdRef.current) return;
-      setImageUrl(primaryUrl);
-      setDownloadName(`dragos-ai-${seed}.png`);
-      setProviderNotice('');
-      setIsLoading(false);
-      return;
-    } catch {
-      // Ignore and try fallback
-    }
+    const providers: ProviderCandidate[] = [
+      {
+        id: 'pollinations-default',
+        url: `${POLLINATIONS_API}/${promptWithParams}`,
+        timeoutMs: PRIMARY_TIMEOUT_MS,
+      },
+      {
+        id: 'pollinations-flux',
+        url: `${POLLINATIONS_API}/${encodeURIComponent(craftedPrompt)}?model=flux&width=1024&height=1024&nologo=true&seed=${seed}`,
+        timeoutMs: SECONDARY_TIMEOUT_MS,
+      },
+      {
+        id: 'keyword-fallback',
+        url: `${KEYWORD_FALLBACK_API}/1024/1024/${fallbackCategory}?lock=${seed}`,
+        timeoutMs: FALLBACK_TIMEOUT_MS,
+      },
+    ];
 
-    try {
-      await preloadImage(secondaryUrl, FALLBACK_TIMEOUT_MS);
-      if (requestId !== requestIdRef.current) return;
-      setImageUrl(secondaryUrl);
-      setDownloadName(`dragos-ai-${seed}.png`);
-      setProviderNotice(
-        locale === 'es'
-          ? 'El proveedor principal no respondio. Se ha mostrado una alternativa visual.'
-          : 'Main provider did not respond. A visual fallback has been displayed.'
-      );
-      setIsLoading(false);
-      return;
-    } catch {
-      // Ignore and use local fallback
+    for (const provider of providers) {
+      try {
+        await preloadImage(provider.url, provider.timeoutMs);
+        if (requestId !== requestIdRef.current) return;
+
+        setImageUrl(provider.url);
+        setDownloadName(`dragos-ai-${seed}.png`);
+        setError('');
+
+        if (provider.id === 'keyword-fallback' && !fallbackNoticeShownRef.current) {
+          fallbackNoticeShownRef.current = true;
+          setProviderNotice(
+            locale === 'es'
+              ? 'Se ha usado un proveedor alternativo para mantener la vista previa disponible.'
+              : 'An alternative provider was used to keep the preview available.'
+          );
+        } else {
+          setProviderNotice('');
+        }
+
+        setIsLoading(false);
+        return;
+      } catch {
+        // Try next provider candidate.
+      }
     }
 
     if (requestId !== requestIdRef.current) return;
+
     setImageUrl(localUrl);
     setDownloadName(`dragos-ai-${seed}.png`);
     setProviderNotice(
       locale === 'es'
         ? 'Se ha activado una vista local porque los servicios externos no respondieron.'
-        : 'A local preview has been activated because external services did not respond.'
+        : 'A local preview was activated because external services did not respond.'
     );
     setError('');
     setIsLoading(false);

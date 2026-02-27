@@ -1,13 +1,156 @@
 <svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="700" rx="24" fill="#100A20"/>
-  <rect x="60" y="70" width="1080" height="560" rx="22" fill="#1E1133" stroke="#553C9A"/>
-  <text x="100" y="135" fill="#E9D5FF" font-family="IBM Plex Mono" font-size="28">ai_image_generator_pwa</text>
-  <rect x="100" y="170" width="420" height="390" rx="18" fill="#2B1B49"/>
-  <rect x="560" y="170" width="540" height="390" rx="18" fill="#261741"/>
-  <text x="128" y="232" fill="#A7F3D0" font-family="IBM Plex Mono" font-size="20">prompt =&gt; model =&gt; image</text>
-  <text x="128" y="276" fill="#93C5FD" font-family="IBM Plex Mono" font-size="20">notifications enabled</text>
-  <text x="128" y="320" fill="#FDE68A" font-family="IBM Plex Mono" font-size="20">service worker active</text>
-  <circle cx="830" cy="360" r="140" fill="#4F2A8A"/>
-  <circle cx="830" cy="360" r="98" fill="#7C3AED"/>
-  <circle cx="830" cy="360" r="54" fill="#C4B5FD"/>
+  <defs>
+    <linearGradient id="bg" x1="60" y1="50" x2="1100" y2="670" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f8edf1" />
+      <stop offset="0.55" stop-color="#f4e4ea" />
+      <stop offset="1" stop-color="#edd7cd" />
+    </linearGradient>
+    <linearGradient id="card" x1="108" y1="108" x2="1080" y2="600" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff8f4" />
+      <stop offset="1" stop-color="#f9eef2" />
+    </linearGradient>
+    <linearGradient id="button" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#b86e5e" />
+      <stop offset="0.55" stop-color="#d48b6e" />
+      <stop offset="1" stop-color="#bf7967" />
+    </linearGradient>
+    <linearGradient id="previewGlow" x1="620" y1="190" x2="1038" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffece4" stop-opacity="0.95" />
+      <stop offset="1" stop-color="#f9d8cb" stop-opacity="0.82" />
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#8e5a4d" flood-opacity="0.24" />
+    </filter>
+  </defs>
+
+  <style><![CDATA[
+    .cursor {
+      transform-origin: 440px 382px;
+      animation: moveCursor 4.8s ease-in-out infinite;
+    }
+    .click-ring-a {
+      transform-origin: 526px 404px;
+      animation: clickPulse 4.8s ease-in-out infinite;
+    }
+    .click-ring-b {
+      transform-origin: 526px 404px;
+      animation: clickPulseB 4.8s ease-in-out infinite;
+    }
+    .preview-pop {
+      transform-origin: 820px 340px;
+      animation: previewPop 4.8s ease-in-out infinite;
+    }
+    .confetti {
+      animation: confettiBurst 4.8s ease-in-out infinite;
+      transform-origin: center;
+    }
+    .confetti-delay {
+      animation-delay: 0.18s;
+    }
+    .confetti-delay2 {
+      animation-delay: 0.28s;
+    }
+    .confetti-delay3 {
+      animation-delay: 0.38s;
+    }
+
+    @keyframes moveCursor {
+      0%, 22% { transform: translate(0, 0) scale(1); }
+      34%, 46% { transform: translate(86px, 82px) scale(1); }
+      52% { transform: translate(86px, 82px) scale(0.94); }
+      66%, 100% { transform: translate(0, 0) scale(1); }
+    }
+
+    @keyframes clickPulse {
+      0%, 34% { opacity: 0; transform: scale(0.2); }
+      42% { opacity: 0.7; transform: scale(1); }
+      58%, 100% { opacity: 0; transform: scale(1.6); }
+    }
+
+    @keyframes clickPulseB {
+      0%, 40% { opacity: 0; transform: scale(0.2); }
+      48% { opacity: 0.62; transform: scale(1); }
+      64%, 100% { opacity: 0; transform: scale(1.72); }
+    }
+
+    @keyframes previewPop {
+      0%, 36% { opacity: 0; transform: scale(0.88); }
+      48% { opacity: 1; transform: scale(1.02); }
+      60%, 100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes confettiBurst {
+      0%, 48% { opacity: 0; transform: translateY(0) scale(0.3) rotate(0deg); }
+      62% { opacity: 1; transform: translateY(-30px) scale(1) rotate(14deg); }
+      84% { opacity: 0.95; transform: translateY(10px) scale(0.9) rotate(42deg); }
+      100% { opacity: 0; transform: translateY(56px) scale(0.72) rotate(78deg); }
+    }
+  ]]></style>
+
+  <rect width="1200" height="700" rx="26" fill="url(#bg)" />
+  <rect x="66" y="64" width="1068" height="572" rx="28" fill="url(#card)" stroke="#dcb7aa" stroke-width="2" filter="url(#softShadow)" />
+
+  <text x="110" y="132" fill="#6a3f49" font-family="Space Grotesk, Inter, Arial, sans-serif" font-size="32" font-weight="700">
+    image_generator_pwa
+  </text>
+  <text x="110" y="166" fill="#8a5f69" font-family="JetBrains Mono, monospace" font-size="18">
+    prompt -&gt; generate -&gt; preview
+  </text>
+
+  <rect x="106" y="198" width="454" height="362" rx="22" fill="#fffdfa" stroke="#e4c8bf" stroke-width="2" />
+  <text x="140" y="244" fill="#7f5660" font-family="JetBrains Mono, monospace" font-size="18">Prompt</text>
+  <rect x="140" y="260" width="386" height="78" rx="14" fill="#f7ecf0" stroke="#dcc3cb" />
+  <text x="156" y="306" fill="#5f3d47" font-family="Inter, Arial, sans-serif" font-size="20">
+    golden retriever, cinematic style
+  </text>
+
+  <text x="140" y="382" fill="#7f5660" font-family="JetBrains Mono, monospace" font-size="18">Style</text>
+  <rect x="140" y="398" width="180" height="46" rx="11" fill="#f7ecf0" stroke="#dcc3cb" />
+  <text x="162" y="427" fill="#5f3d47" font-family="Inter, Arial, sans-serif" font-size="18">Cinematic</text>
+
+  <rect x="350" y="390" width="176" height="60" rx="30" fill="url(#button)" />
+  <text x="388" y="426" fill="#fff6f3" font-family="Space Grotesk, Inter, Arial, sans-serif" font-size="22" font-weight="700">
+    Generate
+  </text>
+
+  <g class="click-ring-a">
+    <circle cx="526" cy="404" r="24" stroke="#bf7967" stroke-width="3" />
+  </g>
+  <g class="click-ring-b">
+    <circle cx="526" cy="404" r="32" stroke="#d48b6e" stroke-width="2.5" />
+  </g>
+
+  <g class="cursor">
+    <path d="M438 372L468 456L486 434L516 444L522 428L492 418L508 388L438 372Z" fill="#2b313b" />
+    <path d="M445 379L470 448L484 430L507 438L511 428L488 420L500 396L445 379Z" fill="#f8edf1" fill-opacity="0.32" />
+  </g>
+
+  <rect x="602" y="198" width="492" height="362" rx="22" fill="#fffdfa" stroke="#e4c8bf" stroke-width="2" />
+  <text x="636" y="244" fill="#7f5660" font-family="JetBrains Mono, monospace" font-size="18">Preview</text>
+  <rect x="636" y="260" width="424" height="266" rx="18" fill="url(#previewGlow)" stroke="#efcfc4" />
+
+  <g class="preview-pop">
+    <rect x="664" y="286" width="368" height="214" rx="16" fill="#fff7f2" stroke="#d7b6aa" stroke-width="2" />
+    <rect x="686" y="306" width="324" height="124" rx="12" fill="#f3e5ea" />
+    <path d="M696 408C738 350 778 336 816 378C846 410 876 416 904 392C932 368 962 354 998 390V430H696V408Z" fill="#d89c8a" />
+    <path d="M694 430H1012V462C1012 474 1002 484 990 484H716C704 484 694 474 694 462V430Z" fill="#f2d8ce" />
+    <circle cx="760" cy="350" r="28" fill="#e8c2b7" />
+    <circle cx="916" cy="332" r="20" fill="#e5b6a4" />
+  </g>
+
+  <g class="confetti">
+    <rect x="968" y="176" width="14" height="14" rx="2" fill="#c57763" />
+  </g>
+  <g class="confetti confetti-delay">
+    <rect x="932" y="154" width="10" height="20" rx="3" fill="#d59a7d" />
+  </g>
+  <g class="confetti confetti-delay2">
+    <circle cx="1008" cy="170" r="8" fill="#8a5f69" />
+  </g>
+  <g class="confetti confetti-delay3">
+    <path d="M892 168L904 180L892 192L880 180L892 168Z" fill="#c9a2ab" />
+  </g>
+  <g class="confetti confetti-delay2">
+    <path d="M1040 186L1052 198L1040 210L1028 198L1040 186Z" fill="#df9e8f" />
+  </g>
 </svg>
