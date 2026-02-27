@@ -1,4 +1,4 @@
-﻿import type { PortfolioContent } from '../types/content';
+import type { PortfolioContent } from '../types/content';
 
 export const portfolioContent: PortfolioContent = {
   seo: {
@@ -7,53 +7,49 @@ export const portfolioContent: PortfolioContent = {
       en: 'Dragos Camarasan | Technical Portfolio',
     },
     description: {
-      es: 'Portfolio bilingüe con proyectos técnicos y experiencia actual en implantación software en Icaria.',
-      en: 'Bilingual portfolio with technical projects and current software implantation experience at Icaria.',
+      es: 'Portfolio bilingüe con proyectos reales, experiencia actual en Icaria Technology e integración de un generador de imágenes.',
+      en: 'Bilingual portfolio with real projects, current experience at Icaria Technology, and an integrated image generator.',
     },
   },
   profile: {
     name: 'Dragos Ionut Camarasan',
     role: {
-      es: 'Junior Implantation Software en Icaria',
-      en: 'Junior Implantation Software at Icaria',
+      es: 'Junior Implantation Software en Icaria Technology',
+      en: 'Junior Implantation Software at Icaria Technology',
     },
     location: {
       es: 'Madrid, España',
       en: 'Madrid, Spain',
     },
     headline: {
-      es: 'Ingeniería de software con mentalidad de producto.',
-      en: 'Software engineering with a product mindset.',
+      es: 'Ingeniería de software aplicada a producto y cliente real.',
+      en: 'Software engineering applied to product and real client delivery.',
     },
     subheadline: {
-      es: 'C++, React, Java, Docker, Icaria TDM y foco en soluciones fiables para negocio real.',
-      en: 'C++, React, Java, Docker, Icaria TDM, and a focus on reliable software for real business use cases.',
+      es: 'Actualmente en Icaria (entorno TDN/TDM), trabajando con GDPR, Java y Docker, con foco en calidad técnica y ejecución.',
+      en: 'Currently at Icaria (TDN/TDM environment), working with GDPR, Java, and Docker, focused on technical quality and execution.',
     },
     shortBio: {
-      es: 'Graduado en Ingeniería Informática por la UCM. Actualmente trabajo como Junior Implantation Software en Icaria, tras experiencia previa en Siemens (HMI/SCADA) y soporte técnico universitario.',
-      en: 'Computer Engineering graduate from UCM. I currently work as Junior Implantation Software at Icaria, after previous experience at Siemens (HMI/SCADA) and university IT support.',
+      es: 'Graduado en Ingeniería Informática por la UCM. Mi etapa actual está centrada en implantación software en Icaria Technology, y la combino con proyectos de desarrollo full-stack, testing y automatización.',
+      en: 'Computer Engineering graduate from UCM. My current stage is focused on software implementation at Icaria Technology, combined with full-stack, testing, and automation projects.',
     },
     photo: '/assets/profile/Imagen-CV.png',
     insightLines: [
       {
-        es: 'Experiencia actual en implantación software para cliente final.',
-        en: 'Current experience in software implementation for end clients.',
+        es: 'Implementación técnica en cliente con foco en fiabilidad y entrega.',
+        en: 'Client-facing technical implementation focused on reliability and delivery.',
       },
       {
-        es: 'Trabajo con Icaria TDM, módulos GDPR, Java y Docker.',
-        en: 'Hands-on work with Icaria TDM, GDPR modules, Java, and Docker.',
+        es: 'Trabajo diario con Icaria TDN/TDM, módulos GDPR, Java y Docker.',
+        en: 'Daily work with Icaria TDN/TDM, GDPR modules, Java, and Docker.',
       },
       {
-        es: 'Base sólida en C++, React y diseño de soluciones orientadas a negocio.',
-        en: 'Strong foundation in C++, React, and business-oriented solution design.',
+        es: 'Perfil mixto entre desarrollo, validación funcional y soporte de negocio.',
+        en: 'Hybrid profile across development, functional validation, and business support.',
       },
       {
-        es: 'Experiencia industrial previa en Siemens con HMI/SCADA.',
-        en: 'Previous industrial experience at Siemens with HMI/SCADA.',
-      },
-      {
-        es: 'Perfil junior con foco en fiabilidad, aprendizaje y entrega.',
-        en: 'Junior profile focused on reliability, learning, and delivery.',
+        es: 'Base sólida en TypeScript/JavaScript para frontend moderno.',
+        en: 'Strong TypeScript/JavaScript foundation for modern frontend work.',
       },
     ],
   },
@@ -64,20 +60,16 @@ export const portfolioContent: PortfolioContent = {
     },
     paragraphs: [
       {
-        es: 'Comencé mi trayectoria académica en ADE e Ingeniería Informática, y finalmente me especialicé en informática para construir una base sólida en programación, algoritmia y estructuras de datos.',
-        en: 'I started my academic path in Business Administration and Computer Engineering, then specialized in computing to build strong foundations in programming, algorithms, and data structures.',
+        es: 'Mi perfil está orientado a construir software útil para negocio, con una combinación de base técnica sólida y capacidad de adaptación a entornos de cliente.',
+        en: 'My profile is focused on building software that is useful for business, combining strong technical foundations with client-environment adaptability.',
       },
       {
-        es: 'Durante mis prácticas en Siemens trabajé en proyectos industriales con WinCC Unified y SCADA, participando en integración de sistemas, pruebas, soporte técnico y automatización de tareas.',
-        en: 'During my internship at Siemens, I worked on industrial projects with WinCC Unified and SCADA, participating in system integration, testing, technical support, and task automation.',
+        es: 'Actualmente trabajo en Icaria Technology como Junior Implantation Software, participando en implantaciones y tareas de integración con herramientas como Icaria TDN/TDM, módulos GDPR, Java y Docker.',
+        en: 'I currently work at Icaria Technology as Junior Implantation Software, participating in deployments and integration tasks with tools such as Icaria TDN/TDM, GDPR modules, Java, and Docker.',
       },
       {
-        es: 'Actualmente trabajo en Icaria como Junior Implantation Software, implantando soluciones en cliente y operando con herramientas como Icaria TDM, módulos GDPR, Java y Docker.',
-        en: 'I currently work at Icaria as Junior Implantation Software, implementing client solutions and working with tools such as Icaria TDM, GDPR modules, Java, and Docker.',
-      },
-      {
-        es: 'También presté soporte técnico en el laboratorio de informática de la universidad, gestionando incidencias, mantenimiento y configuración de aulas para docencia y evaluación.',
-        en: 'I also provided technical support in the university IT lab, handling incidents, maintenance, and classroom setup for teaching and assessment.',
+        es: 'Además, desarrollo proyectos propios para reforzar arquitectura frontend, modelado de datos, pruebas automáticas y experiencia de usuario en web responsive.',
+        en: 'I also build personal projects to strengthen frontend architecture, data modeling, automated testing, and responsive web user experience.',
       },
     ],
   },
@@ -87,108 +79,42 @@ export const portfolioContent: PortfolioContent = {
       en: 'Projects',
     },
     intro: {
-      es: 'Selección de proyectos académicos y profesionales orientados a resolver problemas reales.',
-      en: 'Selection of academic and professional projects focused on solving real problems.',
+      es: 'Proyectos seleccionados con más peso técnico y mejor alineados con mi perfil actual.',
+      en: 'Selected projects with stronger technical weight and better alignment with my current profile.',
     },
     items: [
       {
-        id: 'siemens-hmi-scada',
-        title: {
-          es: 'Siemens HMI/SCADA',
-          en: 'Siemens HMI/SCADA',
-        },
-        summary: {
-          es: 'Participación en desarrollo y soporte para interfaces industriales con WinCC Unified, CWC y migraciones técnicas.',
-          en: 'Contribution to development and support for industrial interfaces with WinCC Unified, CWC, and technical migrations.',
-        },
-        context: {
-          es: 'Proyecto de prácticas en departamento HMI & SCADA, con foco en calidad, integración y mantenimiento evolutivo.',
-          en: 'Internship project in an HMI & SCADA department focused on quality, integration, and evolutive maintenance.',
-        },
-        stack: ['WinCC Unified', 'WinCC OA', 'HMI', 'SCADA', 'HTML', 'CSS', 'JavaScript', 'SQL', 'SQLite'],
-        highlights: [
-          {
-            es: 'Desarrollo de Custom Web Controls con SVGs dinámicos y comportamiento en tiempo real.',
-            en: 'Built Custom Web Controls with dynamic SVGs and real-time behavior.',
-          },
-          {
-            es: 'Soporte en migraciones de logs entre versiones de TIA Portal/WinCC Unified.',
-            en: 'Supported log migrations between TIA Portal/WinCC Unified versions.',
-          },
-          {
-            es: 'Automatización de tareas con scripts reutilizables y apoyo a estandarización del equipo.',
-            en: 'Automated repetitive tasks with reusable scripts and team standardization support.',
-          },
-        ],
-        images: ['/assets/projects/siemens.svg'],
-        links: {
-          privateRepoLabel: 'Repositorio interno / Internal repository',
-        },
-      },
-      {
-        id: 'lab-soporte',
-        title: {
-          es: 'Soporte Técnico Universitario',
-          en: 'University IT Support',
-        },
-        summary: {
-          es: 'Gestión de incidencias, mantenimiento de equipos y preparación de aulas en laboratorio de informática.',
-          en: 'Incident management, hardware/software maintenance, and classroom setup in an IT lab.',
-        },
-        context: {
-          es: 'Trabajo en entorno académico con usuarios múltiples, incidencias simultáneas y necesidad de respuesta ágil.',
-          en: 'Work in an academic environment with multiple users, simultaneous incidents, and the need for fast response.',
-        },
-        stack: ['Windows', 'Linux básico', 'Soporte IT', 'Configuración de equipos', 'Gestión de incidencias'],
-        highlights: [
-          {
-            es: 'Mantenimiento preventivo y actualización de software en puestos de laboratorio.',
-            en: 'Performed preventive maintenance and software updates in lab workstations.',
-          },
-          {
-            es: 'Asistencia técnica en exámenes y sesiones prácticas con alta demanda.',
-            en: 'Provided technical assistance during exams and high-demand practical sessions.',
-          },
-          {
-            es: 'Colaboración con equipo IT para mejorar estabilidad de aulas informáticas.',
-            en: 'Collaborated with the IT team to improve lab classroom stability.',
-          },
-        ],
-        images: ['/assets/projects/lab.svg'],
-        links: {},
-      },
-      {
         id: 'pwa-imagenes-ia',
         title: {
-          es: 'PWA Generador de Imágenes IA',
-          en: 'AI Image Generator PWA',
+          es: 'Generador de Imágenes (PWA)',
+          en: 'Image Generator (PWA)',
         },
         summary: {
-          es: 'Aplicación React que genera imágenes desde texto con API de Hugging Face e integra notificaciones.',
-          en: 'React application that generates images from text using Hugging Face API with notification support.',
+          es: 'Aplicación web para generar imágenes desde prompt, con UX rápida, notificaciones y enfoque mobile-first.',
+          en: 'Web app to generate images from prompts, with fast UX, notifications, and mobile-first focus.',
         },
         context: {
-          es: 'Proyecto académico centrado en integración API, UX en tiempo real y distribución como aplicación web progresiva.',
-          en: 'Academic project focused on API integration, real-time UX, and distribution as a progressive web app.',
+          es: 'Proyecto personal/académico orientado a consumo de servicios de imagen, gestión de estado en frontend y optimización de experiencia de uso.',
+          en: 'Personal/academic project focused on image-service consumption, frontend state management, and UX optimization.',
         },
-        stack: ['React', 'Node.js', 'PWA', 'Service Worker', 'Hugging Face API', 'Bootstrap'],
+        stack: ['React', 'TypeScript', 'Vite', 'PWA', 'Service Worker', 'CSS responsive'],
         highlights: [
           {
-            es: 'Implementación de flujo de generación y descarga de imágenes con manejo de estados.',
-            en: 'Implemented image generation and download flow with robust state handling.',
+            es: 'Integrado como módulo real dentro del portfolio para que pueda probarse directamente.',
+            en: 'Integrated as a real module inside this portfolio so it can be tested directly.',
           },
           {
-            es: 'Notificaciones para avisar al usuario cuando el resultado está disponible.',
-            en: 'Added notifications to inform users when results are ready.',
+            es: 'Flujo de generación, limpieza y descarga adaptado a escritorio y móvil.',
+            en: 'Generation, reset, and download flow adapted for desktop and mobile.',
           },
           {
-            es: 'Integrado como laboratorio interactivo dentro de este portfolio para uso real en escritorio y móvil.',
-            en: 'Integrated as an interactive lab inside this portfolio for real desktop and mobile usage.',
+            es: 'Fallback visual automático si el proveedor principal de imágenes falla.',
+            en: 'Automatic visual fallback if the main image provider fails.',
           },
         ],
         images: ['/assets/projects/pwa.svg'],
         links: {
-          publicRepo: 'https://github.com/dragosic12/dragosic12.github.io',
+          publicRepo: 'https://github.com/dragosic12/generador-de-imagenes',
         },
       },
       {
@@ -198,95 +124,63 @@ export const portfolioContent: PortfolioContent = {
           en: 'Job Offers Bot',
         },
         summary: {
-          es: 'Script en Python que rastrea ofertas de InfoJobs y envía alertas a Telegram.',
-          en: 'Python script that monitors InfoJobs offers and sends Telegram alerts.',
+          es: 'Bot en Python para monitorizar ofertas y enviar alertas automáticas a Telegram.',
+          en: 'Python bot to monitor job offers and send automated Telegram alerts.',
         },
         context: {
-          es: 'Proyecto personal de automatización para seguimiento continuo de vacantes junior en zona objetivo.',
-          en: 'Personal automation project for continuous tracking of junior vacancies in target locations.',
+          es: 'Proyecto de automatización enfocado a productividad personal. Actualmente no está desplegado en producción.',
+          en: 'Automation project focused on personal productivity. It is currently not deployed in production.',
         },
         stack: ['Python', 'asyncio', 'requests', 'BeautifulSoup', 'Telegram Bot API'],
         highlights: [
           {
-            es: 'Scraping periódico con control de duplicados para evitar ruido en notificaciones.',
-            en: 'Scheduled scraping with duplicate control to avoid noisy notifications.',
+            es: 'Extracción periódica de vacantes con control de duplicados.',
+            en: 'Periodic vacancy extraction with duplicate control.',
           },
           {
-            es: 'Diseño simple y mantenible orientado a uso real diario.',
-            en: 'Simple and maintainable design intended for real daily usage.',
+            es: 'Diseño simple, fácil de mantener y ampliar.',
+            en: 'Simple design, easy to maintain and extend.',
           },
           {
-            es: 'Aplicación práctica de automatización en un caso de productividad personal.',
-            en: 'Practical automation applied to a personal productivity use case.',
+            es: 'Base para una futura versión cloud con scheduler.',
+            en: 'Foundation for a future cloud version with scheduler.',
           },
         ],
         images: ['/assets/projects/bot.svg'],
         links: {},
       },
       {
-        id: 'cpp-estructuras-datos',
+        id: 'tfg-aps-fullstack',
         title: {
-          es: 'Colección C++ de Estructuras de Datos',
-          en: 'C++ Data Structures Collection',
+          es: 'TFG - Aplicación web de soporte (UCM)',
+          en: 'Thesis - Support Web Platform (UCM)',
         },
         summary: {
-          es: 'Conjunto de prácticas y ejercicios avanzados en C++ sobre TADs, árboles, diccionarios y complejidad.',
-          en: 'Collection of advanced C++ assignments on ADTs, trees, dictionaries, and complexity analysis.',
+          es: 'Proyecto full-stack orientado a gestión de datos, lógica de negocio y calidad de software.',
+          en: 'Full-stack project focused on data management, business logic, and software quality.',
         },
         context: {
-          es: 'Bloque académico clave para consolidar razonamiento algorítmico y diseño de software eficiente.',
-          en: 'Key academic block for consolidating algorithmic reasoning and efficient software design.',
+          es: 'Evolución de la plataforma ApS de la UCM con mejoras funcionales, trabajo de arquitectura y ampliación de cobertura de pruebas.',
+          en: 'Evolution of UCM ApS platform with functional improvements, architecture work, and expanded test coverage.',
         },
-        stack: ['C++', 'Algoritmia', 'Estructuras de datos', 'Análisis de complejidad', 'Depuración'],
+        stack: ['Nuxt 3', 'Vue 3', 'TypeScript', 'Node.js', 'MySQL', 'Knex', 'Docker', 'TailwindCSS', 'Vitest', 'Playwright'],
         highlights: [
           {
-            es: 'Implementación de soluciones con foco en rendimiento y corrección.',
-            en: 'Implemented solutions with strong focus on performance and correctness.',
+            es: 'Modelado y explotación de datos en MySQL con capa de acceso en Knex.',
+            en: 'Data modeling and querying in MySQL with a Knex data-access layer.',
           },
           {
-            es: 'Trabajo continuado con árboles, secuencias, diccionarios y aplicaciones de TADs.',
-            en: 'Continuous work with trees, sequences, dictionaries, and ADT-based applications.',
+            es: 'Implementación frontend/backend en Nuxt con tipado TypeScript.',
+            en: 'Frontend/backend implementation in Nuxt with TypeScript typing.',
           },
           {
-            es: 'Base sólida transferible a entornos profesionales de backend y sistemas.',
-            en: 'Solid foundation transferable to professional backend and systems environments.',
+            es: 'Validación con tests unitarios y e2e (Vitest + Playwright) y despliegue en entorno Docker.',
+            en: 'Validation with unit and e2e tests (Vitest + Playwright) and Docker-based deployment.',
           },
         ],
-        images: ['/assets/projects/cpp.svg'],
-        links: {},
-      },
-      {
-        id: 'tfg-fullstack',
-        title: {
-          es: 'TFG Full-Stack Orientado a Datos',
-          en: 'Data-Oriented Full-Stack Thesis',
-        },
-        summary: {
-          es: 'Desarrollo de aplicación completa con backend, frontend, base de datos y validación funcional.',
-          en: 'Development of a complete application with backend, frontend, database, and functional validation.',
-        },
-        context: {
-          es: 'Proyecto final de grado enfocado en diseño de datos, lógica de negocio y resolución de incidencias reales.',
-          en: 'Final degree project focused on data modeling, business logic, and solving real-world issues.',
-        },
-        stack: ['SQL', 'Modelado de datos', 'Backend', 'Frontend', 'Testing funcional'],
-        highlights: [
-          {
-            es: 'Diseño del modelo de datos y consultas orientadas a validación y consistencia.',
-            en: 'Designed data model and queries oriented to validation and consistency.',
-          },
-          {
-            es: 'Implementación integral del flujo funcional de la aplicación.',
-            en: 'Implemented end-to-end functional flow of the application.',
-          },
-          {
-            es: 'Documentación técnica y enfoque de mejora iterativa.',
-            en: 'Technical documentation and iterative improvement approach.',
-          },
-        ],
-        images: ['/assets/projects/tfg.svg'],
+        images: ['/assets/projects/tfg-aps.png'],
         links: {
-          privateRepoLabel: 'Repositorio privado / Private repository',
+          publicRepo: 'https://github.com/dragosic/TFG',
         },
       },
     ],
@@ -297,20 +191,20 @@ export const portfolioContent: PortfolioContent = {
       en: 'Image generator',
     },
     intro: {
-      es: 'Módulo de generación de imágenes integrado en el portfolio. Escribe un prompt y genera la imagen directamente.',
-      en: 'Image generation module integrated into the portfolio. Write a prompt and generate the image directly.',
+      es: 'Escribe un prompt y genera imagen. Si el proveedor principal no responde, se activa un fallback automático para que la experiencia no se rompa.',
+      en: 'Write a prompt and generate an image. If the main provider fails, an automatic fallback is used so the experience remains functional.',
     },
     tokenLabel: {
       es: 'Token interno',
       en: 'Internal token',
     },
     tokenHint: {
-      es: 'La autenticación del generador ya está configurada.',
-      en: 'Generator authentication is already configured.',
+      es: 'No necesitas introducir token para usar este módulo.',
+      en: 'You do not need to enter a token to use this module.',
     },
     rememberTokenLabel: {
-      es: 'Recordar token en este navegador',
-      en: 'Remember token in this browser',
+      es: 'Recordar token',
+      en: 'Remember token',
     },
     showTokenLabel: {
       es: 'Mostrar',
@@ -325,8 +219,8 @@ export const portfolioContent: PortfolioContent = {
       en: 'Prompt',
     },
     promptPlaceholder: {
-      es: 'Ejemplo: ciudad futurista con lluvia, estilo cinematográfico, alto detalle...',
-      en: 'Example: futuristic rainy city, cinematic style, high detail...',
+      es: 'Ejemplo: retrato editorial minimalista, luz suave, tonos cálidos, alta calidad...',
+      en: 'Example: minimalist editorial portrait, soft lighting, warm tones, high quality...',
     },
     styleLabel: {
       es: 'Estilo',
@@ -349,8 +243,8 @@ export const portfolioContent: PortfolioContent = {
       en: 'Download PNG',
     },
     note: {
-      es: 'Tip: en móvil, usa prompts cortos al inicio y luego añade detalles progresivamente.',
-      en: 'Tip: on mobile, start with short prompts and then add details progressively.',
+      es: 'Consejo: en móvil empieza con prompts breves y añade detalle en una segunda iteración.',
+      en: 'Tip: on mobile, start with short prompts and add detail in a second iteration.',
     },
     previewTitle: {
       es: 'Vista previa',
@@ -361,16 +255,16 @@ export const portfolioContent: PortfolioContent = {
       en: 'Your generated image will appear here.',
     },
     missingTokenError: {
-      es: 'El servicio de generación no está disponible temporalmente.',
-      en: 'The generation service is temporarily unavailable.',
+      es: 'Servicio no disponible temporalmente.',
+      en: 'Service temporarily unavailable.',
     },
     missingPromptError: {
       es: 'Escribe un prompt antes de generar.',
       en: 'Write a prompt before generating.',
     },
     apiErrorPrefix: {
-      es: 'Error de generación',
-      en: 'Generation error',
+      es: 'No se pudo generar imagen con este prompt',
+      en: 'Image generation failed for this prompt',
     },
     styleOptions: [
       {
@@ -382,8 +276,8 @@ export const portfolioContent: PortfolioContent = {
         label: { es: 'Ilustración', en: 'Illustration' },
       },
       {
-        value: 'cyberpunk',
-        label: { es: 'Cyberpunk', en: 'Cyberpunk' },
+        value: 'cinematic',
+        label: { es: 'Cinemático', en: 'Cinematic' },
       },
       {
         value: 'minimal',
@@ -392,16 +286,16 @@ export const portfolioContent: PortfolioContent = {
     ],
     quickPrompts: [
       {
-        es: 'Estación de metro futurista con neón y lluvia',
-        en: 'Futuristic subway station with neon lights and rain',
+        es: 'Paisaje urbano nocturno con reflejos de lluvia',
+        en: 'Night cityscape with rain reflections',
       },
       {
-        es: 'Centro de control industrial limpio y moderno',
-        en: 'Clean and modern industrial control center',
+        es: 'Interior moderno con luz natural y tonos cálidos',
+        en: 'Modern interior with natural light and warm tones',
       },
       {
-        es: 'Escritorio de programador con estética retro-tech',
-        en: 'Programmer desk with retro-tech aesthetics',
+        es: 'Retrato creativo editorial con estilo fotográfico',
+        en: 'Creative editorial portrait in photographic style',
       },
     ],
   },
@@ -416,42 +310,42 @@ export const portfolioContent: PortfolioContent = {
           es: 'Lenguajes',
           en: 'Languages',
         },
-        items: ['C', 'C++', 'Java', 'Python', 'TypeScript', 'JavaScript'],
+        items: ['TypeScript', 'JavaScript', 'Java', 'Python', 'SQL', 'C++'],
       },
       {
         name: {
-          es: 'Desarrollo de Software',
-          en: 'Software Engineering',
+          es: 'Frontend y Web',
+          en: 'Frontend and Web',
         },
-        items: ['POO', 'Algoritmia', 'Estructuras de datos', 'Depuración', 'Resolución de problemas'],
+        items: ['React', 'Vite', 'Nuxt 3', 'Vue 3', 'TailwindCSS', 'PWA'],
       },
       {
         name: {
-          es: 'Frontend / Backend',
-          en: 'Frontend / Backend',
+          es: 'Backend y Datos',
+          en: 'Backend and Data',
         },
-        items: ['React', 'Node.js', 'Angular (base)', 'REST APIs', 'PWA'],
+        items: ['Node.js', 'MySQL', 'Knex', 'TypeORM (base)', 'REST APIs', 'Modelado de datos'],
       },
       {
         name: {
-          es: 'Datos y Herramientas',
-          en: 'Data and Tooling',
+          es: 'QA y Testing',
+          en: 'QA and Testing',
         },
-        items: ['MySQL', 'MongoDB', 'Oracle SQL Developer', 'Git', 'Docker', 'Linux básico', 'Icaria TDM', 'GDPR'],
+        items: ['Vitest', 'Playwright', 'Testing unitario', 'Testing e2e', 'Smoke tests', 'Validación funcional'],
       },
       {
         name: {
-          es: 'Industrial',
-          en: 'Industrial',
+          es: 'Implantación (Icaria)',
+          en: 'Implementation (Icaria)',
         },
-        items: ['WinCC Unified', 'WinCC OA', 'HMI', 'SCADA', 'Integración de sistemas'],
+        items: ['Icaria TDN/TDM', 'Módulos GDPR', 'Docker', 'Integración técnica', 'Soporte a cliente', 'Resolución de incidencias'],
       },
       {
         name: {
-          es: 'Trabajo en Equipo',
+          es: 'Trabajo de Equipo',
           en: 'Teamwork',
         },
-        items: ['SCRUM', 'Colaboración multidisciplinar', 'Comunicación técnica', 'Mentoría inicial'],
+        items: ['SCRUM', 'Comunicación técnica', 'Priorización', 'Documentación', 'Mejora continua'],
       },
     ],
   },
@@ -462,20 +356,8 @@ export const portfolioContent: PortfolioContent = {
     },
     paragraphs: [
       {
-        es: 'Quiero desarrollarme como ingeniero de software en equipos donde se valore la calidad técnica, la fiabilidad y el aprendizaje continuo.',
-        en: 'I want to grow as a software engineer in teams where technical quality, reliability, and continuous learning are core values.',
-      },
-      {
-        es: 'Me motivan los proyectos que combinan arquitectura clara, datos bien diseñados y solución de problemas reales de negocio.',
-        en: 'I am motivated by projects that combine clear architecture, well-designed data, and real business problem solving.',
-      },
-      {
-        es: 'Estoy especialmente interesado en roles junior de desarrollo software, implementación técnica o integración de sistemas.',
-        en: 'I am particularly interested in junior roles in software development, technical implementation, or system integration.',
-      },
-      {
-        es: 'Mi objetivo es consolidar mi etapa actual en Icaria y escalar hacia responsabilidades de implementación y producto cada vez más completas.',
-        en: 'My goal is to consolidate my current stage at Icaria and grow toward broader implementation and product responsibilities.',
+        es: 'Mi foco actual está en consolidar mi etapa en Icaria Technology dentro del área de implantación software, crecer en responsabilidades técnicas (integración, calidad y automatización) y evolucionar hacia un rol de desarrollo de producto donde pueda aportar tanto en código como en ejecución real con cliente.',
+        en: 'My current focus is to consolidate my stage at Icaria Technology in software implementation, grow in technical responsibilities (integration, quality, and automation), and evolve toward a product development role where I can contribute both in code and real client execution.',
       },
     ],
   },
@@ -485,8 +367,8 @@ export const portfolioContent: PortfolioContent = {
       en: 'Contact',
     },
     text: {
-      es: 'Si tu empresa busca un perfil junior con base técnica sólida, capacidad de aprendizaje y orientación a resultados, estaré encantado de hablar.',
-      en: 'If your company is looking for a junior profile with strong technical foundations, learning agility, and outcome orientation, I would be glad to connect.',
+      es: 'Si buscas un perfil junior con experiencia real en implantación, base de desarrollo y visión de calidad, hablamos.',
+      en: 'If you are looking for a junior profile with real implementation experience, development foundations, and a quality mindset, let us connect.',
     },
     emailLabel: {
       es: 'Enviar email',
@@ -506,7 +388,7 @@ export const portfolioContent: PortfolioContent = {
   ui: {
     nav: [
       { id: 'home', label: { es: 'Inicio', en: 'Home' } },
-      { id: 'about', label: { es: 'Sobre mí', en: 'About' } },
+      { id: 'about', label: { es: 'Perfil', en: 'Profile' } },
       { id: 'projects', label: { es: 'Proyectos', en: 'Projects' } },
       { id: 'image-lab', label: { es: 'Generador', en: 'Generator' } },
       { id: 'skills', label: { es: 'Skills', en: 'Skills' } },
@@ -539,11 +421,8 @@ export const portfolioContent: PortfolioContent = {
       downloadCv: { es: 'Descargar CV', en: 'Download CV' },
     },
     footer: {
-      es: 'Construido con React, Vite, TypeScript y Tailwind.',
-      en: 'Built with React, Vite, TypeScript, and Tailwind.',
+      es: 'Diseñado con React, Vite, TypeScript y Tailwind.',
+      en: 'Designed with React, Vite, TypeScript, and Tailwind.',
     },
   },
 };
-
-
-

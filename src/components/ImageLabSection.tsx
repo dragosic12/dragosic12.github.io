@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { ImageLabContent, Locale } from '../types/content';
 import { t } from '../content/i18n';
 import { SectionWrapper } from './SectionWrapper';
 
-const IMAGE_API_BASE = 'https://image.pollinations.ai/prompt';
+const IMAGE_API_PRIMARY = 'https://image.pollinations.ai/prompt';
+const IMAGE_API_FALLBACK = 'https://loremflickr.com';
 
 interface ImageLabSectionProps {
   locale: Locale;
@@ -15,19 +16,27 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
   const [style, setStyle] = useState(imageLab.styleOptions[0]?.value ?? 'realistic');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [providerNotice, setProviderNotice] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [fallbackUrl, setFallbackUrl] = useState('');
+  const [usedFallback, setUsedFallback] = useState(false);
   const [downloadName, setDownloadName] = useState('dragos-ai-image.png');
 
   const quickPrompts = useMemo(() => imageLab.quickPrompts.map((item) => t(item, locale)), [imageLab.quickPrompts, locale]);
 
-  useEffect(
-    () => () => {
-      if (imageUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(imageUrl);
-      }
-    },
-    [imageUrl]
-  );
+  function buildFallbackCategory(rawPrompt: string) {
+    const tags = rawPrompt
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .split(/\s+/)
+      .filter((word) => word.length > 2)
+      .slice(0, 4)
+      .join(',');
+
+    return tags || 'design,creative,abstract';
+  }
 
   function handleGenerate() {
     const cleanPrompt = prompt.trim();
@@ -38,30 +47,57 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
 
     setIsLoading(true);
     setError('');
-    if (imageUrl.startsWith('blob:')) {
-      URL.revokeObjectURL(imageUrl);
-    }
+    setProviderNotice('');
+    setUsedFallback(false);
 
+    const seed = Date.now();
     const craftedPrompt = `${cleanPrompt}, ${style} style, high quality`;
-    const nextUrl = `${IMAGE_API_BASE}/${encodeURIComponent(craftedPrompt)}?model=flux&width=1024&height=1024&nologo=true&seed=${Date.now()}`;
-    setImageUrl(nextUrl);
-    setDownloadName(`dragos-ai-${Date.now()}.png`);
-    setIsLoading(false);
+    const primaryUrl = `${IMAGE_API_PRIMARY}/${encodeURIComponent(craftedPrompt)}?model=flux&width=1024&height=1024&nologo=true&seed=${seed}`;
+    const fallbackCategory = buildFallbackCategory(cleanPrompt);
+    const fallbackImageUrl = `${IMAGE_API_FALLBACK}/1024/1024/${fallbackCategory}?lock=${seed}`;
 
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('Image ready', {
-        body: locale === 'es' ? 'Tu imagen esta lista para descargar.' : 'Your image is ready to download.',
-      });
-    }
+    setFallbackUrl(fallbackImageUrl);
+    setImageUrl(primaryUrl);
+    setDownloadName(`dragos-ai-${seed}.png`);
   }
 
   function handleClear() {
     setPrompt('');
     setError('');
-    if (imageUrl.startsWith('blob:')) {
-      URL.revokeObjectURL(imageUrl);
-    }
+    setProviderNotice('');
+    setIsLoading(false);
+    setUsedFallback(false);
+    setFallbackUrl('');
     setImageUrl('');
+  }
+
+  function handlePreviewLoad() {
+    setIsLoading(false);
+
+    if (usedFallback) {
+      setProviderNotice(
+        locale === 'es'
+          ? 'El proveedor principal no respondió. Se ha mostrado una alternativa visual.'
+          : 'Main provider did not respond. A visual fallback has been displayed.'
+      );
+    }
+
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('Image ready', {
+        body: locale === 'es' ? 'Tu imagen está lista para descargar.' : 'Your image is ready to download.',
+      });
+    }
+  }
+
+  function handlePreviewError() {
+    if (!usedFallback && fallbackUrl) {
+      setUsedFallback(true);
+      setImageUrl(fallbackUrl);
+      return;
+    }
+
+    setIsLoading(false);
+    setError(t(imageLab.apiErrorPrefix, locale));
   }
 
   return (
@@ -123,6 +159,12 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
             </p>
           ) : null}
 
+          {providerNotice ? (
+            <p className="mt-3 rounded-xl border border-[var(--line)] bg-[var(--bg-soft)]/65 p-3 text-sm text-[var(--muted)]">
+              {providerNotice}
+            </p>
+          ) : null}
+
           <p className="generator-hint mt-3">{t(imageLab.note, locale)}</p>
         </article>
 
@@ -134,7 +176,8 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
                 src={imageUrl}
                 alt="Generated image preview"
                 className="h-full w-full object-contain"
-                onError={() => setError(t(imageLab.apiErrorPrefix, locale))}
+                onLoad={handlePreviewLoad}
+                onError={handlePreviewError}
               />
             ) : (
               <p className="px-4 text-center text-sm text-[var(--muted)]">{t(imageLab.emptyPreviewText, locale)}</p>

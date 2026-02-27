@@ -8,19 +8,17 @@ interface FocusSectionProps {
 }
 
 export function FocusSection({ locale, focus }: FocusSectionProps) {
+  const focusText = focus.paragraphs.map((paragraph) => t(paragraph, locale)).join(' ');
+
   return (
     <SectionWrapper id="focus" className="pt-12 sm:pt-20">
       <div className="section-header">
         <h2>{t(focus.title, locale)}</h2>
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        {focus.paragraphs.map((paragraph) => (
-          <article key={paragraph.es} className="glass-panel p-5">
-            <p className="leading-relaxed text-[var(--text)]">{t(paragraph, locale)}</p>
-          </article>
-        ))}
-      </div>
+      <article className="glass-panel mt-6 p-6 sm:p-7">
+        <p className="leading-relaxed text-[var(--text)] sm:text-lg">{focusText}</p>
+      </article>
     </SectionWrapper>
   );
 }

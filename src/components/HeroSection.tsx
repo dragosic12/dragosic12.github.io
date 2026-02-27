@@ -59,7 +59,7 @@ export function HeroSection({ locale, profile, ui, cvUrl }: HeroSectionProps) {
             <img
               src={profile.photo}
               alt={profile.name}
-              className="h-24 w-24 rounded-2xl border border-[var(--line)] object-cover shadow-glow"
+              className="hero-avatar h-24 w-24 rounded-2xl border border-[var(--line)] object-cover shadow-glow"
               loading="eager"
             />
             <div>
