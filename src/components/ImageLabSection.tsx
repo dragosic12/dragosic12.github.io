@@ -13,7 +13,7 @@ const TERTIARY_TIMEOUT_MS = 9000;
 const SEARCH_LOOKUP_TIMEOUT_MS = 5000;
 const POLLINATIONS_FAILURE_THRESHOLD = 1;
 const POLLINATIONS_COOLDOWN_MS = 5 * 60 * 1000;
-const MAX_SEARCH_TERMS = 6;
+const MAX_SEARCH_TERMS = 8;
 
 interface ImageLabSectionProps {
   locale: Locale;
@@ -198,7 +198,7 @@ const TOKEN_STOP_WORDS = new Set([
   'minimal',
 ]);
 
-function buildSearchQueries(rawPrompt: string, styleValue: StyleVariant) {
+function buildSearchQuery(rawPrompt: string, styleValue: StyleVariant) {
   const normalizedTokens = rawPrompt
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
@@ -209,7 +209,7 @@ function buildSearchQueries(rawPrompt: string, styleValue: StyleVariant) {
     .slice(0, MAX_SEARCH_TERMS);
 
   if (!normalizedTokens.length) {
-    return ['nature'];
+    return `nature ${getStyleKeywords(styleValue)[0]}`.trim();
   }
 
   const translatedTokens = normalizedTokens.map((word) => SPANISH_TO_ENGLISH[word] ?? word);
@@ -222,28 +222,21 @@ function buildSearchQueries(rawPrompt: string, styleValue: StyleVariant) {
   const hasWildAnimals = filteredTokens.includes('wild') || filteredTokens.includes('animals') || filteredTokens.includes('wildlife');
   const hasSavannah = filteredTokens.includes('savannah');
 
-  const queries = [
-    filteredTokens.join(' '),
-    translatedTokens.join(' '),
-    translatedTokens.slice(0, 4).join(' '),
+  const styleKeywords = getStyleKeywords(styleValue);
+  const styleSuffix = styleKeywords.slice(0, 2).join(' ');
+
+  const domainHint = [
     hasGoldenRetriever || hasDog ? 'golden retriever dog' : '',
     hasCat ? 'orange cat' : '',
     hasCar ? 'classic blue car city night' : '',
     hasMotorcycle ? 'sport motorcycle mountain road' : '',
     hasWildAnimals && hasSavannah ? 'wildlife animals savannah' : '',
-  ];
-
-  const styleKeywords = getStyleKeywords(styleValue);
-  const styleSuffix = styleKeywords.slice(0, 2).join(' ');
-  const styleAwareQueries = queries
-    .map((query) => query.trim())
+  ]
     .filter(Boolean)
-    .map((query) => `${query} ${styleSuffix}`.trim());
+    .join(' ');
 
-  const directStyleQueryBase = filteredTokens.join(' ') || translatedTokens.join(' ');
-  const directStyleQueries = styleKeywords.map((keyword) => `${directStyleQueryBase} ${keyword}`.trim());
-
-  return [...new Set([...styleAwareQueries, ...queries, ...directStyleQueries].map((query) => query.trim()).filter(Boolean))];
+  const baseQuery = filteredTokens.join(' ') || translatedTokens.join(' ') || normalizedTokens.join(' ');
+  return `${baseQuery} ${domainHint} ${styleSuffix}`.trim();
 }
 
 function scoreSemanticMatch(sourceText: string, queryTokens: string[]) {
@@ -280,86 +273,95 @@ function scoreStyleMatch(sourceText: string, styleValue: StyleVariant) {
 }
 
 async function searchOpenverseImage(rawPrompt: string, styleValue: StyleVariant, timeoutMs: number) {
-  const searchQueries = buildSearchQueries(rawPrompt, styleValue);
+  const searchQuery = buildSearchQuery(rawPrompt, styleValue);
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
 
-  for (const searchQuery of searchQueries) {
-    const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
-
-    try {
-      const requestUrl = `${OPENVERSE_API}?q=${encodeURIComponent(searchQuery)}&page_size=20`;
-      const response = await fetch(requestUrl, { signal: controller.signal });
-      if (!response.ok) continue;
-
-      const payload = (await response.json()) as OpenverseResponse;
-      const queryTokens = searchQuery.split(/\s+/).filter(Boolean);
-      let bestScore = -1;
-      let bestUrl = '';
-
-      for (const result of payload.results ?? []) {
-        const imageUrl = result.url ?? '';
-        if (!imageUrl) continue;
-
-        const tagText = (result.tags ?? []).map((tag) => tag.name ?? '').join(' ');
-        const semanticText = `${result.title ?? ''} ${tagText}`;
-        const score = scoreSemanticMatch(semanticText, queryTokens) + scoreStyleMatch(semanticText, styleValue) * 2;
-
-        if (score > bestScore) {
-          bestScore = score;
-          bestUrl = imageUrl;
-        }
-      }
-
-      if (bestScore > 0 && bestUrl) {
-        return bestUrl;
-      }
-    } catch {
-      // Try next query variant.
-    } finally {
-      window.clearTimeout(timeoutId);
+  try {
+    const requestUrl = `${OPENVERSE_API}?q=${encodeURIComponent(searchQuery)}&page_size=20`;
+    const response = await fetch(requestUrl, { signal: controller.signal });
+    if (!response.ok) {
+      throw new Error('openverse-response-error');
     }
+
+    const payload = (await response.json()) as OpenverseResponse;
+    const queryTokens = searchQuery.split(/\s+/).filter(Boolean);
+    let bestScore = -1;
+    let bestUrl = '';
+
+    for (const result of payload.results ?? []) {
+      const imageUrl = result.url ?? '';
+      if (!imageUrl) continue;
+
+      const tagText = (result.tags ?? []).map((tag) => tag.name ?? '').join(' ');
+      const semanticText = `${result.title ?? ''} ${tagText}`;
+      const score = scoreSemanticMatch(semanticText, queryTokens) + scoreStyleMatch(semanticText, styleValue) * 2;
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestUrl = imageUrl;
+      }
+    }
+
+    if (bestUrl) {
+      return bestUrl;
+    }
+  } finally {
+    window.clearTimeout(timeoutId);
   }
 
   throw new Error('openverse-no-results');
 }
 
 async function searchWikimediaImage(rawPrompt: string, styleValue: StyleVariant, timeoutMs: number) {
-  const searchQueries = buildSearchQueries(rawPrompt, styleValue);
+  const searchQuery = buildSearchQuery(rawPrompt, styleValue);
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
 
-  for (const searchQuery of searchQueries) {
-    const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const requestUrl =
+      `${WIKIMEDIA_COMMONS_API}?action=query&generator=search&gsrnamespace=6&gsrlimit=10` +
+      `&prop=imageinfo&iiprop=url|mime&format=json&origin=*&gsrsearch=${encodeURIComponent(searchQuery)}`;
 
-    try {
-      const requestUrl =
-        `${WIKIMEDIA_COMMONS_API}?action=query&generator=search&gsrnamespace=6&gsrlimit=10` +
-        `&prop=imageinfo&iiprop=url|mime&format=json&origin=*&gsrsearch=${encodeURIComponent(searchQuery)}`;
-
-      const response = await fetch(requestUrl, { signal: controller.signal });
-      if (!response.ok) continue;
-
-      const payload = (await response.json()) as WikimediaResponse;
-      const pages = Object.values(payload.query?.pages ?? {}).sort(
-        (left, right) => (left.index ?? Number.MAX_SAFE_INTEGER) - (right.index ?? Number.MAX_SAFE_INTEGER)
-      );
-
-      for (const page of pages) {
-        const imageInfo = page.imageinfo?.[0];
-        const imageUrl = imageInfo?.url;
-        const mime = imageInfo?.mime ?? '';
-        const title = page.title ?? '';
-        const looksLikeArchiveFile = /\bIA[_\s]/i.test(title);
-        const isRasterImage = /^image\/(jpeg|png|webp)$/i.test(mime);
-
-        if (imageUrl && isRasterImage && !looksLikeArchiveFile) {
-          return imageUrl;
-        }
-      }
-    } catch {
-      // Try next query variant.
-    } finally {
-      window.clearTimeout(timeoutId);
+    const response = await fetch(requestUrl, { signal: controller.signal });
+    if (!response.ok) {
+      throw new Error('wikimedia-response-error');
     }
+
+    const payload = (await response.json()) as WikimediaResponse;
+    const pages = Object.values(payload.query?.pages ?? {}).sort(
+      (left, right) => (left.index ?? Number.MAX_SAFE_INTEGER) - (right.index ?? Number.MAX_SAFE_INTEGER)
+    );
+
+    const queryTokens = searchQuery.split(/\s+/).filter(Boolean);
+    let bestScore = -1;
+    let bestUrl = '';
+
+    for (const page of pages) {
+      const imageInfo = page.imageinfo?.[0];
+      const imageUrl = imageInfo?.url;
+      const mime = imageInfo?.mime ?? '';
+      const title = page.title ?? '';
+      const looksLikeArchiveFile = /\bIA[_\s]/i.test(title);
+      const isRasterImage = /^image\/(jpeg|png|webp)$/i.test(mime);
+
+      if (!imageUrl || !isRasterImage || looksLikeArchiveFile) {
+        continue;
+      }
+
+      const score = scoreSemanticMatch(title, queryTokens) + scoreStyleMatch(title, styleValue) * 2;
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestUrl = imageUrl;
+      }
+    }
+
+    if (bestUrl) {
+      return bestUrl;
+    }
+  } finally {
+    window.clearTimeout(timeoutId);
   }
 
   throw new Error('wikimedia-no-results');

@@ -15,7 +15,7 @@ export function ProjectsSection({ locale, theme, projects, ui }: ProjectsSection
   const [missingDarkAssetBySource, setMissingDarkAssetBySource] = useState<Record<string, boolean>>({});
 
   return (
-    <SectionWrapper id="projects" className="pt-12 sm:pt-20">
+    <SectionWrapper id="projects" className="pt-12 sm:pt-20" disableReveal>
       <div className="section-header">
         <h2>{t(projects.title, locale)}</h2>
         <p>{t(projects.intro, locale)}</p>
