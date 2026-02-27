@@ -1,0 +1,50 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2b313b"/>
+      <stop offset="1" stop-color="#37424f"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="700" rx="28" fill="url(#bg)"/>
+  <rect x="64" y="64" width="1072" height="572" rx="26" fill="#2f3946" stroke="#5f6b79" stroke-width="2"/>
+
+  <text x="106" y="132" fill="#f8ebe2" font-family="Space Grotesk, Inter, sans-serif" font-size="34" font-weight="700">Practica 3 HJA (Java)</text>
+  <text x="106" y="168" fill="#c9bac3" font-family="JetBrains Mono, monospace" font-size="18">project structure - implementation - assignment tracking</text>
+
+  <rect x="106" y="208" width="444" height="336" rx="20" fill="#3e4a59" stroke="#6a7685"/>
+  <text x="136" y="254" fill="#c9bac3" font-family="JetBrains Mono, monospace" font-size="17">Repository Snapshot</text>
+
+  <rect x="136" y="272" width="384" height="46" rx="10" fill="#27303a" stroke="#5f6b79"/>
+  <text x="156" y="302" fill="#eadbd1" font-family="JetBrains Mono, monospace" font-size="17">src/</text>
+
+  <rect x="136" y="332" width="384" height="46" rx="10" fill="#27303a" stroke="#5f6b79"/>
+  <text x="156" y="362" fill="#eadbd1" font-family="JetBrains Mono, monospace" font-size="17">docs/ enunciado + entregables</text>
+
+  <rect x="136" y="392" width="384" height="46" rx="10" fill="#27303a" stroke="#5f6b79"/>
+  <text x="156" y="422" fill="#eadbd1" font-family="JetBrains Mono, monospace" font-size="17">tests/ validacion de casos</text>
+
+  <rect x="136" y="454" width="186" height="58" rx="12" fill="#d59a7d"/>
+  <text x="182" y="490" fill="#2b313b" font-family="Space Grotesk, Inter, sans-serif" font-size="22" font-weight="700">GitHub</text>
+
+  <rect x="352" y="454" width="168" height="58" rx="12" fill="#7085a9"/>
+  <text x="392" y="490" fill="#f8ebe2" font-family="Space Grotesk, Inter, sans-serif" font-size="22" font-weight="700">Java</text>
+
+  <rect x="580" y="208" width="514" height="336" rx="20" fill="#3e4a59" stroke="#6a7685"/>
+  <text x="612" y="254" fill="#c9bac3" font-family="JetBrains Mono, monospace" font-size="17">Work Flow</text>
+
+  <circle cx="668" cy="360" r="54" fill="#27303a" stroke="#5f6b79"/>
+  <text x="640" y="366" fill="#eadbd1" font-family="JetBrains Mono, monospace" font-size="16">SPEC</text>
+
+  <circle cx="842" cy="360" r="54" fill="#27303a" stroke="#5f6b79"/>
+  <text x="812" y="366" fill="#eadbd1" font-family="JetBrains Mono, monospace" font-size="16">CODE</text>
+
+  <circle cx="1016" cy="360" r="54" fill="#27303a" stroke="#5f6b79"/>
+  <text x="986" y="366" fill="#eadbd1" font-family="JetBrains Mono, monospace" font-size="16">TEST</text>
+
+  <path d="M722 360H788" stroke="#d59a7d" stroke-width="4" stroke-dasharray="10 8"/>
+  <path d="M896 360H962" stroke="#d59a7d" stroke-width="4" stroke-dasharray="10 8"/>
+
+  <rect x="612" y="452" width="452" height="50" rx="12" fill="#27303a" stroke="#5f6b79"/>
+  <text x="634" y="484" fill="#c9bac3" font-family="Inter, Arial, sans-serif" font-size="20">Entrega documentada con trazabilidad de requisitos</text>
+</svg>

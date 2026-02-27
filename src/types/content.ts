@@ -8,6 +8,7 @@ export interface LocalizedText {
 export interface SocialLinks {
   github?: string;
   linkedin?: string;
+  leetcode?: string;
   email: string;
   cv: string;
 }
@@ -149,6 +150,7 @@ export interface UiLabels {
   social: {
     github: LocalizedText;
     linkedin: LocalizedText;
+    leetcode: LocalizedText;
     email: LocalizedText;
   };
   ctas: {

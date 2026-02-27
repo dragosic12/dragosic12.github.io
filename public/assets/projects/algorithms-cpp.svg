@@ -1,0 +1,50 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f8edf1"/>
+      <stop offset="1" stop-color="#edd7cd"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#fff8f4"/>
+      <stop offset="1" stop-color="#f9eef2"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="700" rx="28" fill="url(#bg)"/>
+  <rect x="64" y="64" width="1072" height="572" rx="26" fill="url(#card)" stroke="#dcb7aa" stroke-width="2"/>
+
+  <text x="102" y="130" fill="#5b3640" font-family="Space Grotesk, Inter, sans-serif" font-size="34" font-weight="700">Algorithm Fundamentals (C++)</text>
+  <text x="102" y="168" fill="#8a5f69" font-family="JetBrains Mono, monospace" font-size="18">iterative - recursion - backtracking - divide and conquer</text>
+
+  <rect x="102" y="206" width="470" height="340" rx="20" fill="#fffdfb" stroke="#e4c8bf"/>
+  <text x="132" y="250" fill="#7f5660" font-family="JetBrains Mono, monospace" font-size="17">Problem72.cpp</text>
+  <text x="132" y="286" fill="#5f3d47" font-family="JetBrains Mono, monospace" font-size="16">int solve(const vector&lt;int&gt;&amp; v) {'{'}</text>
+  <text x="152" y="316" fill="#5f3d47" font-family="JetBrains Mono, monospace" font-size="16">if (v.empty()) return 0;</text>
+  <text x="152" y="346" fill="#5f3d47" font-family="JetBrains Mono, monospace" font-size="16">return backtrack(v, 0, best);</text>
+  <text x="132" y="376" fill="#5f3d47" font-family="JetBrains Mono, monospace" font-size="16">{'}'}</text>
+
+  <rect x="132" y="410" width="188" height="48" rx="10" fill="#f7ecf0" stroke="#dcc3cb"/>
+  <text x="153" y="440" fill="#6d4752" font-family="Inter, Arial, sans-serif" font-size="18">Complexity: O(n log n)</text>
+
+  <rect x="350" y="410" width="192" height="48" rx="10" fill="#f7ecf0" stroke="#dcc3cb"/>
+  <text x="372" y="440" fill="#6d4752" font-family="Inter, Arial, sans-serif" font-size="18">Paradigm: D&amp;C</text>
+
+  <rect x="598" y="206" width="500" height="340" rx="20" fill="#fffdfb" stroke="#e4c8bf"/>
+  <text x="628" y="250" fill="#7f5660" font-family="JetBrains Mono, monospace" font-size="17">Progress Map</text>
+
+  <rect x="628" y="280" width="440" height="44" rx="12" fill="#f7ecf0"/>
+  <rect x="628" y="280" width="388" height="44" rx="12" fill="#c57763"/>
+  <text x="642" y="308" fill="#fff6f3" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="700">Backtracking - 88%</text>
+
+  <rect x="628" y="338" width="440" height="44" rx="12" fill="#f7ecf0"/>
+  <rect x="628" y="338" width="356" height="44" rx="12" fill="#df9e8f"/>
+  <text x="642" y="366" fill="#5b3640" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="700">Divide &amp; Conquer - 81%</text>
+
+  <rect x="628" y="396" width="440" height="44" rx="12" fill="#f7ecf0"/>
+  <rect x="628" y="396" width="328" height="44" rx="12" fill="#8a5f69"/>
+  <text x="642" y="424" fill="#fff6f3" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="700">Recursion - 74%</text>
+
+  <rect x="628" y="454" width="440" height="44" rx="12" fill="#f7ecf0"/>
+  <rect x="628" y="454" width="302" height="44" rx="12" fill="#c9a2ab"/>
+  <text x="642" y="482" fill="#5b3640" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="700">Iterative - 69%</text>
+</svg>
