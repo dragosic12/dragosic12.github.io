@@ -4,13 +4,16 @@ import { t } from '../content/i18n';
 import { SectionWrapper } from './SectionWrapper';
 
 const POLLINATIONS_API = 'https://image.pollinations.ai/prompt';
+const WIKIMEDIA_COMMONS_API = 'https://commons.wikimedia.org/w/api.php';
 const KEYWORD_FALLBACK_API = 'https://loremflickr.com';
 const SEEDED_FALLBACK_API = 'https://picsum.photos';
 const PRIMARY_TIMEOUT_MS = 5000;
 const SECONDARY_TIMEOUT_MS = 7000;
 const TERTIARY_TIMEOUT_MS = 9000;
+const SEARCH_LOOKUP_TIMEOUT_MS = 5000;
 const POLLINATIONS_FAILURE_THRESHOLD = 1;
 const POLLINATIONS_COOLDOWN_MS = 5 * 60 * 1000;
+const MAX_SEARCH_TERMS = 6;
 
 interface ImageLabSectionProps {
   locale: Locale;
@@ -18,14 +21,29 @@ interface ImageLabSectionProps {
 }
 
 interface ProviderCandidate {
-  id: 'pollinations-default' | 'keyword-fallback' | 'seeded-fallback';
-  url: string;
+  id: 'pollinations-default' | 'wikimedia-commons' | 'keyword-fallback' | 'seeded-fallback';
+  url?: string;
+  resolveUrl?: () => Promise<string>;
   timeoutMs: number;
 }
 
 interface PollinationsHealth {
   consecutiveFailures: number;
   cooldownUntil: number;
+}
+
+interface WikimediaPageInfo {
+  index?: number;
+  imageinfo?: Array<{
+    url?: string;
+    mime?: string;
+  }>;
+}
+
+interface WikimediaResponse {
+  query?: {
+    pages?: Record<string, WikimediaPageInfo>;
+  };
 }
 
 function preloadImage(url: string, timeoutMs: number) {
@@ -104,6 +122,89 @@ function hashText(value: string) {
   return Math.abs(hash >>> 0);
 }
 
+const SPANISH_TO_ENGLISH: Record<string, string> = {
+  perro: 'dog',
+  perros: 'dogs',
+  gato: 'cat',
+  gatos: 'cats',
+  coche: 'car',
+  coches: 'cars',
+  clasico: 'classic',
+  clasica: 'classic',
+  azul: 'blue',
+  ciudad: 'city',
+  nocturna: 'night',
+  noche: 'night',
+  comida: 'food',
+  moto: 'motorcycle',
+  motos: 'motorcycles',
+  deportiva: 'sport',
+  carretera: 'road',
+  montana: 'mountain',
+  animales: 'animals',
+  sabana: 'savannah',
+};
+
+function buildSearchQueries(rawPrompt: string) {
+  const normalizedTokens = rawPrompt
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter((word) => word.length > 2)
+    .slice(0, MAX_SEARCH_TERMS);
+
+  if (!normalizedTokens.length) {
+    return ['nature'];
+  }
+
+  const translatedTokens = normalizedTokens.map((word) => SPANISH_TO_ENGLISH[word] ?? word);
+  const queries = [normalizedTokens.join(' '), translatedTokens.join(' '), translatedTokens.slice(0, 4).join(' ')];
+
+  return [...new Set(queries.map((query) => query.trim()).filter(Boolean))];
+}
+
+async function searchWikimediaImage(rawPrompt: string, timeoutMs: number) {
+  const searchQueries = buildSearchQueries(rawPrompt);
+
+  for (const searchQuery of searchQueries) {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const requestUrl =
+        `${WIKIMEDIA_COMMONS_API}?action=query&generator=search&gsrnamespace=6&gsrlimit=10` +
+        `&prop=imageinfo&iiprop=url|mime&format=json&origin=*&gsrsearch=${encodeURIComponent(searchQuery)}`;
+
+      const response = await fetch(requestUrl, { signal: controller.signal });
+      if (!response.ok) continue;
+
+      const payload = (await response.json()) as WikimediaResponse;
+      const pages = Object.values(payload.query?.pages ?? {}).sort(
+        (left, right) => (left.index ?? Number.MAX_SAFE_INTEGER) - (right.index ?? Number.MAX_SAFE_INTEGER)
+      );
+
+      for (const page of pages) {
+        const imageInfo = page.imageinfo?.[0];
+        const imageUrl = imageInfo?.url;
+        const mime = imageInfo?.mime ?? '';
+        const isRasterImage = /^image\/(jpeg|png|webp)$/i.test(mime);
+
+        if (imageUrl && isRasterImage) {
+          return imageUrl;
+        }
+      }
+    } catch {
+      // Try next query variant.
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+  }
+
+  throw new Error('wikimedia-no-results');
+}
+
 export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
   const [prompt, setPrompt] = useState('');
   const [style, setStyle] = useState(imageLab.styleOptions[0]?.value ?? 'realistic');
@@ -155,20 +256,37 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
 
     providers.push(
       {
-        id: 'seeded-fallback',
-        url: `${SEEDED_FALLBACK_API}/seed/${fallbackSeed}/1024/1024`,
+        id: 'wikimedia-commons',
+        resolveUrl: () => searchWikimediaImage(cleanPrompt, SEARCH_LOOKUP_TIMEOUT_MS),
         timeoutMs: SECONDARY_TIMEOUT_MS,
       },
       {
         id: 'keyword-fallback',
         url: `${KEYWORD_FALLBACK_API}/1024/1024/${fallbackCategory}?lock=${seed}`,
         timeoutMs: TERTIARY_TIMEOUT_MS,
+      },
+      {
+        id: 'seeded-fallback',
+        url: `${SEEDED_FALLBACK_API}/seed/${fallbackSeed}/1024/1024`,
+        timeoutMs: TERTIARY_TIMEOUT_MS,
       }
     );
 
     for (const provider of providers) {
+      let resolvedUrl = provider.url;
+
       try {
-        await preloadImage(provider.url, provider.timeoutMs);
+        if (!resolvedUrl && provider.resolveUrl) {
+          resolvedUrl = await provider.resolveUrl();
+        }
+
+        if (!resolvedUrl) {
+          throw new Error('provider-url-missing');
+        }
+
+        if (requestId !== requestIdRef.current) return;
+
+        await preloadImage(resolvedUrl, provider.timeoutMs);
         if (requestId !== requestIdRef.current) return;
 
         if (provider.id === 'pollinations-default') {
@@ -178,7 +296,7 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
           };
         }
 
-        setImageUrl(provider.url);
+        setImageUrl(resolvedUrl);
         setDownloadName(`dragos-ai-${seed}.png`);
         setError('');
         setProviderNotice('');
