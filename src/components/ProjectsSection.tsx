@@ -1,16 +1,18 @@
-﻿import { useState } from 'react';
-import type { Locale, ProjectsContent, UiLabels } from '../types/content';
+import { useState } from 'react';
+import type { Locale, ProjectsContent, Theme, UiLabels } from '../types/content';
 import { t } from '../content/i18n';
 import { SectionWrapper } from './SectionWrapper';
 
 interface ProjectsSectionProps {
   locale: Locale;
+  theme: Theme;
   projects: ProjectsContent;
   ui: UiLabels;
 }
 
-export function ProjectsSection({ locale, projects, ui }: ProjectsSectionProps) {
+export function ProjectsSection({ locale, theme, projects, ui }: ProjectsSectionProps) {
   const [expandedId, setExpandedId] = useState<string | null>(projects.items[0]?.id ?? null);
+  const [missingDarkAssetBySource, setMissingDarkAssetBySource] = useState<Record<string, boolean>>({});
 
   return (
     <SectionWrapper id="projects" className="pt-12 sm:pt-20">
@@ -24,6 +26,9 @@ export function ProjectsSection({ locale, projects, ui }: ProjectsSectionProps) 
           const expanded = expandedId === project.id;
           const mediaSrc = project.images[0];
           const isVideo = /\.(mp4|webm|ogg)$/i.test(mediaSrc);
+          const darkVariantSrc = mediaSrc.replace(/\.svg$/i, '-dark.svg');
+          const usingDarkVariant = theme === 'dark' && /\.svg$/i.test(mediaSrc) && !missingDarkAssetBySource[mediaSrc];
+          const resolvedMediaSrc = usingDarkVariant ? darkVariantSrc : mediaSrc;
 
           return (
             <article key={project.id} className="project-card">
@@ -40,10 +45,15 @@ export function ProjectsSection({ locale, projects, ui }: ProjectsSectionProps) 
                   />
                 ) : (
                   <img
-                    src={mediaSrc}
+                    src={resolvedMediaSrc}
                     alt={`${t(project.title, locale)} visual`}
                     className="project-media"
                     loading="lazy"
+                    onError={() => {
+                      if (usingDarkVariant) {
+                        setMissingDarkAssetBySource((previous) => ({ ...previous, [mediaSrc]: true }));
+                      }
+                    }}
                   />
                 )}
               </div>
@@ -136,4 +146,3 @@ export function ProjectsSection({ locale, projects, ui }: ProjectsSectionProps) 
     </SectionWrapper>
   );
 }
-

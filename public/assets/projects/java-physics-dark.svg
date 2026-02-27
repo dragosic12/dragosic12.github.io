@@ -1,0 +1,52 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2b313b"/>
+      <stop offset="1" stop-color="#37424f"/>
+    </linearGradient>
+    <linearGradient id="board" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#3e4a59"/>
+      <stop offset="1" stop-color="#313b48"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="700" rx="28" fill="url(#bg)"/>
+  <rect x="66" y="66" width="1068" height="568" rx="26" fill="#2f3946" stroke="#5f6b79" stroke-width="2"/>
+
+  <text x="106" y="132" fill="#f8ebe2" font-family="Space Grotesk, Inter, sans-serif" font-size="34" font-weight="700">Java Physics Simulator</text>
+  <text x="106" y="168" fill="#c9bac3" font-family="JetBrains Mono, monospace" font-size="18">Java 11 - Swing - MVC - JSON - CLI</text>
+
+  <rect x="106" y="206" width="486" height="350" rx="20" fill="url(#board)" stroke="#6a7685"/>
+  <text x="138" y="252" fill="#c9bac3" font-family="JetBrains Mono, monospace" font-size="17">Main.java (launcher)</text>
+  <rect x="138" y="272" width="422" height="220" rx="14" fill="#27303a" stroke="#5f6b79"/>
+
+  <text x="156" y="312" fill="#eadbd1" font-family="JetBrains Mono, monospace" font-size="16">-m gui -i ex4.4body.json -s 10000</text>
+  <text x="156" y="344" fill="#eadbd1" font-family="JetBrains Mono, monospace" font-size="16">-fl mtfp:{c:[20e2,20e2],g:9.80}</text>
+  <text x="156" y="376" fill="#eadbd1" font-family="JetBrains Mono, monospace" font-size="16">-cmp espeq:{eps:0.1}</text>
+
+  <rect x="138" y="414" width="196" height="58" rx="12" fill="#d59a7d"/>
+  <text x="172" y="450" fill="#2b313b" font-family="Space Grotesk, Inter, sans-serif" font-size="23" font-weight="700">RUN GUI</text>
+
+  <rect x="364" y="414" width="196" height="58" rx="12" fill="#7085a9"/>
+  <text x="395" y="450" fill="#f8ebe2" font-family="Space Grotesk, Inter, sans-serif" font-size="23" font-weight="700">BATCH</text>
+
+  <rect x="618" y="206" width="476" height="350" rx="20" fill="url(#board)" stroke="#6a7685"/>
+  <text x="648" y="252" fill="#c9bac3" font-family="JetBrains Mono, monospace" font-size="17">Simulation View</text>
+
+  <circle cx="760" cy="396" r="84" fill="#27303a" stroke="#5f6b79"/>
+  <circle cx="760" cy="396" r="18" fill="#d59a7d"/>
+  <circle cx="830" cy="360" r="13" fill="#7085a9"/>
+  <circle cx="695" cy="348" r="12" fill="#e1af97"/>
+  <circle cx="860" cy="432" r="11" fill="#8da2c4"/>
+
+  <path d="M760 396L830 360" stroke="#c9bac3" stroke-width="3"/>
+  <path d="M760 396L695 348" stroke="#c9bac3" stroke-width="3"/>
+  <path d="M760 396L860 432" stroke="#c9bac3" stroke-width="3"/>
+
+  <rect x="920" y="300" width="146" height="188" rx="14" fill="#27303a" stroke="#5f6b79"/>
+  <text x="938" y="334" fill="#c9bac3" font-family="JetBrains Mono, monospace" font-size="15">Observers</text>
+  <rect x="938" y="348" width="110" height="14" rx="7" fill="#5d6f87"/>
+  <rect x="938" y="372" width="110" height="14" rx="7" fill="#7085a9"/>
+  <rect x="938" y="396" width="110" height="14" rx="7" fill="#e1af97"/>
+  <rect x="938" y="420" width="110" height="14" rx="7" fill="#d59a7d"/>
+</svg>

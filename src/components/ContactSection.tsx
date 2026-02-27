@@ -47,6 +47,17 @@ export function ContactSection({ locale, contact, social, ui }: ContactSectionPr
           </a>
         ) : null}
 
+        {social.leetcode ? (
+          <a
+            href={social.leetcode}
+            target="_blank"
+            rel="noreferrer"
+            className="secondary-pill"
+          >
+            {t(ui.social.leetcode, locale)}
+          </a>
+        ) : null}
+
         <a
           href={social.cv}
           target="_blank"

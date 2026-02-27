@@ -60,7 +60,7 @@ export function App() {
         <HeroSection locale={locale} profile={portfolioContent.profile} ui={portfolioContent.ui} cvUrl={portfolioContent.social.cv} />
         <AboutSection locale={locale} about={portfolioContent.about} />
         <ExperienceSection locale={locale} experience={portfolioContent.experience} />
-        <ProjectsSection locale={locale} projects={portfolioContent.projects} ui={portfolioContent.ui} />
+        <ProjectsSection locale={locale} theme={theme} projects={portfolioContent.projects} ui={portfolioContent.ui} />
         <ImageLabSection locale={locale} imageLab={portfolioContent.imageLab} />
         <SkillsSection locale={locale} skills={portfolioContent.skills} />
         <FocusSection locale={locale} focus={portfolioContent.focus} />

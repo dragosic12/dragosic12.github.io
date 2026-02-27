@@ -251,6 +251,109 @@ export const portfolioContent: PortfolioContent = {
           publicRepo: 'https://github.com/dragosic/TFG',
         },
       },
+      {
+        id: 'algoritmia-cpp-fundamentals',
+        title: {
+          es: 'Fundamentos de Algoritmia en C++',
+          en: 'Algorithm Fundamentals in C++',
+        },
+        summary: {
+          es: 'Coleccion de ejercicios de algoritmia con enfoque practico en complejidad, recursion, backtracking y divide y venceras.',
+          en: 'Collection of algorithm exercises focused on complexity, recursion, backtracking, and divide and conquer.',
+        },
+        context: {
+          es: 'Repositorio academico estructurado por paradigmas con problemas resueltos en C++ y practica continua en LeetCode.',
+          en: 'Academic repository organized by paradigms, with solved C++ problems and continuous practice on LeetCode.',
+        },
+        stack: ['C++', 'STL', 'Recursion', 'Backtracking', 'Divide and Conquer', 'Big O'],
+        highlights: [
+          {
+            es: 'Problemas clasificados por tecnica: iterativo, recursion, backtracking y divide y venceras.',
+            en: 'Problems classified by technique: iterative, recursion, backtracking, and divide and conquer.',
+          },
+          {
+            es: 'Incluye enunciados y datos de prueba para repetir los ejercicios.',
+            en: 'Includes statements and test data to rerun exercises.',
+          },
+          {
+            es: 'Complementado con practica publica en perfil de LeetCode.',
+            en: 'Complemented by public practice in LeetCode profile.',
+          },
+        ],
+        images: ['/assets/projects/algorithms-cpp.svg'],
+        links: {
+          publicRepo: 'https://github.com/dragosic12/algorithm-fundamentals',
+          demo: 'https://leetcode.com/u/dragosic12/',
+        },
+      },
+      {
+        id: 'java-physics-simulator',
+        title: {
+          es: 'Simulador de Fisica en Java',
+          en: 'Java Physics Simulator',
+        },
+        summary: {
+          es: 'Simulador de cuerpos con modos GUI y batch, soporte JSON y comparacion automatica de estados.',
+          en: 'Body simulation project with GUI and batch modes, JSON support, and automated state comparison.',
+        },
+        context: {
+          es: 'Proyecto universitario en Java 11 con arquitectura MVC, motores de fuerzas configurables y visualizacion en Swing.',
+          en: 'University Java 11 project with MVC architecture, configurable force engines, and Swing visualization.',
+        },
+        stack: ['Java 11', 'Swing', 'MVC', 'JSON', 'Apache Commons CLI', 'Eclipse'],
+        highlights: [
+          {
+            es: 'Ejecucion en modo grafico y modo por linea de comandos.',
+            en: 'Runs in graphical mode and command-line mode.',
+          },
+          {
+            es: 'Lectura/escritura de escenarios JSON y comparadores de estado parametrizables.',
+            en: 'Reads/writes JSON scenarios and supports configurable state comparators.',
+          },
+          {
+            es: 'Implementa varias leyes de fuerza y simulacion temporal por pasos.',
+            en: 'Implements multiple force laws with time-step simulation.',
+          },
+        ],
+        images: ['/assets/projects/java-physics.svg'],
+        links: {
+          publicRepo: 'https://github.com/dragosic12/java-physics-simulator',
+        },
+      },
+      {
+        id: 'hja-practica3-java',
+        title: {
+          es: 'Practica 3 HJA (Java)',
+          en: 'HJA Practice 3 (Java)',
+        },
+        summary: {
+          es: 'Entrega academica en Java orientada a resolucion de problemas y calidad de implementacion.',
+          en: 'Academic Java delivery focused on problem solving and implementation quality.',
+        },
+        context: {
+          es: 'Proyecto incluido para mostrar evolucion academica y documentacion de enunciado dentro del propio repositorio.',
+          en: 'Project included to show academic progression and statement documentation inside the repository.',
+        },
+        stack: ['Java', 'POO', 'Git', 'GitHub', 'Practica academica'],
+        highlights: [
+          {
+            es: 'Repositorio de practica universitaria con codigo y enunciado.',
+            en: 'University practice repository with code and assignment statement.',
+          },
+          {
+            es: 'Enfoque en estructura del proyecto y trazabilidad de ejercicios.',
+            en: 'Focus on project structure and exercise traceability.',
+          },
+          {
+            es: 'Incluido en portfolio para seguimiento de progreso tecnico en Java.',
+            en: 'Included in portfolio to track technical progress in Java.',
+          },
+        ],
+        images: ['/assets/projects/hja-practica3.svg'],
+        links: {
+          publicRepo: 'https://github.com/dragosic/Practica3HJA',
+        },
+      },
     ],
   },
   imageLab: {
@@ -458,6 +561,7 @@ export const portfolioContent: PortfolioContent = {
   social: {
     github: 'https://github.com/dragosic12',
     linkedin: undefined,
+    leetcode: 'https://leetcode.com/u/dragosic12/',
     email: 'dragosic12@gmail.com',
     cv: '/assets/cv/CV_DragosIcaria.pdf',
   },
@@ -491,6 +595,7 @@ export const portfolioContent: PortfolioContent = {
     social: {
       github: { es: 'GitHub', en: 'GitHub' },
       linkedin: { es: 'LinkedIn', en: 'LinkedIn' },
+      leetcode: { es: 'LeetCode', en: 'LeetCode' },
       email: { es: 'Email', en: 'Email' },
     },
     ctas: {
