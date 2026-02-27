@@ -1,0 +1,82 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FCEBF0"/>
+      <stop offset="1" stop-color="#E4EAF5"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#FFF8FB"/>
+      <stop offset="1" stop-color="#F7FAFF"/>
+    </linearGradient>
+  </defs>
+
+  <style>
+    .pulse {
+      animation: pulse 1.8s ease-in-out infinite;
+      transform-origin: center;
+    }
+    .blink {
+      animation: blink 1.2s ease-in-out infinite;
+    }
+    .cursor {
+      animation: move 3.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 0.35; }
+      50% { opacity: 1; }
+    }
+    @keyframes move {
+      0% { transform: translate(0px, 0px); }
+      30% { transform: translate(180px, 24px); }
+      65% { transform: translate(320px, 140px); }
+      100% { transform: translate(0px, 0px); }
+    }
+  </style>
+
+  <style><![CDATA[
+    .darkify {
+      filter: invert(1) hue-rotate(178deg) saturate(0.92) brightness(0.86) contrast(1.06);
+      transform-origin: center;
+    }
+  ]]></style>
+  <g class="darkify">
+  <rect width="1200" height="700" rx="28" fill="url(#bg)"/>
+  <text x="66" y="78" fill="#755C78" font-family="Space Grotesk, Inter, sans-serif" font-size="38" font-weight="700">TFG Web Platform Preview</text>
+
+  <rect x="86" y="122" width="1028" height="530" rx="26" fill="#2A3442"/>
+  <rect x="116" y="154" width="968" height="468" rx="22" fill="url(#panel)"/>
+  <rect x="116" y="154" width="968" height="48" rx="22" fill="#E9D7E2"/>
+  <circle cx="150" cy="178" r="8" fill="#D08A95"/>
+  <circle cx="176" cy="178" r="8" fill="#D6B088"/>
+  <circle cx="202" cy="178" r="8" fill="#9DBF9F"/>
+
+  <rect x="146" y="228" width="230" height="362" rx="16" fill="#F3E8EE"/>
+  <rect x="408" y="228" width="644" height="362" rx="16" fill="#FDFEFF" stroke="#E7DDE7"/>
+
+  <rect x="170" y="258" width="180" height="14" rx="7" fill="#C68EA0"/>
+  <rect x="170" y="290" width="150" height="12" rx="6" fill="#D5B3C0"/>
+  <rect x="170" y="326" width="160" height="12" rx="6" fill="#D5B3C0"/>
+  <rect x="170" y="362" width="140" height="12" rx="6" fill="#D5B3C0"/>
+  <rect x="170" y="398" width="170" height="12" rx="6" fill="#D5B3C0"/>
+
+  <rect x="436" y="258" width="560" height="20" rx="10" fill="#E3C4D2"/>
+  <rect x="436" y="292" width="520" height="14" rx="7" fill="#EDE0E7"/>
+  <rect x="436" y="320" width="470" height="14" rx="7" fill="#EDE0E7"/>
+
+  <rect x="436" y="358" width="220" height="98" rx="14" fill="#F6EAF0" stroke="#E6D0DB"/>
+  <rect x="680" y="358" width="220" height="98" rx="14" fill="#E8EEF8" stroke="#D0DBEE"/>
+  <rect x="924" y="358" width="72" height="98" rx="14" fill="#F7EEE8" stroke="#E6D4C8"/>
+
+  <rect class="pulse" x="436" y="482" width="180" height="74" rx="14" fill="#D48E77"/>
+  <text x="476" y="527" fill="#FFF8F6" font-family="Space Grotesk, Inter, sans-serif" font-size="26" font-weight="700">Deploy</text>
+  <rect class="blink" x="640" y="482" width="356" height="74" rx="14" fill="#F2E4EA"/>
+
+  <g class="cursor" transform="translate(520 368)">
+    <path d="M0 0L24 16L14 20L18 36L10 40L6 24L-6 30L0 0Z" fill="#855E76"/>
+  </g>
+  </g>
+</svg>
