@@ -15,7 +15,7 @@ export function useTheme() {
 
     const themeColorMeta = document.querySelector('meta[name="theme-color"]');
     if (themeColorMeta) {
-      themeColorMeta.setAttribute('content', theme === 'dark' ? '#071116' : '#e8fff6');
+      themeColorMeta.setAttribute('content', theme === 'dark' ? '#1b1411' : '#f8edf1');
     }
   }, [theme]);
 
