@@ -10,9 +10,7 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ locale, profile, ui, cvUrl }: HeroSectionProps) {
-  const insights = profile.terminalLines.map((line) =>
-    line.replace(/^\$\s*/, '').replace(/\s+#\s*/, ': ').replace(/_/g, ' ').trim()
-  );
+  const insights = profile.insightLines.map((line) => t(line, locale));
 
   return (
     <SectionWrapper id="home" className="pt-10 sm:pt-16">
@@ -47,7 +45,7 @@ export function HeroSection({ locale, profile, ui, cvUrl }: HeroSectionProps) {
 
         <div className="grid gap-4">
           <div className="glass-panel p-5 sm:p-6">
-            <p className="subtle-label">Resumen profesional</p>
+            <p className="subtle-label">{locale === 'es' ? 'Resumen profesional' : 'Professional snapshot'}</p>
             <ol className="mt-3 grid gap-2 text-sm text-[var(--text)]" aria-label="Technical profile summary">
               {insights.map((insight) => (
                 <li key={insight} className="rounded-xl border border-[var(--line)] bg-[var(--bg-soft)]/60 px-3 py-2">

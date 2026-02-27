@@ -52,7 +52,7 @@ export interface ProfileContent {
   subheadline: LocalizedText;
   shortBio: LocalizedText;
   photo: string;
-  terminalLines: string[];
+  insightLines: LocalizedText[];
 }
 
 export interface AboutContent {

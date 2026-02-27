@@ -34,13 +34,27 @@ export const portfolioContent: PortfolioContent = {
       en: 'Computer Engineering graduate from UCM. I currently work as Junior Implantation Software at Icaria, after previous experience at Siemens (HMI/SCADA) and university IT support.',
     },
     photo: '/assets/profile/Imagen-CV.png',
-    terminalLines: [
-      '$ whoami  # dragos-camarasan',
-      '$ stack --primary  # C++ React Java Docker SQL',
-      '$ domain --focus  # software_implementation',
-      '$ industry --experience  # Icaria-TDM GDPR HMI SCADA',
-      '$ values --set  # quality reliability teamwork',
-      '$ status --now  # working_at_icaria',
+    insightLines: [
+      {
+        es: 'Experiencia actual en implantación software para cliente final.',
+        en: 'Current experience in software implementation for end clients.',
+      },
+      {
+        es: 'Trabajo con Icaria TDM, módulos GDPR, Java y Docker.',
+        en: 'Hands-on work with Icaria TDM, GDPR modules, Java, and Docker.',
+      },
+      {
+        es: 'Base sólida en C++, React y diseño de soluciones orientadas a negocio.',
+        en: 'Strong foundation in C++, React, and business-oriented solution design.',
+      },
+      {
+        es: 'Experiencia industrial previa en Siemens con HMI/SCADA.',
+        en: 'Previous industrial experience at Siemens with HMI/SCADA.',
+      },
+      {
+        es: 'Perfil junior con foco en fiabilidad, aprendizaje y entrega.',
+        en: 'Junior profile focused on reliability, learning, and delivery.',
+      },
     ],
   },
   about: {
