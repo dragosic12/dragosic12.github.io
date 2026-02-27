@@ -122,6 +122,22 @@ function normalizeStyleValue(styleValue: string): StyleVariant {
   return 'realistic';
 }
 
+function getStyleKeywords(styleValue: StyleVariant) {
+  if (styleValue === 'illustration') {
+    return ['illustration', 'drawing', 'artwork', 'digital art', 'vector'];
+  }
+
+  if (styleValue === 'cinematic') {
+    return ['cinematic', 'film', 'movie still', 'dramatic lighting', 'wide shot'];
+  }
+
+  if (styleValue === 'minimal') {
+    return ['minimal', 'minimalist', 'simple composition', 'clean design'];
+  }
+
+  return ['photo', 'realistic', 'photography'];
+}
+
 function hashText(value: string) {
   let hash = 2166136261;
 
@@ -182,7 +198,7 @@ const TOKEN_STOP_WORDS = new Set([
   'minimal',
 ]);
 
-function buildSearchQueries(rawPrompt: string) {
+function buildSearchQueries(rawPrompt: string, styleValue: StyleVariant) {
   const normalizedTokens = rawPrompt
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
@@ -217,23 +233,17 @@ function buildSearchQueries(rawPrompt: string) {
     hasWildAnimals && hasSavannah ? 'wildlife animals savannah' : '',
   ];
 
-  return [...new Set(queries.map((query) => query.trim()).filter(Boolean))];
-}
+  const styleKeywords = getStyleKeywords(styleValue);
+  const styleSuffix = styleKeywords.slice(0, 2).join(' ');
+  const styleAwareQueries = queries
+    .map((query) => query.trim())
+    .filter(Boolean)
+    .map((query) => `${query} ${styleSuffix}`.trim());
 
-function buildStyleHints(styleValue: StyleVariant) {
-  if (styleValue === 'illustration') {
-    return ['illustration drawing art', 'digital illustration', 'vector style artwork'];
-  }
+  const directStyleQueryBase = filteredTokens.join(' ') || translatedTokens.join(' ');
+  const directStyleQueries = styleKeywords.map((keyword) => `${directStyleQueryBase} ${keyword}`.trim());
 
-  if (styleValue === 'cinematic') {
-    return ['cinematic movie still', 'dramatic film lighting', 'cinematic scene wide shot'];
-  }
-
-  if (styleValue === 'minimal') {
-    return ['minimalist composition', 'minimal style simple', 'clean minimal design'];
-  }
-
-  return ['realistic photo', 'high detail photography'];
+  return [...new Set([...styleAwareQueries, ...queries, ...directStyleQueries].map((query) => query.trim()).filter(Boolean))];
 }
 
 function scoreSemanticMatch(sourceText: string, queryTokens: string[]) {
@@ -253,8 +263,24 @@ function scoreSemanticMatch(sourceText: string, queryTokens: string[]) {
   return score;
 }
 
+function scoreStyleMatch(sourceText: string, styleValue: StyleVariant) {
+  if (!sourceText) return 0;
+
+  const loweredText = sourceText.toLowerCase();
+  const styleKeywords = getStyleKeywords(styleValue);
+  let score = 0;
+
+  for (const keyword of styleKeywords) {
+    if (loweredText.includes(keyword)) {
+      score += keyword.length > 6 ? 2 : 1;
+    }
+  }
+
+  return score;
+}
+
 async function searchOpenverseImage(rawPrompt: string, styleValue: StyleVariant, timeoutMs: number) {
-  const searchQueries = [...buildSearchQueries(rawPrompt), ...buildStyleHints(styleValue)];
+  const searchQueries = buildSearchQueries(rawPrompt, styleValue);
 
   for (const searchQuery of searchQueries) {
     const controller = new AbortController();
@@ -276,7 +302,7 @@ async function searchOpenverseImage(rawPrompt: string, styleValue: StyleVariant,
 
         const tagText = (result.tags ?? []).map((tag) => tag.name ?? '').join(' ');
         const semanticText = `${result.title ?? ''} ${tagText}`;
-        const score = scoreSemanticMatch(semanticText, queryTokens);
+        const score = scoreSemanticMatch(semanticText, queryTokens) + scoreStyleMatch(semanticText, styleValue) * 2;
 
         if (score > bestScore) {
           bestScore = score;
@@ -298,7 +324,7 @@ async function searchOpenverseImage(rawPrompt: string, styleValue: StyleVariant,
 }
 
 async function searchWikimediaImage(rawPrompt: string, styleValue: StyleVariant, timeoutMs: number) {
-  const searchQueries = [...buildSearchQueries(rawPrompt), ...buildStyleHints(styleValue)];
+  const searchQueries = buildSearchQueries(rawPrompt, styleValue);
 
   for (const searchQuery of searchQueries) {
     const controller = new AbortController();
