@@ -5,7 +5,7 @@ import { SectionWrapper } from './SectionWrapper';
 
 const POLLINATIONS_API = 'https://image.pollinations.ai/prompt';
 const WIKIMEDIA_COMMONS_API = 'https://commons.wikimedia.org/w/api.php';
-const KEYWORD_FALLBACK_API = 'https://loremflickr.com';
+const OPENVERSE_API = 'https://api.openverse.org/v1/images/';
 const SEEDED_FALLBACK_API = 'https://picsum.photos';
 const PRIMARY_TIMEOUT_MS = 5000;
 const SECONDARY_TIMEOUT_MS = 7000;
@@ -21,7 +21,7 @@ interface ImageLabSectionProps {
 }
 
 interface ProviderCandidate {
-  id: 'pollinations-default' | 'wikimedia-commons' | 'keyword-fallback' | 'seeded-fallback';
+  id: 'pollinations-default' | 'openverse' | 'wikimedia-commons' | 'seeded-fallback';
   url?: string;
   resolveUrl?: () => Promise<string>;
   timeoutMs: number;
@@ -34,6 +34,7 @@ interface PollinationsHealth {
 
 interface WikimediaPageInfo {
   index?: number;
+  title?: string;
   imageinfo?: Array<{
     url?: string;
     mime?: string;
@@ -44,6 +45,20 @@ interface WikimediaResponse {
   query?: {
     pages?: Record<string, WikimediaPageInfo>;
   };
+}
+
+interface OpenverseTag {
+  name?: string;
+}
+
+interface OpenverseImageResult {
+  url?: string;
+  title?: string;
+  tags?: OpenverseTag[];
+}
+
+interface OpenverseResponse {
+  results?: OpenverseImageResult[];
 }
 
 function preloadImage(url: string, timeoutMs: number) {
@@ -71,20 +86,6 @@ function preloadImage(url: string, timeoutMs: number) {
 
     img.src = url;
   });
-}
-
-function buildFallbackCategory(rawPrompt: string) {
-  const tags = rawPrompt
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, ' ')
-    .split(/\s+/)
-    .filter((word) => word.length > 2)
-    .slice(0, 4)
-    .join(',');
-
-  return tags || 'animals,car,pet';
 }
 
 function buildInlineSvgFallback(rawPrompt: string, styleName: string) {
@@ -145,6 +146,32 @@ const SPANISH_TO_ENGLISH: Record<string, string> = {
   sabana: 'savannah',
 };
 
+const TOKEN_STOP_WORDS = new Set([
+  'con',
+  'para',
+  'de',
+  'del',
+  'la',
+  'el',
+  'los',
+  'las',
+  'un',
+  'una',
+  'en',
+  'and',
+  'the',
+  'a',
+  'an',
+  'with',
+  'style',
+  'high',
+  'quality',
+  'realistic',
+  'illustration',
+  'cinematic',
+  'minimal',
+]);
+
 function buildSearchQueries(rawPrompt: string) {
   const normalizedTokens = rawPrompt
     .normalize('NFD')
@@ -160,9 +187,88 @@ function buildSearchQueries(rawPrompt: string) {
   }
 
   const translatedTokens = normalizedTokens.map((word) => SPANISH_TO_ENGLISH[word] ?? word);
-  const queries = [normalizedTokens.join(' '), translatedTokens.join(' '), translatedTokens.slice(0, 4).join(' ')];
+  const filteredTokens = translatedTokens.filter((word) => !TOKEN_STOP_WORDS.has(word));
+  const hasDog = filteredTokens.includes('dog') || filteredTokens.includes('dogs');
+  const hasGoldenRetriever = filteredTokens.includes('golden') && filteredTokens.includes('retriever');
+  const hasCat = filteredTokens.includes('cat') || filteredTokens.includes('cats');
+  const hasCar = filteredTokens.includes('car') || filteredTokens.includes('cars');
+  const hasMotorcycle = filteredTokens.includes('motorcycle') || filteredTokens.includes('motorcycles');
+  const hasWildAnimals = filteredTokens.includes('wild') || filteredTokens.includes('animals') || filteredTokens.includes('wildlife');
+  const hasSavannah = filteredTokens.includes('savannah');
+
+  const queries = [
+    filteredTokens.join(' '),
+    translatedTokens.join(' '),
+    translatedTokens.slice(0, 4).join(' '),
+    hasGoldenRetriever || hasDog ? 'golden retriever dog' : '',
+    hasCat ? 'orange cat' : '',
+    hasCar ? 'classic blue car city night' : '',
+    hasMotorcycle ? 'sport motorcycle mountain road' : '',
+    hasWildAnimals && hasSavannah ? 'wildlife animals savannah' : '',
+  ];
 
   return [...new Set(queries.map((query) => query.trim()).filter(Boolean))];
+}
+
+function scoreSemanticMatch(sourceText: string, queryTokens: string[]) {
+  if (!sourceText) return 0;
+
+  const loweredText = sourceText.toLowerCase();
+  let score = 0;
+
+  for (const token of queryTokens) {
+    if (token.length < 3 || TOKEN_STOP_WORDS.has(token)) continue;
+
+    if (loweredText.includes(token)) {
+      score += token.length > 5 ? 2 : 1;
+    }
+  }
+
+  return score;
+}
+
+async function searchOpenverseImage(rawPrompt: string, timeoutMs: number) {
+  const searchQueries = buildSearchQueries(rawPrompt);
+
+  for (const searchQuery of searchQueries) {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const requestUrl = `${OPENVERSE_API}?q=${encodeURIComponent(searchQuery)}&page_size=20`;
+      const response = await fetch(requestUrl, { signal: controller.signal });
+      if (!response.ok) continue;
+
+      const payload = (await response.json()) as OpenverseResponse;
+      const queryTokens = searchQuery.split(/\s+/).filter(Boolean);
+      let bestScore = -1;
+      let bestUrl = '';
+
+      for (const result of payload.results ?? []) {
+        const imageUrl = result.url ?? '';
+        if (!imageUrl) continue;
+
+        const tagText = (result.tags ?? []).map((tag) => tag.name ?? '').join(' ');
+        const semanticText = `${result.title ?? ''} ${tagText}`;
+        const score = scoreSemanticMatch(semanticText, queryTokens);
+
+        if (score > bestScore) {
+          bestScore = score;
+          bestUrl = imageUrl;
+        }
+      }
+
+      if (bestScore > 0 && bestUrl) {
+        return bestUrl;
+      }
+    } catch {
+      // Try next query variant.
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+  }
+
+  throw new Error('openverse-no-results');
 }
 
 async function searchWikimediaImage(rawPrompt: string, timeoutMs: number) {
@@ -189,9 +295,11 @@ async function searchWikimediaImage(rawPrompt: string, timeoutMs: number) {
         const imageInfo = page.imageinfo?.[0];
         const imageUrl = imageInfo?.url;
         const mime = imageInfo?.mime ?? '';
+        const title = page.title ?? '';
+        const looksLikeArchiveFile = /\bIA[_\s]/i.test(title);
         const isRasterImage = /^image\/(jpeg|png|webp)$/i.test(mime);
 
-        if (imageUrl && isRasterImage) {
+        if (imageUrl && isRasterImage && !looksLikeArchiveFile) {
           return imageUrl;
         }
       }
@@ -238,7 +346,6 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
     const seed = Date.now();
     const craftedPrompt = `${cleanPrompt}, ${style} style, high quality`;
     const promptWithParams = `${encodeURIComponent(craftedPrompt)}?width=1024&height=1024&nologo=true&seed=${seed}`;
-    const fallbackCategory = buildFallbackCategory(cleanPrompt);
     const fallbackSeed = hashText(`${cleanPrompt}|${style}|${seed}`);
     const localUrl = buildInlineSvgFallback(cleanPrompt, style);
     const now = Date.now();
@@ -256,14 +363,14 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
 
     providers.push(
       {
-        id: 'wikimedia-commons',
-        resolveUrl: () => searchWikimediaImage(cleanPrompt, SEARCH_LOOKUP_TIMEOUT_MS),
+        id: 'openverse',
+        resolveUrl: () => searchOpenverseImage(cleanPrompt, SEARCH_LOOKUP_TIMEOUT_MS),
         timeoutMs: SECONDARY_TIMEOUT_MS,
       },
       {
-        id: 'keyword-fallback',
-        url: `${KEYWORD_FALLBACK_API}/1024/1024/${fallbackCategory}?lock=${seed}`,
-        timeoutMs: TERTIARY_TIMEOUT_MS,
+        id: 'wikimedia-commons',
+        resolveUrl: () => searchWikimediaImage(cleanPrompt, SEARCH_LOOKUP_TIMEOUT_MS),
+        timeoutMs: SECONDARY_TIMEOUT_MS,
       },
       {
         id: 'seeded-fallback',
