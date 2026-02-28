@@ -40,24 +40,25 @@ Incluye una sección integrada `Generador de imágenes` dentro del propio portfo
 
 El deploy está automatizado a GitHub Pages en cada push a `main` mediante `.github/workflows/deploy.yml`.
 
-## Generador IA (proxy local)
+## Generador IA
 
-- El frontend no llama a Hugging Face directamente.
-- La imagen se genera vía `POST /api/generate-image` en `server/index.js`.
-- El token se guarda en backend (`HF_API_KEY`) y nunca se expone en cliente.
+- Modo recomendado por defecto: usa proveedor remoto compatible con CORS y no requiere backend local.
+- Modo opcional avanzado: puedes usar backend propio vía `POST /api/generate-image` en `server/index.js`.
+- Si usas backend propio, el token se guarda en backend (`HF_API_KEY`) y nunca se expone en cliente.
 
 ### Puesta en marcha local (paso a paso)
 
 1. Copia variables de entorno:
    - PowerShell: `Copy-Item .env.example .env`
-2. Edita `.env` y añade tu token en `HF_API_KEY`.
-3. Terminal 1: arranca API local:
-   - `npm run dev:api`
-4. Terminal 2: arranca frontend:
+2. Frontend normal (sin backend local): arranca directamente:
    - `npm run dev`
-5. Abre `http://localhost:5173` y prueba la sección `Generador de imágenes`.
+3. Abre `http://localhost:5173` y prueba la sección `Generador de imágenes`.
+4. Solo si quieres backend propio:
+   - Añade `HF_API_KEY` en `.env`.
+   - Define `VITE_API_BASE_URL` (por ejemplo `http://localhost:8787`).
+   - Arranca `npm run dev:api` y `npm run dev`.
 
-Si el backend no está disponible, la UI muestra una vista local de fallback para no romper la experiencia.
+Si algún proveedor falla, la UI usa fallback para no romper la experiencia.
 
 ## Seguridad
 

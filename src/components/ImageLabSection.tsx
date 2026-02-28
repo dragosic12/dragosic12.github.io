@@ -3,11 +3,11 @@ import type { ImageLabContent, Locale } from '../types/content';
 import { t } from '../content/i18n';
 import { SectionWrapper } from './SectionWrapper';
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ?? (import.meta.env.DEV ? 'http://localhost:8787' : '');
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').trim().replace(/\/+$/, '');
 const FALLBACK_PROVIDER_URL = 'https://image.pollinations.ai/prompt';
 const GRADIO_SPACE_BASE_URL = 'https://multimodalart-flux-1-merged.hf.space';
 const FETCH_TIMEOUT_MS = 30000;
+const BACKEND_TIMEOUT_MS = 5000;
 
 interface ImageLabSectionProps {
   locale: Locale;
@@ -52,9 +52,9 @@ async function blobToDataUrl(blob: Blob) {
   });
 }
 
-async function fetchWithTimeout(resource: string, options?: RequestInit) {
+async function fetchWithTimeout(resource: string, options?: RequestInit, timeoutMs = FETCH_TIMEOUT_MS) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
     return await fetch(resource, { ...options, signal: controller.signal });
@@ -162,16 +162,20 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
 
       if (API_BASE_URL) {
         try {
-          const backendResponse = await fetchWithTimeout(`${API_BASE_URL}/api/generate-image`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
+          const backendResponse = await fetchWithTimeout(
+            `${API_BASE_URL}/api/generate-image`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                prompt: cleanPrompt,
+                style,
+              }),
             },
-            body: JSON.stringify({
-              prompt: cleanPrompt,
-              style,
-            }),
-          });
+            BACKEND_TIMEOUT_MS
+          );
 
           const backendData = (await backendResponse.json()) as {
             imageBase64?: string;
