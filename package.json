@@ -6,6 +6,7 @@
   "homepage": "https://dragosic12.github.io",
   "scripts": {
     "dev": "vite",
+    "dev:api": "node server/index.js",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
@@ -15,6 +16,9 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
@@ -39,4 +43,3 @@
     "vitest": "^2.1.1"
   }
 }
-
