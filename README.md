@@ -16,8 +16,9 @@ Incluye una sección integrada `Generador de imágenes` dentro del propio portfo
 
 ## Scripts
 
-- `npm run dev`: entorno local
-- `npm run dev:api`: backend local (proxy CORS hacia Hugging Face)
+- `npm run dev`: entorno local completo (frontend + backend proxy)
+- `npm run dev:web`: solo frontend
+- `npm run dev:api`: solo backend local (proxy CORS hacia Hugging Face)
 - `npm run build`: typecheck + build de producción
 - `npm run preview`: previsualizar build
 - `npm run lint`: lint de TypeScript
@@ -50,13 +51,13 @@ El deploy está automatizado a GitHub Pages en cada push a `main` mediante `.git
 
 1. Copia variables de entorno:
    - PowerShell: `Copy-Item .env.example .env`
-2. Frontend normal (sin backend local): arranca directamente:
+2. Añade `HF_API_KEY` en `.env`.
+3. Arranca todo con un único comando:
    - `npm run dev`
-3. Abre `http://localhost:5173` y prueba la sección `Generador de imágenes`.
-4. Solo si quieres backend propio:
-   - Añade `HF_API_KEY` en `.env`.
-   - Define `VITE_API_BASE_URL` (por ejemplo `http://localhost:8787`).
-   - Arranca `npm run dev:api` y `npm run dev`.
+4. Abre `http://localhost:5173` y prueba la sección `Generador de imágenes`.
+5. Opcional:
+   - Solo frontend: `npm run dev:web`
+   - Solo backend: `npm run dev:api`
 
 Si algún proveedor falla, la UI usa fallback para no romper la experiencia.
 

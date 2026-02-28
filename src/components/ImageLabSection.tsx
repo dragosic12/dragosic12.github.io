@@ -3,11 +3,13 @@ import type { ImageLabContent, Locale } from '../types/content';
 import { t } from '../content/i18n';
 import { SectionWrapper } from './SectionWrapper';
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').trim().replace(/\/+$/, '');
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? (import.meta.env.DEV ? 'http://localhost:8787' : ''))
+  .trim()
+  .replace(/\/+$/, '');
 const FALLBACK_PROVIDER_URL = 'https://image.pollinations.ai/prompt';
 const GRADIO_SPACE_BASE_URL = 'https://multimodalart-flux-1-merged.hf.space';
-const FETCH_TIMEOUT_MS = 30000;
-const BACKEND_TIMEOUT_MS = 5000;
+const FETCH_TIMEOUT_MS = 90000;
+const BACKEND_TIMEOUT_MS = 90000;
 
 interface ImageLabSectionProps {
   locale: Locale;
