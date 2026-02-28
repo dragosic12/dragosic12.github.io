@@ -6,6 +6,7 @@ import { SectionWrapper } from './SectionWrapper';
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? (import.meta.env.DEV ? 'http://localhost:8787' : '');
 const FALLBACK_PROVIDER_URL = 'https://image.pollinations.ai/prompt';
+const GRADIO_SPACE_BASE_URL = 'https://multimodalart-flux-1-merged.hf.space';
 const FETCH_TIMEOUT_MS = 30000;
 
 interface ImageLabSectionProps {
@@ -60,6 +61,78 @@ async function fetchWithTimeout(resource: string, options?: RequestInit) {
   } finally {
     clearTimeout(timeoutId);
   }
+}
+
+function parseGradioSseData(streamPayload: string) {
+  const dataLines = streamPayload
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith('data:'));
+
+  if (dataLines.length === 0) {
+    throw new Error('gradio stream returned no data lines');
+  }
+
+  const rawData = dataLines[dataLines.length - 1].replace(/^data:\s*/, '').trim();
+  if (!rawData || rawData === 'null') {
+    throw new Error('gradio stream returned null payload');
+  }
+
+  return JSON.parse(rawData) as Array<
+    | {
+        url?: string;
+      }
+    | number
+  >;
+}
+
+async function generateViaGradioSpace(cleanPrompt: string) {
+  const startResponse = await fetchWithTimeout(`${GRADIO_SPACE_BASE_URL}/gradio_api/call/infer`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      // Keep params simple/stable for faster execution.
+      data: [cleanPrompt, 0, true, 1024, 1024, 3.5, 8],
+    }),
+  });
+
+  if (!startResponse.ok) {
+    throw new Error(`gradio start failed (${startResponse.status})`);
+  }
+
+  const startData = (await startResponse.json()) as { event_id?: string };
+  if (!startData.event_id) {
+    throw new Error('gradio did not return event_id');
+  }
+
+  const streamResponse = await fetchWithTimeout(
+    `${GRADIO_SPACE_BASE_URL}/gradio_api/call/infer/${encodeURIComponent(startData.event_id)}`
+  );
+  if (!streamResponse.ok) {
+    throw new Error(`gradio stream failed (${streamResponse.status})`);
+  }
+
+  const streamPayload = await streamResponse.text();
+  const parsed = parseGradioSseData(streamPayload);
+  const fileInfo = parsed.find((item) => typeof item === 'object' && item !== null && 'url' in item) as
+    | {
+        url?: string;
+      }
+    | undefined;
+
+  if (!fileInfo?.url) {
+    throw new Error('gradio payload missing image url');
+  }
+
+  const imageResponse = await fetchWithTimeout(fileInfo.url);
+  if (!imageResponse.ok) {
+    throw new Error(`gradio image fetch failed (${imageResponse.status})`);
+  }
+
+  const imageBlob = await imageResponse.blob();
+  return await blobToDataUrl(imageBlob);
 }
 
 export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
@@ -117,6 +190,15 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
         } catch (backendError) {
           const message = backendError instanceof Error ? backendError.message : 'Unknown backend error';
           errors.push(`backend: ${message}`);
+        }
+      }
+
+      if (!resolvedImageUrl) {
+        try {
+          resolvedImageUrl = await generateViaGradioSpace(buildGenerationPrompt(cleanPrompt, style));
+        } catch (gradioError) {
+          const message = gradioError instanceof Error ? gradioError.message : 'Unknown gradio error';
+          errors.push(`gradio: ${message}`);
         }
       }
 
