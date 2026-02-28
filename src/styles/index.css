@@ -303,6 +303,22 @@ body {
     color-mix(in srgb, var(--bg-soft) 76%, transparent);
 }
 
+.preview-style-realistic {
+  filter: none;
+}
+
+.preview-style-illustration {
+  filter: saturate(1.32) contrast(1.18) brightness(1.05);
+}
+
+.preview-style-cinematic {
+  filter: contrast(1.34) saturate(1.14) brightness(0.84) sepia(0.12);
+}
+
+.preview-style-minimal {
+  filter: grayscale(0.58) saturate(0.72) contrast(1.02) brightness(1.12);
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(14px);
@@ -346,5 +362,12 @@ body {
   .generator-grid {
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
     gap: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
