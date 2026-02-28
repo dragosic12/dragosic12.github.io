@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ImageLabContent, Locale } from '../types/content';
 import { t } from '../content/i18n';
 import { SectionWrapper } from './SectionWrapper';
@@ -6,10 +6,11 @@ import { SectionWrapper } from './SectionWrapper';
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? (import.meta.env.DEV ? 'http://localhost:8787' : ''))
   .trim()
   .replace(/\/+$/, '');
-const FALLBACK_PROVIDER_URL = 'https://image.pollinations.ai/prompt';
+const HF_ROUTER_URL = 'https://router.huggingface.co/hf-inference/models/stabilityai/stable-diffusion-xl-base-1.0';
 const GRADIO_SPACE_BASE_URL = 'https://multimodalart-flux-1-merged.hf.space';
 const FETCH_TIMEOUT_MS = 90000;
 const BACKEND_TIMEOUT_MS = 90000;
+const HF_TOKEN_STORAGE_KEY = 'dragos_hf_read_token';
 
 interface ImageLabSectionProps {
   locale: Locale;
@@ -137,6 +138,41 @@ async function generateViaGradioSpace(cleanPrompt: string) {
   return await blobToDataUrl(imageBlob);
 }
 
+async function generateViaHfRouter(prompt: string, token: string) {
+  if (!token) {
+    throw new Error('missing HF token');
+  }
+
+  const hfResponse = await fetchWithTimeout(HF_ROUTER_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      inputs: prompt,
+      parameters: {
+        guidance_scale: 7.5,
+        num_inference_steps: 28,
+      },
+    }),
+  });
+
+  if (!hfResponse.ok) {
+    const body = await hfResponse.text();
+    throw new Error(`hf router failed (${hfResponse.status}) ${body.slice(0, 140)}`);
+  }
+
+  const contentType = hfResponse.headers.get('content-type') || '';
+  if (!contentType.startsWith('image/')) {
+    const body = await hfResponse.text();
+    throw new Error(`hf router returned non-image payload: ${body.slice(0, 140)}`);
+  }
+
+  const blob = await hfResponse.blob();
+  return await blobToDataUrl(blob);
+}
+
 export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
   const [prompt, setPrompt] = useState('');
   const [style, setStyle] = useState(imageLab.styleOptions[0]?.value ?? 'realistic');
@@ -144,8 +180,36 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
   const [error, setError] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [downloadName, setDownloadName] = useState('dragos-ai-image.png');
+  const [hfTokenInput, setHfTokenInput] = useState('');
+  const [isTokenSaved, setIsTokenSaved] = useState(false);
 
   const quickPrompts = useMemo(() => imageLab.quickPrompts.map((item) => t(item, locale)), [imageLab.quickPrompts, locale]);
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(HF_TOKEN_STORAGE_KEY)?.trim() || '';
+      setHfTokenInput(stored);
+      setIsTokenSaved(Boolean(stored));
+    } catch {
+      setHfTokenInput('');
+      setIsTokenSaved(false);
+    }
+  }, []);
+
+  function handleSaveToken() {
+    const cleaned = hfTokenInput.trim();
+    try {
+      if (cleaned) {
+        window.localStorage.setItem(HF_TOKEN_STORAGE_KEY, cleaned);
+        setIsTokenSaved(true);
+      } else {
+        window.localStorage.removeItem(HF_TOKEN_STORAGE_KEY);
+        setIsTokenSaved(false);
+      }
+    } catch {
+      // no-op; some browsers might block storage in private contexts
+    }
+  }
 
   async function handleGenerate() {
     const cleanPrompt = prompt.trim();
@@ -161,6 +225,7 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
     try {
       const errors: string[] = [];
       let resolvedImageUrl = '';
+      const promptForProvider = buildGenerationPrompt(cleanPrompt, style);
 
       if (API_BASE_URL) {
         try {
@@ -199,9 +264,19 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
         }
       }
 
+      const hfToken = hfTokenInput.trim();
+      if (!resolvedImageUrl && hfToken) {
+        try {
+          resolvedImageUrl = await generateViaHfRouter(promptForProvider, hfToken);
+        } catch (hfError) {
+          const message = hfError instanceof Error ? hfError.message : 'Unknown HF router error';
+          errors.push(`hf-router: ${message}`);
+        }
+      }
+
       if (!resolvedImageUrl) {
         try {
-          resolvedImageUrl = await generateViaGradioSpace(buildGenerationPrompt(cleanPrompt, style));
+          resolvedImageUrl = await generateViaGradioSpace(promptForProvider);
         } catch (gradioError) {
           const message = gradioError instanceof Error ? gradioError.message : 'Unknown gradio error';
           errors.push(`gradio: ${message}`);
@@ -209,23 +284,7 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
       }
 
       if (!resolvedImageUrl) {
-        const promptForProvider = buildGenerationPrompt(cleanPrompt, style);
-        const providerUrl =
-          `${FALLBACK_PROVIDER_URL}/${encodeURIComponent(promptForProvider)}` +
-          `?model=flux&width=1024&height=1024&nologo=true&seed=${Date.now()}`;
-        const providerResponse = await fetchWithTimeout(providerUrl);
-
-        if (!providerResponse.ok) {
-          throw new Error(`fallback provider failed (${providerResponse.status})`);
-        }
-
-        const contentType = providerResponse.headers.get('content-type') || '';
-        if (!contentType.startsWith('image/')) {
-          throw new Error('fallback provider did not return an image');
-        }
-
-        const imageBlob = await providerResponse.blob();
-        resolvedImageUrl = await blobToDataUrl(imageBlob);
+        throw new Error(errors.join(' | ') || 'No provider available');
       }
 
       setImageUrl(resolvedImageUrl);
@@ -239,8 +298,8 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
       setDownloadName(`dragos-ai-local-${Date.now()}.png`);
       setError(
         locale === 'es'
-          ? 'No se pudo generar la imagen con los proveedores disponibles. Se muestra vista local.'
-          : 'Could not generate the image with available providers. Showing local preview.'
+          ? 'No se pudo generar la imagen con los proveedores disponibles. Si estas en GitHub Pages, guarda un token de Hugging Face y vuelve a probar.'
+          : 'Could not generate the image with available providers. If you are on GitHub Pages, save a Hugging Face token and try again.'
       );
     } finally {
       setIsLoading(false);
@@ -301,6 +360,34 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
               </option>
             ))}
           </select>
+
+          <div className="mt-5 rounded-2xl border border-[var(--border)] bg-[var(--card-elevated)]/60 p-3">
+            <p className="generator-label">
+              {locale === 'es' ? 'Token Hugging Face (opcional, recomendado en web)' : 'Hugging Face token (optional, recommended on web)'}
+            </p>
+            <p className="generator-hint mt-1">
+              {locale === 'es'
+                ? 'Se guarda solo en tu navegador para mejorar la fiabilidad del generador en GitHub Pages.'
+                : 'Stored only in your browser to improve generator reliability on GitHub Pages.'}
+            </p>
+            <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+              <input
+                type="password"
+                value={hfTokenInput}
+                onChange={(e) => setHfTokenInput(e.target.value)}
+                className="generator-input"
+                placeholder={locale === 'es' ? 'hf_xxx...' : 'hf_xxx...'}
+              />
+              <button type="button" onClick={handleSaveToken} className="generator-secondary-button sm:w-auto">
+                {locale === 'es' ? 'Guardar token' : 'Save token'}
+              </button>
+            </div>
+            {isTokenSaved ? (
+              <p className="mt-2 text-xs text-emerald-400">
+                {locale === 'es' ? 'Token guardado localmente.' : 'Token saved locally.'}
+              </p>
+            ) : null}
+          </div>
 
           <div className="mt-5 flex flex-col gap-2 sm:flex-row">
             <button type="button" onClick={handleGenerate} disabled={isLoading} className="generator-primary-button">

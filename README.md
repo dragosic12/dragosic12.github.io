@@ -46,6 +46,7 @@ El deploy está automatizado a GitHub Pages en cada push a `main` mediante `.git
 - Modo recomendado por defecto: usa proveedor remoto compatible con CORS y no requiere backend local.
 - Modo opcional avanzado: puedes usar backend propio vía `POST /api/generate-image` en `server/index.js`.
 - Si usas backend propio, el token se guarda en backend (`HF_API_KEY`) y nunca se expone en cliente.
+- En GitHub Pages, si los proveedores públicos fallan, puedes guardar un token de Hugging Face en la UI del generador (se guarda solo en `localStorage` de tu navegador).
 
 ### Puesta en marcha local (paso a paso)
 
