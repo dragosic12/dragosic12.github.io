@@ -17,6 +17,7 @@ Incluye una sección integrada `Generador de imágenes` dentro del propio portfo
 ## Scripts
 
 - `npm run dev`: entorno local
+- `npm run dev:api`: backend local (proxy CORS hacia Hugging Face)
 - `npm run build`: typecheck + build de producción
 - `npm run preview`: previsualizar build
 - `npm run lint`: lint de TypeScript
@@ -39,14 +40,29 @@ Incluye una sección integrada `Generador de imágenes` dentro del propio portfo
 
 El deploy está automatizado a GitHub Pages en cada push a `main` mediante `.github/workflows/deploy.yml`.
 
-## Generador IA
+## Generador IA (proxy local)
 
-- El generador está integrado dentro del portfolio y no requiere introducir token en la interfaz.
-- Usa un endpoint público de generación de imágenes en cliente para evitar gestión de credenciales en la web.
+- El frontend no llama a Hugging Face directamente.
+- La imagen se genera vía `POST /api/generate-image` en `server/index.js`.
+- El token se guarda en backend (`HF_API_KEY`) y nunca se expone en cliente.
+
+### Puesta en marcha local (paso a paso)
+
+1. Copia variables de entorno:
+   - PowerShell: `Copy-Item .env.example .env`
+2. Edita `.env` y añade tu token en `HF_API_KEY`.
+3. Terminal 1: arranca API local:
+   - `npm run dev:api`
+4. Terminal 2: arranca frontend:
+   - `npm run dev`
+5. Abre `http://localhost:5173` y prueba la sección `Generador de imágenes`.
+
+Si el backend no está disponible, la UI muestra una vista local de fallback para no romper la experiencia.
 
 ## Seguridad
 
-- Evita publicar claves en repositorios públicos si cambias la configuración del generador.
+- No uses variables `VITE_*` para claves privadas.
+- Evita publicar claves en repositorios públicos.
 - Escaneo de secretos con Gitleaks en CI.
 - Si necesitas claves para otros proyectos, usa `.env` fuera de repositorio y rota cualquier token expuesto previamente.
 

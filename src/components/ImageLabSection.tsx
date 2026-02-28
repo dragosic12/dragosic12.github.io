@@ -1,78 +1,13 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { ImageLabContent, Locale } from '../types/content';
 import { t } from '../content/i18n';
 import { SectionWrapper } from './SectionWrapper';
 
-const POLLINATIONS_API = 'https://image.pollinations.ai/prompt';
-const OPENVERSE_API = 'https://api.openverse.org/v1/images/';
-const SEEDED_FALLBACK_API = 'https://picsum.photos';
-const PRIMARY_TIMEOUT_MS = 5000;
-const SECONDARY_TIMEOUT_MS = 7000;
-const TERTIARY_TIMEOUT_MS = 9000;
-const SEARCH_LOOKUP_TIMEOUT_MS = 5000;
-const POLLINATIONS_FAILURE_THRESHOLD = 1;
-const POLLINATIONS_COOLDOWN_MS = 5 * 60 * 1000;
-const MAX_SEARCH_TERMS = 8;
-const MIN_OPENVERSE_SCORE = 2;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
 
 interface ImageLabSectionProps {
   locale: Locale;
   imageLab: ImageLabContent;
-}
-
-interface ProviderCandidate {
-  id: 'pollinations-default' | 'openverse' | 'seeded-fallback';
-  url?: string;
-  resolveUrl?: () => Promise<string>;
-  timeoutMs: number;
-}
-
-interface PollinationsHealth {
-  consecutiveFailures: number;
-  cooldownUntil: number;
-}
-
-interface OpenverseTag {
-  name?: string;
-}
-
-interface OpenverseImageResult {
-  url?: string;
-  title?: string;
-  tags?: OpenverseTag[];
-}
-
-interface OpenverseResponse {
-  results?: OpenverseImageResult[];
-}
-
-type StyleVariant = 'realistic' | 'illustration' | 'comic' | 'cinematic' | 'minimal';
-
-function preloadImage(url: string, timeoutMs: number) {
-  return new Promise<void>((resolve, reject) => {
-    const img = new Image();
-    const timerId = window.setTimeout(() => {
-      img.onload = null;
-      img.onerror = null;
-      reject(new Error('timeout'));
-    }, timeoutMs);
-
-    img.onload = () => {
-      window.clearTimeout(timerId);
-      img.onload = null;
-      img.onerror = null;
-      resolve();
-    };
-
-    img.onerror = () => {
-      window.clearTimeout(timerId);
-      img.onload = null;
-      img.onerror = null;
-      reject(new Error('image-load-error'));
-    };
-
-    img.src = url;
-  });
 }
 
 function buildInlineSvgFallback(rawPrompt: string, styleName: string) {
@@ -81,315 +16,22 @@ function buildInlineSvgFallback(rawPrompt: string, styleName: string) {
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
       <defs>
-        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#f8edf1" />
-          <stop offset="1" stop-color="#f4e4ea" />
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f0d6cf" />
+          <stop offset="1" stop-color="#d6ddec" />
         </linearGradient>
       </defs>
-      <rect width="1024" height="1024" fill="url(#bg)" />
+      <rect width="1024" height="1024" fill="url(#g)" />
       <circle cx="812" cy="194" r="90" fill="#ffffff66" />
       <circle cx="200" cy="844" r="108" fill="#ffffff4a" />
-      <rect x="132" y="160" width="760" height="704" rx="40" fill="#fffaf8" stroke="#d8b8ae" stroke-width="3" />
-      <text x="182" y="270" font-family="Inter, Arial, sans-serif" font-size="46" fill="#7a4656" font-weight="700">Preview fallback</text>
-      <text x="182" y="336" font-family="JetBrains Mono, monospace" font-size="28" fill="#7f5c66">Style: ${safeStyle}</text>
-      <text x="182" y="410" font-family="Inter, Arial, sans-serif" font-size="34" fill="#6d4752">Prompt: ${safePrompt}</text>
+      <rect x="132" y="160" width="760" height="704" rx="40" fill="#ffffffcc" />
+      <text x="182" y="270" font-family="Inter, Arial, sans-serif" font-size="46" fill="#6f4e5c" font-weight="700">Local preview</text>
+      <text x="182" y="336" font-family="JetBrains Mono, monospace" font-size="28" fill="#755a67">Style: ${safeStyle}</text>
+      <text x="182" y="410" font-family="Inter, Arial, sans-serif" font-size="34" fill="#6a515f">Prompt: ${safePrompt}</text>
     </svg>
   `;
 
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
-}
-
-function normalizeStyleValue(styleValue: string): StyleVariant {
-  if (styleValue === 'illustration' || styleValue === 'comic' || styleValue === 'cinematic' || styleValue === 'minimal') {
-    return styleValue;
-  }
-
-  return 'realistic';
-}
-
-function getStyleKeywords(styleValue: StyleVariant) {
-  if (styleValue === 'comic') {
-    return ['comic', 'cartoon', 'inked'];
-  }
-
-  if (styleValue === 'illustration') {
-    return ['illustration', 'drawing', 'artwork'];
-  }
-
-  if (styleValue === 'cinematic') {
-    return ['cinematic', 'film', 'movie still'];
-  }
-
-  if (styleValue === 'minimal') {
-    return ['minimal', 'minimalist', 'simple'];
-  }
-
-  return ['photo', 'realistic'];
-}
-
-function hashText(value: string) {
-  let hash = 2166136261;
-
-  for (let index = 0; index < value.length; index += 1) {
-    hash ^= value.charCodeAt(index);
-    hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
-  }
-
-  return Math.abs(hash >>> 0);
-}
-
-const SPANISH_TO_ENGLISH: Record<string, string> = {
-  perro: 'dog',
-  perros: 'dogs',
-  golden: 'golden',
-  retriever: 'retriever',
-  gato: 'cat',
-  gatos: 'cats',
-  coche: 'car',
-  coches: 'cars',
-  auto: 'car',
-  automovil: 'car',
-  clasico: 'classic',
-  clasica: 'classic',
-  azul: 'blue',
-  rojo: 'red',
-  roja: 'red',
-  verde: 'green',
-  amarillo: 'yellow',
-  amarilla: 'yellow',
-  negro: 'black',
-  negra: 'black',
-  blanco: 'white',
-  blanca: 'white',
-  naranja: 'orange',
-  ciudad: 'city',
-  nocturna: 'night',
-  noche: 'night',
-  parque: 'park',
-  soleado: 'sunny',
-  manta: 'blanket',
-  comida: 'food',
-  moto: 'motorcycle',
-  motos: 'motorcycles',
-  deportiva: 'sport',
-  carretera: 'road',
-  montana: 'mountain',
-  animales: 'animals',
-  sabana: 'savannah',
-};
-
-const SUBJECT_TOKENS = new Set([
-  'dog',
-  'dogs',
-  'retriever',
-  'cat',
-  'cats',
-  'car',
-  'cars',
-  'motorcycle',
-  'motorcycles',
-  'animals',
-  'animal',
-  'wildlife',
-]);
-
-const COLOR_TOKENS = new Set(['blue', 'red', 'green', 'yellow', 'black', 'white', 'orange']);
-
-const CONTEXT_TOKENS = new Set([
-  'city',
-  'night',
-  'mountain',
-  'road',
-  'park',
-  'sunny',
-  'blanket',
-  'savannah',
-  'forest',
-  'beach',
-]);
-
-const TOKEN_STOP_WORDS = new Set([
-  'con',
-  'para',
-  'de',
-  'del',
-  'la',
-  'el',
-  'los',
-  'las',
-  'un',
-  'una',
-  'en',
-  'and',
-  'the',
-  'a',
-  'an',
-  'with',
-  'style',
-  'high',
-  'quality',
-  'realistic',
-  'illustration',
-  'comic',
-  'cinematic',
-  'minimal',
-]);
-
-function buildSearchProfile(rawPrompt: string) {
-  const normalizedTokens = rawPrompt
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, ' ')
-    .split(/\s+/)
-    .filter((word) => word.length > 2)
-    .slice(0, MAX_SEARCH_TERMS);
-
-  if (!normalizedTokens.length) {
-    return { query: 'nature', requiredTokens: [] };
-  }
-
-  const translatedTokens = normalizedTokens.map((word) => SPANISH_TO_ENGLISH[word] ?? word);
-  const filteredTokens = translatedTokens.filter((word) => !TOKEN_STOP_WORDS.has(word));
-  const hasDog = filteredTokens.includes('dog') || filteredTokens.includes('dogs');
-  const hasGoldenRetriever = filteredTokens.includes('golden') && filteredTokens.includes('retriever');
-  const hasCat = filteredTokens.includes('cat') || filteredTokens.includes('cats');
-  const hasCar = filteredTokens.includes('car') || filteredTokens.includes('cars');
-  const hasMotorcycle = filteredTokens.includes('motorcycle') || filteredTokens.includes('motorcycles');
-  const hasWildAnimals = filteredTokens.includes('wild') || filteredTokens.includes('animals') || filteredTokens.includes('wildlife');
-  const hasSavannah = filteredTokens.includes('savannah');
-
-  const prioritizedTerms: string[] = [];
-  const requiredTokens = filteredTokens.filter((token) => SUBJECT_TOKENS.has(token));
-
-  if (hasGoldenRetriever) {
-    prioritizedTerms.push('golden retriever');
-  } else if (hasDog) {
-    prioritizedTerms.push('dog');
-  }
-
-  if (hasCat) {
-    prioritizedTerms.push('cat');
-  }
-
-  if (hasCar) {
-    prioritizedTerms.push('car');
-  }
-
-  if (hasMotorcycle) {
-    prioritizedTerms.push('motorcycle');
-  }
-
-  if (hasWildAnimals || hasSavannah) {
-    prioritizedTerms.push('wildlife');
-  }
-
-  const colorToken = filteredTokens.find((token) => COLOR_TOKENS.has(token));
-  if (colorToken) {
-    prioritizedTerms.push(colorToken);
-  }
-
-  const contextToken = filteredTokens.find((token) => CONTEXT_TOKENS.has(token));
-  if (contextToken) {
-    prioritizedTerms.push(contextToken);
-  }
-
-  if (!prioritizedTerms.length) {
-    prioritizedTerms.push(...filteredTokens.slice(0, 4));
-  }
-
-  const query = [...new Set(prioritizedTerms.join(' ').split(/\s+/).filter(Boolean))].slice(0, 5).join(' ');
-  return {
-    query: query || 'nature',
-    requiredTokens: [...new Set(requiredTokens)],
-  };
-}
-
-function scoreSemanticMatch(sourceText: string, queryTokens: string[]) {
-  if (!sourceText) return 0;
-
-  const loweredText = sourceText.toLowerCase();
-  let score = 0;
-
-  for (const token of queryTokens) {
-    if (token.length < 3 || TOKEN_STOP_WORDS.has(token)) continue;
-
-    if (loweredText.includes(token)) {
-      score += token.length > 5 ? 2 : 1;
-    }
-  }
-
-  return score;
-}
-
-function scoreStyleMatch(sourceText: string, styleValue: StyleVariant) {
-  if (!sourceText) return 0;
-
-  const loweredText = sourceText.toLowerCase();
-  const styleKeywords = getStyleKeywords(styleValue);
-  let score = 0;
-
-  for (const keyword of styleKeywords) {
-    if (loweredText.includes(keyword)) {
-      score += keyword.length > 6 ? 2 : 1;
-    }
-  }
-
-  return score;
-}
-
-function hasRequiredTokenMatch(sourceText: string, requiredTokens: string[]) {
-  if (!requiredTokens.length) return true;
-
-  const loweredText = sourceText.toLowerCase();
-  return requiredTokens.some((token) => loweredText.includes(token));
-}
-
-async function searchOpenverseImage(rawPrompt: string, styleValue: StyleVariant, timeoutMs: number) {
-  const profile = buildSearchProfile(rawPrompt);
-  const styleKeyword = getStyleKeywords(styleValue)[0] ?? '';
-  const searchQuery = styleValue === 'comic' || styleValue === 'illustration' ? `${profile.query} ${styleKeyword}`.trim() : profile.query;
-  const controller = new AbortController();
-  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
-
-  try {
-    const requestUrl = `${OPENVERSE_API}?q=${encodeURIComponent(searchQuery)}&page_size=20`;
-    const response = await fetch(requestUrl, { signal: controller.signal });
-    if (!response.ok) {
-      throw new Error('openverse-response-error');
-    }
-
-    const payload = (await response.json()) as OpenverseResponse;
-    const queryTokens = searchQuery.split(/\s+/).filter(Boolean);
-    let bestScore = -1;
-    let bestUrl = '';
-
-    for (const result of payload.results ?? []) {
-      const imageUrl = result.url ?? '';
-      if (!imageUrl) continue;
-
-      const tagText = (result.tags ?? []).map((tag) => tag.name ?? '').join(' ');
-      const semanticText = `${result.title ?? ''} ${tagText}`;
-      if (!hasRequiredTokenMatch(semanticText, profile.requiredTokens)) {
-        continue;
-      }
-
-      const score = scoreSemanticMatch(semanticText, queryTokens) + scoreStyleMatch(semanticText, styleValue) * 2;
-
-      if (score > bestScore) {
-        bestScore = score;
-        bestUrl = imageUrl;
-      }
-    }
-
-    if (bestUrl && bestScore >= MIN_OPENVERSE_SCORE) {
-      return bestUrl;
-    }
-  } finally {
-    window.clearTimeout(timeoutId);
-  }
-
-  throw new Error('openverse-no-results');
 }
 
 export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
@@ -397,15 +39,8 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
   const [style, setStyle] = useState(imageLab.styleOptions[0]?.value ?? 'realistic');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [providerNotice, setProviderNotice] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  const [previewStyle, setPreviewStyle] = useState<StyleVariant>('realistic');
   const [downloadName, setDownloadName] = useState('dragos-ai-image.png');
-  const requestIdRef = useRef(0);
-  const pollinationsHealthRef = useRef<PollinationsHealth>({
-    consecutiveFailures: 0,
-    cooldownUntil: 0,
-  });
 
   const quickPrompts = useMemo(() => imageLab.quickPrompts.map((item) => t(item, locale)), [imageLab.quickPrompts, locale]);
 
@@ -416,136 +51,60 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
       return;
     }
 
-    const requestId = requestIdRef.current + 1;
-    requestIdRef.current = requestId;
-
     setIsLoading(true);
     setError('');
-    setProviderNotice('');
+    setImageUrl('');
 
-    const seed = Date.now();
-    const normalizedStyle = normalizeStyleValue(style);
-    const craftedPrompt = `${cleanPrompt}, ${style} style, high quality`;
-    const promptWithParams = `${encodeURIComponent(craftedPrompt)}?width=1024&height=1024&nologo=true&seed=${seed}`;
-    const fallbackSeed = hashText(`${cleanPrompt}|${style}|${seed}`);
-    const localUrl = buildInlineSvgFallback(cleanPrompt, style);
-    const now = Date.now();
-    const canTryPollinations = now >= pollinationsHealthRef.current.cooldownUntil;
-
-    const providers: ProviderCandidate[] = [];
-
-    if (canTryPollinations) {
-      providers.push({
-        id: 'pollinations-default',
-        url: `${POLLINATIONS_API}/${promptWithParams}`,
-        timeoutMs: PRIMARY_TIMEOUT_MS,
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/generate-image`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: cleanPrompt,
+          style,
+        }),
       });
-    }
 
-    providers.push(
-      {
-        id: 'openverse',
-        resolveUrl: () => searchOpenverseImage(cleanPrompt, normalizedStyle, SEARCH_LOOKUP_TIMEOUT_MS),
-        timeoutMs: SECONDARY_TIMEOUT_MS,
-      },
-      {
-        id: 'seeded-fallback',
-        url: `${SEEDED_FALLBACK_API}/seed/${fallbackSeed}/1024/1024`,
-        timeoutMs: TERTIARY_TIMEOUT_MS,
+      const data = (await response.json()) as {
+        imageBase64?: string;
+        mimeType?: string;
+        error?: string;
+        details?: string;
+      };
+
+      if (!response.ok || !data.imageBase64) {
+        const details = data.details ? ` (${data.details})` : '';
+        throw new Error(`${data.error || 'Generation failed'}${details}`);
       }
-    );
 
-    for (const provider of providers) {
-      let resolvedUrl = provider.url;
+      const imageMime = data.mimeType || 'image/jpeg';
+      const url = `data:${imageMime};base64,${data.imageBase64}`;
+      setImageUrl(url);
+      setDownloadName(`dragos-ai-${Date.now()}.png`);
+    } catch (generationError) {
+      const message = generationError instanceof Error ? generationError.message : 'Unknown error';
+      console.error('[image-lab] generation error:', message);
 
-      try {
-        if (!resolvedUrl && provider.resolveUrl) {
-          resolvedUrl = await provider.resolveUrl();
-        }
-
-        if (!resolvedUrl) {
-          throw new Error('provider-url-missing');
-        }
-
-        if (requestId !== requestIdRef.current) return;
-
-        await preloadImage(resolvedUrl, provider.timeoutMs);
-        if (requestId !== requestIdRef.current) return;
-
-        if (provider.id === 'pollinations-default') {
-          pollinationsHealthRef.current = {
-            consecutiveFailures: 0,
-            cooldownUntil: 0,
-          };
-        }
-
-        setImageUrl(resolvedUrl);
-        setPreviewStyle(normalizedStyle);
-        setDownloadName(`dragos-ai-${seed}.png`);
-        setError('');
-        setProviderNotice('');
-
-        setIsLoading(false);
-        return;
-      } catch {
-        if (provider.id === 'pollinations-default') {
-          const nextFailures = pollinationsHealthRef.current.consecutiveFailures + 1;
-          const cooldownUntil =
-            nextFailures >= POLLINATIONS_FAILURE_THRESHOLD ? Date.now() + POLLINATIONS_COOLDOWN_MS : 0;
-
-          pollinationsHealthRef.current = {
-            consecutiveFailures: nextFailures,
-            cooldownUntil,
-          };
-        }
-      }
+      const localPreview = buildInlineSvgFallback(cleanPrompt, style);
+      setImageUrl(localPreview);
+      setDownloadName(`dragos-ai-local-${Date.now()}.png`);
+      setError(
+        locale === 'es'
+          ? 'No se pudo conectar con el backend de generacion. Se muestra vista local.'
+          : 'Could not reach generation backend. Showing local preview.'
+      );
+    } finally {
+      setIsLoading(false);
     }
-
-    if (requestId !== requestIdRef.current) return;
-
-    setImageUrl(localUrl);
-    setPreviewStyle(normalizedStyle);
-    setDownloadName(`dragos-ai-${seed}.png`);
-    setProviderNotice(
-      locale === 'es'
-        ? 'Se ha activado una vista local porque los servicios externos no respondieron.'
-        : 'A local preview was activated because external services did not respond.'
-    );
-    setError('');
-    setIsLoading(false);
   }
 
   function handleClear() {
-    requestIdRef.current += 1;
     setPrompt('');
     setError('');
-    setProviderNotice('');
     setIsLoading(false);
     setImageUrl('');
-    setPreviewStyle(normalizeStyleValue(style));
-  }
-
-  function handlePreviewLoad() {
-    setIsLoading(false);
-
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('Image ready', {
-        body: locale === 'es' ? 'Tu imagen esta lista para descargar.' : 'Your image is ready to download.',
-      });
-    }
-  }
-
-  function handlePreviewError() {
-    const localUrl = buildInlineSvgFallback(prompt.trim() || 'image generation', style);
-    setImageUrl(localUrl);
-    setPreviewStyle(normalizeStyleValue(style));
-    setProviderNotice(
-      locale === 'es'
-        ? 'La vista previa fallo en este navegador. Se ha cargado la version local.'
-        : 'Preview failed in this browser. Local version has been loaded.'
-    );
-    setError('');
-    setIsLoading(false);
   }
 
   return (
@@ -572,20 +131,15 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
           <textarea
             id="prompt"
             value={prompt}
-            onChange={(event) => setPrompt(event.target.value)}
+            onChange={(e) => setPrompt(e.target.value)}
             className="generator-input mt-2 min-h-28"
             placeholder={t(imageLab.promptPlaceholder, locale)}
           />
 
           <div className="mt-3 flex flex-wrap gap-2">
-            {quickPrompts.map((quickPrompt) => (
-              <button
-                key={quickPrompt}
-                type="button"
-                className="chip text-left"
-                onClick={() => setPrompt(quickPrompt)}
-              >
-                {quickPrompt}
+            {quickPrompts.map((qp) => (
+              <button key={qp} type="button" className="chip text-left" onClick={() => setPrompt(qp)}>
+                {qp}
               </button>
             ))}
           </div>
@@ -593,7 +147,7 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
           <label htmlFor="style" className="generator-label mt-5">
             {t(imageLab.styleLabel, locale)}
           </label>
-          <select id="style" value={style} onChange={(event) => setStyle(event.target.value)} className="generator-input mt-2">
+          <select id="style" value={style} onChange={(e) => setStyle(e.target.value)} className="generator-input mt-2">
             {imageLab.styleOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {t(option.label, locale)}
@@ -610,37 +164,23 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
             </button>
           </div>
 
-          {isLoading ? <div className="generator-progress mt-3" aria-hidden="true" /> : null}
-
-          {error ? (
-            <p role="alert" className="mt-3 rounded-xl border border-rose-400/45 bg-rose-300/10 p-3 text-sm text-rose-300">
-              {error}
-            </p>
-          ) : null}
-
-          {providerNotice ? (
-            <p className="mt-3 rounded-xl border border-[var(--line)] bg-[var(--bg-soft)]/65 p-3 text-sm text-[var(--muted)]">
-              {providerNotice}
-            </p>
-          ) : null}
-
+          {error ? <p className="mt-3 text-sm text-rose-400">{error}</p> : null}
           <p className="generator-hint mt-3">{t(imageLab.note, locale)}</p>
         </article>
 
         <article className="glass-panel p-5 sm:p-6">
-          <p className="generator-label">{t(imageLab.previewTitle, locale)}</p>
-          <div className="preview-area mt-3">
+          <div className="preview-area mt-3 relative">
+            {isLoading ? (
+              <p className="absolute inset-0 flex items-center justify-center text-lg font-semibold text-[var(--muted)]">
+                {t(imageLab.generatingLabel, locale)}...
+              </p>
+            ) : null}
+
             {imageUrl ? (
-              <img
-                src={imageUrl}
-                alt="Generated image preview"
-                className={`h-full w-full object-contain preview-style-${previewStyle}`}
-                onLoad={handlePreviewLoad}
-                onError={handlePreviewError}
-              />
-            ) : (
-              <p className="px-4 text-center text-sm text-[var(--muted)]">{t(imageLab.emptyPreviewText, locale)}</p>
-            )}
+              <img src={imageUrl} alt="Generated image preview" className="h-full w-full object-contain" />
+            ) : !isLoading ? (
+              <p className="text-sm text-[var(--muted)]">{t(imageLab.emptyPreviewText, locale)}</p>
+            ) : null}
           </div>
 
           {imageUrl ? (
