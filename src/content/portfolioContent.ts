@@ -443,8 +443,8 @@ export const portfolioContent: PortfolioContent = {
         label: { es: 'Realista', en: 'Realistic' },
       },
       {
-        value: 'illustration',
-        label: { es: 'Ilustracion', en: 'Illustration' },
+        value: 'comic',
+        label: { es: 'Comic / Dibujo', en: 'Comic / Drawing' },
       },
       {
         value: 'cinematic',

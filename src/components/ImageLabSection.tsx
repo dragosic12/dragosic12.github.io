@@ -4,7 +4,6 @@ import { t } from '../content/i18n';
 import { SectionWrapper } from './SectionWrapper';
 
 const POLLINATIONS_API = 'https://image.pollinations.ai/prompt';
-const WIKIMEDIA_COMMONS_API = 'https://commons.wikimedia.org/w/api.php';
 const OPENVERSE_API = 'https://api.openverse.org/v1/images/';
 const SEEDED_FALLBACK_API = 'https://picsum.photos';
 const PRIMARY_TIMEOUT_MS = 5000;
@@ -14,6 +13,7 @@ const SEARCH_LOOKUP_TIMEOUT_MS = 5000;
 const POLLINATIONS_FAILURE_THRESHOLD = 1;
 const POLLINATIONS_COOLDOWN_MS = 5 * 60 * 1000;
 const MAX_SEARCH_TERMS = 8;
+const MIN_OPENVERSE_SCORE = 2;
 
 interface ImageLabSectionProps {
   locale: Locale;
@@ -21,7 +21,7 @@ interface ImageLabSectionProps {
 }
 
 interface ProviderCandidate {
-  id: 'pollinations-default' | 'openverse' | 'wikimedia-commons' | 'seeded-fallback';
+  id: 'pollinations-default' | 'openverse' | 'seeded-fallback';
   url?: string;
   resolveUrl?: () => Promise<string>;
   timeoutMs: number;
@@ -30,21 +30,6 @@ interface ProviderCandidate {
 interface PollinationsHealth {
   consecutiveFailures: number;
   cooldownUntil: number;
-}
-
-interface WikimediaPageInfo {
-  index?: number;
-  title?: string;
-  imageinfo?: Array<{
-    url?: string;
-    mime?: string;
-  }>;
-}
-
-interface WikimediaResponse {
-  query?: {
-    pages?: Record<string, WikimediaPageInfo>;
-  };
 }
 
 interface OpenverseTag {
@@ -61,7 +46,7 @@ interface OpenverseResponse {
   results?: OpenverseImageResult[];
 }
 
-type StyleVariant = 'realistic' | 'illustration' | 'cinematic' | 'minimal';
+type StyleVariant = 'realistic' | 'illustration' | 'comic' | 'cinematic' | 'minimal';
 
 function preloadImage(url: string, timeoutMs: number) {
   return new Promise<void>((resolve, reject) => {
@@ -115,7 +100,7 @@ function buildInlineSvgFallback(rawPrompt: string, styleName: string) {
 }
 
 function normalizeStyleValue(styleValue: string): StyleVariant {
-  if (styleValue === 'illustration' || styleValue === 'cinematic' || styleValue === 'minimal') {
+  if (styleValue === 'illustration' || styleValue === 'comic' || styleValue === 'cinematic' || styleValue === 'minimal') {
     return styleValue;
   }
 
@@ -123,19 +108,23 @@ function normalizeStyleValue(styleValue: string): StyleVariant {
 }
 
 function getStyleKeywords(styleValue: StyleVariant) {
+  if (styleValue === 'comic') {
+    return ['comic', 'cartoon', 'inked'];
+  }
+
   if (styleValue === 'illustration') {
-    return ['illustration', 'drawing', 'artwork', 'digital art', 'vector'];
+    return ['illustration', 'drawing', 'artwork'];
   }
 
   if (styleValue === 'cinematic') {
-    return ['cinematic', 'film', 'movie still', 'dramatic lighting', 'wide shot'];
+    return ['cinematic', 'film', 'movie still'];
   }
 
   if (styleValue === 'minimal') {
-    return ['minimal', 'minimalist', 'simple composition', 'clean design'];
+    return ['minimal', 'minimalist', 'simple'];
   }
 
-  return ['photo', 'realistic', 'photography'];
+  return ['photo', 'realistic'];
 }
 
 function hashText(value: string) {
@@ -152,16 +141,33 @@ function hashText(value: string) {
 const SPANISH_TO_ENGLISH: Record<string, string> = {
   perro: 'dog',
   perros: 'dogs',
+  golden: 'golden',
+  retriever: 'retriever',
   gato: 'cat',
   gatos: 'cats',
   coche: 'car',
   coches: 'cars',
+  auto: 'car',
+  automovil: 'car',
   clasico: 'classic',
   clasica: 'classic',
   azul: 'blue',
+  rojo: 'red',
+  roja: 'red',
+  verde: 'green',
+  amarillo: 'yellow',
+  amarilla: 'yellow',
+  negro: 'black',
+  negra: 'black',
+  blanco: 'white',
+  blanca: 'white',
+  naranja: 'orange',
   ciudad: 'city',
   nocturna: 'night',
   noche: 'night',
+  parque: 'park',
+  soleado: 'sunny',
+  manta: 'blanket',
   comida: 'food',
   moto: 'motorcycle',
   motos: 'motorcycles',
@@ -171,6 +177,36 @@ const SPANISH_TO_ENGLISH: Record<string, string> = {
   animales: 'animals',
   sabana: 'savannah',
 };
+
+const SUBJECT_TOKENS = new Set([
+  'dog',
+  'dogs',
+  'retriever',
+  'cat',
+  'cats',
+  'car',
+  'cars',
+  'motorcycle',
+  'motorcycles',
+  'animals',
+  'animal',
+  'wildlife',
+]);
+
+const COLOR_TOKENS = new Set(['blue', 'red', 'green', 'yellow', 'black', 'white', 'orange']);
+
+const CONTEXT_TOKENS = new Set([
+  'city',
+  'night',
+  'mountain',
+  'road',
+  'park',
+  'sunny',
+  'blanket',
+  'savannah',
+  'forest',
+  'beach',
+]);
 
 const TOKEN_STOP_WORDS = new Set([
   'con',
@@ -194,11 +230,12 @@ const TOKEN_STOP_WORDS = new Set([
   'quality',
   'realistic',
   'illustration',
+  'comic',
   'cinematic',
   'minimal',
 ]);
 
-function buildSearchQuery(rawPrompt: string, styleValue: StyleVariant) {
+function buildSearchProfile(rawPrompt: string) {
   const normalizedTokens = rawPrompt
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
@@ -209,7 +246,7 @@ function buildSearchQuery(rawPrompt: string, styleValue: StyleVariant) {
     .slice(0, MAX_SEARCH_TERMS);
 
   if (!normalizedTokens.length) {
-    return `nature ${getStyleKeywords(styleValue)[0]}`.trim();
+    return { query: 'nature', requiredTokens: [] };
   }
 
   const translatedTokens = normalizedTokens.map((word) => SPANISH_TO_ENGLISH[word] ?? word);
@@ -222,21 +259,50 @@ function buildSearchQuery(rawPrompt: string, styleValue: StyleVariant) {
   const hasWildAnimals = filteredTokens.includes('wild') || filteredTokens.includes('animals') || filteredTokens.includes('wildlife');
   const hasSavannah = filteredTokens.includes('savannah');
 
-  const styleKeywords = getStyleKeywords(styleValue);
-  const styleSuffix = styleKeywords.slice(0, 2).join(' ');
+  const prioritizedTerms: string[] = [];
+  const requiredTokens = filteredTokens.filter((token) => SUBJECT_TOKENS.has(token));
 
-  const domainHint = [
-    hasGoldenRetriever || hasDog ? 'golden retriever dog' : '',
-    hasCat ? 'orange cat' : '',
-    hasCar ? 'classic blue car city night' : '',
-    hasMotorcycle ? 'sport motorcycle mountain road' : '',
-    hasWildAnimals && hasSavannah ? 'wildlife animals savannah' : '',
-  ]
-    .filter(Boolean)
-    .join(' ');
+  if (hasGoldenRetriever) {
+    prioritizedTerms.push('golden retriever');
+  } else if (hasDog) {
+    prioritizedTerms.push('dog');
+  }
 
-  const baseQuery = filteredTokens.join(' ') || translatedTokens.join(' ') || normalizedTokens.join(' ');
-  return `${baseQuery} ${domainHint} ${styleSuffix}`.trim();
+  if (hasCat) {
+    prioritizedTerms.push('cat');
+  }
+
+  if (hasCar) {
+    prioritizedTerms.push('car');
+  }
+
+  if (hasMotorcycle) {
+    prioritizedTerms.push('motorcycle');
+  }
+
+  if (hasWildAnimals || hasSavannah) {
+    prioritizedTerms.push('wildlife');
+  }
+
+  const colorToken = filteredTokens.find((token) => COLOR_TOKENS.has(token));
+  if (colorToken) {
+    prioritizedTerms.push(colorToken);
+  }
+
+  const contextToken = filteredTokens.find((token) => CONTEXT_TOKENS.has(token));
+  if (contextToken) {
+    prioritizedTerms.push(contextToken);
+  }
+
+  if (!prioritizedTerms.length) {
+    prioritizedTerms.push(...filteredTokens.slice(0, 4));
+  }
+
+  const query = [...new Set(prioritizedTerms.join(' ').split(/\s+/).filter(Boolean))].slice(0, 5).join(' ');
+  return {
+    query: query || 'nature',
+    requiredTokens: [...new Set(requiredTokens)],
+  };
 }
 
 function scoreSemanticMatch(sourceText: string, queryTokens: string[]) {
@@ -272,8 +338,17 @@ function scoreStyleMatch(sourceText: string, styleValue: StyleVariant) {
   return score;
 }
 
+function hasRequiredTokenMatch(sourceText: string, requiredTokens: string[]) {
+  if (!requiredTokens.length) return true;
+
+  const loweredText = sourceText.toLowerCase();
+  return requiredTokens.some((token) => loweredText.includes(token));
+}
+
 async function searchOpenverseImage(rawPrompt: string, styleValue: StyleVariant, timeoutMs: number) {
-  const searchQuery = buildSearchQuery(rawPrompt, styleValue);
+  const profile = buildSearchProfile(rawPrompt);
+  const styleKeyword = getStyleKeywords(styleValue)[0] ?? '';
+  const searchQuery = styleValue === 'comic' || styleValue === 'illustration' ? `${profile.query} ${styleKeyword}`.trim() : profile.query;
   const controller = new AbortController();
   const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
 
@@ -295,6 +370,10 @@ async function searchOpenverseImage(rawPrompt: string, styleValue: StyleVariant,
 
       const tagText = (result.tags ?? []).map((tag) => tag.name ?? '').join(' ');
       const semanticText = `${result.title ?? ''} ${tagText}`;
+      if (!hasRequiredTokenMatch(semanticText, profile.requiredTokens)) {
+        continue;
+      }
+
       const score = scoreSemanticMatch(semanticText, queryTokens) + scoreStyleMatch(semanticText, styleValue) * 2;
 
       if (score > bestScore) {
@@ -303,7 +382,7 @@ async function searchOpenverseImage(rawPrompt: string, styleValue: StyleVariant,
       }
     }
 
-    if (bestUrl) {
+    if (bestUrl && bestScore >= MIN_OPENVERSE_SCORE) {
       return bestUrl;
     }
   } finally {
@@ -311,60 +390,6 @@ async function searchOpenverseImage(rawPrompt: string, styleValue: StyleVariant,
   }
 
   throw new Error('openverse-no-results');
-}
-
-async function searchWikimediaImage(rawPrompt: string, styleValue: StyleVariant, timeoutMs: number) {
-  const searchQuery = buildSearchQuery(rawPrompt, styleValue);
-  const controller = new AbortController();
-  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
-
-  try {
-    const requestUrl =
-      `${WIKIMEDIA_COMMONS_API}?action=query&generator=search&gsrnamespace=6&gsrlimit=10` +
-      `&prop=imageinfo&iiprop=url|mime&format=json&origin=*&gsrsearch=${encodeURIComponent(searchQuery)}`;
-
-    const response = await fetch(requestUrl, { signal: controller.signal });
-    if (!response.ok) {
-      throw new Error('wikimedia-response-error');
-    }
-
-    const payload = (await response.json()) as WikimediaResponse;
-    const pages = Object.values(payload.query?.pages ?? {}).sort(
-      (left, right) => (left.index ?? Number.MAX_SAFE_INTEGER) - (right.index ?? Number.MAX_SAFE_INTEGER)
-    );
-
-    const queryTokens = searchQuery.split(/\s+/).filter(Boolean);
-    let bestScore = -1;
-    let bestUrl = '';
-
-    for (const page of pages) {
-      const imageInfo = page.imageinfo?.[0];
-      const imageUrl = imageInfo?.url;
-      const mime = imageInfo?.mime ?? '';
-      const title = page.title ?? '';
-      const looksLikeArchiveFile = /\bIA[_\s]/i.test(title);
-      const isRasterImage = /^image\/(jpeg|png|webp)$/i.test(mime);
-
-      if (!imageUrl || !isRasterImage || looksLikeArchiveFile) {
-        continue;
-      }
-
-      const score = scoreSemanticMatch(title, queryTokens) + scoreStyleMatch(title, styleValue) * 2;
-
-      if (score > bestScore) {
-        bestScore = score;
-        bestUrl = imageUrl;
-      }
-    }
-
-    if (bestUrl) {
-      return bestUrl;
-    }
-  } finally {
-    window.clearTimeout(timeoutId);
-  }
-
-  throw new Error('wikimedia-no-results');
 }
 
 export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
@@ -421,11 +446,6 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
       {
         id: 'openverse',
         resolveUrl: () => searchOpenverseImage(cleanPrompt, normalizedStyle, SEARCH_LOOKUP_TIMEOUT_MS),
-        timeoutMs: SECONDARY_TIMEOUT_MS,
-      },
-      {
-        id: 'wikimedia-commons',
-        resolveUrl: () => searchWikimediaImage(cleanPrompt, normalizedStyle, SEARCH_LOOKUP_TIMEOUT_MS),
         timeoutMs: SECONDARY_TIMEOUT_MS,
       },
       {
@@ -589,6 +609,8 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
               {t(imageLab.clearLabel, locale)}
             </button>
           </div>
+
+          {isLoading ? <div className="generator-progress mt-3" aria-hidden="true" /> : null}
 
           {error ? (
             <p role="alert" className="mt-3 rounded-xl border border-rose-400/45 bg-rose-300/10 p-3 text-sm text-rose-300">
