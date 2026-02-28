@@ -3,7 +3,10 @@ import type { ImageLabContent, Locale } from '../types/content';
 import { t } from '../content/i18n';
 import { SectionWrapper } from './SectionWrapper';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ?? (import.meta.env.DEV ? 'http://localhost:8787' : '');
+const FALLBACK_PROVIDER_URL = 'https://image.pollinations.ai/prompt';
+const FETCH_TIMEOUT_MS = 30000;
 
 interface ImageLabSectionProps {
   locale: Locale;
@@ -34,6 +37,31 @@ function buildInlineSvgFallback(rawPrompt: string, styleName: string) {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
+function buildGenerationPrompt(rawPrompt: string, styleName: string) {
+  const normalizedStyle = styleName.trim() ? `${styleName} style` : '';
+  return [rawPrompt.trim(), normalizedStyle, 'high quality'].filter(Boolean).join(', ');
+}
+
+async function blobToDataUrl(blob: Blob) {
+  return await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(new Error('Could not parse image blob.'));
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function fetchWithTimeout(resource: string, options?: RequestInit) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
+  try {
+    return await fetch(resource, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
   const [prompt, setPrompt] = useState('');
   const [style, setStyle] = useState(imageLab.styleOptions[0]?.value ?? 'realistic');
@@ -56,32 +84,63 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
     setImageUrl('');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/generate-image`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          prompt: cleanPrompt,
-          style,
-        }),
-      });
+      const errors: string[] = [];
+      let resolvedImageUrl = '';
 
-      const data = (await response.json()) as {
-        imageBase64?: string;
-        mimeType?: string;
-        error?: string;
-        details?: string;
-      };
+      if (API_BASE_URL) {
+        try {
+          const backendResponse = await fetchWithTimeout(`${API_BASE_URL}/api/generate-image`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              prompt: cleanPrompt,
+              style,
+            }),
+          });
 
-      if (!response.ok || !data.imageBase64) {
-        const details = data.details ? ` (${data.details})` : '';
-        throw new Error(`${data.error || 'Generation failed'}${details}`);
+          const backendData = (await backendResponse.json()) as {
+            imageBase64?: string;
+            mimeType?: string;
+            error?: string;
+            details?: string;
+          };
+
+          if (!backendResponse.ok || !backendData.imageBase64) {
+            const details = backendData.details ? ` (${backendData.details})` : '';
+            throw new Error(`${backendData.error || 'Generation failed'}${details}`);
+          }
+
+          const imageMime = backendData.mimeType || 'image/jpeg';
+          resolvedImageUrl = `data:${imageMime};base64,${backendData.imageBase64}`;
+        } catch (backendError) {
+          const message = backendError instanceof Error ? backendError.message : 'Unknown backend error';
+          errors.push(`backend: ${message}`);
+        }
       }
 
-      const imageMime = data.mimeType || 'image/jpeg';
-      const url = `data:${imageMime};base64,${data.imageBase64}`;
-      setImageUrl(url);
+      if (!resolvedImageUrl) {
+        const promptForProvider = buildGenerationPrompt(cleanPrompt, style);
+        const providerUrl =
+          `${FALLBACK_PROVIDER_URL}/${encodeURIComponent(promptForProvider)}` +
+          `?model=flux&width=1024&height=1024&nologo=true&seed=${Date.now()}`;
+        const providerResponse = await fetchWithTimeout(providerUrl);
+
+        if (!providerResponse.ok) {
+          throw new Error(`fallback provider failed (${providerResponse.status})`);
+        }
+
+        const contentType = providerResponse.headers.get('content-type') || '';
+        if (!contentType.startsWith('image/')) {
+          throw new Error('fallback provider did not return an image');
+        }
+
+        const imageBlob = await providerResponse.blob();
+        resolvedImageUrl = await blobToDataUrl(imageBlob);
+      }
+
+      setImageUrl(resolvedImageUrl);
       setDownloadName(`dragos-ai-${Date.now()}.png`);
     } catch (generationError) {
       const message = generationError instanceof Error ? generationError.message : 'Unknown error';
@@ -92,8 +151,8 @@ export function ImageLabSection({ locale, imageLab }: ImageLabSectionProps) {
       setDownloadName(`dragos-ai-local-${Date.now()}.png`);
       setError(
         locale === 'es'
-          ? 'No se pudo conectar con el backend de generacion. Se muestra vista local.'
-          : 'Could not reach generation backend. Showing local preview.'
+          ? 'No se pudo generar la imagen con los proveedores disponibles. Se muestra vista local.'
+          : 'Could not generate the image with available providers. Showing local preview.'
       );
     } finally {
       setIsLoading(false);
