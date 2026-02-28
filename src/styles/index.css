@@ -288,6 +288,26 @@ body {
   cursor: not-allowed;
 }
 
+.generator-progress {
+  position: relative;
+  height: 6px;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-soft) 78%, transparent);
+  border: 1px solid var(--line);
+}
+
+.generator-progress::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #b86e5e, #d48b6e, #bf7967);
+  animation: progress-slide 1.2s ease-in-out infinite;
+}
+
 .preview-area {
   display: flex;
   min-height: 270px;
@@ -309,6 +329,10 @@ body {
 
 .preview-style-illustration {
   filter: saturate(1.32) contrast(1.18) brightness(1.05);
+}
+
+.preview-style-comic {
+  filter: contrast(1.55) saturate(1.75) brightness(1.02) hue-rotate(-8deg);
 }
 
 .preview-style-cinematic {
@@ -355,6 +379,18 @@ body {
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+@keyframes progress-slide {
+  0% {
+    transform: translateX(-120%);
+  }
+  50% {
+    transform: translateX(70%);
+  }
+  100% {
+    transform: translateX(260%);
   }
 }
 
