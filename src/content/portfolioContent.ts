@@ -186,38 +186,6 @@ export const portfolioContent: PortfolioContent = {
         },
       },
       {
-        id: 'bot-infojobs',
-        title: {
-          es: 'Bot de Ofertas de Empleo',
-          en: 'Job Offers Bot',
-        },
-        summary: {
-          es: 'Bot en Python para monitorizar ofertas y enviar alertas automaticas en Telegram.',
-          en: 'Python bot to monitor offers and send automated Telegram alerts.',
-        },
-        context: {
-          es: 'Proyecto de automatizacion para productividad personal. Actualmente no esta desplegado en produccion.',
-          en: 'Automation project for personal productivity. It is currently not deployed in production.',
-        },
-        stack: ['Python', 'asyncio', 'requests', 'BeautifulSoup', 'Telegram Bot API'],
-        highlights: [
-          {
-            es: 'Extraccion periodica con control de duplicados.',
-            en: 'Periodic extraction with duplicate control.',
-          },
-          {
-            es: 'Base para evolucion cloud con scheduler.',
-            en: 'Foundation for a future cloud scheduler version.',
-          },
-          {
-            es: 'Arquitectura simple y mantenible.',
-            en: 'Simple and maintainable architecture.',
-          },
-        ],
-        images: ['/assets/projects/bot-toy.svg'],
-        links: {},
-      },
-      {
         id: 'tfg-aps-fullstack',
         title: {
           es: 'TFG - Aplicacion Web de Soporte (UCM)',

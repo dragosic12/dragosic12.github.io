@@ -37,6 +37,10 @@ Incluye una sección integrada `Generador de imágenes` dentro del propio portfo
 - `public/assets`: CV, foto y assets visuales
 - `.github/workflows`: CI/CD y seguridad
 
+## Documentacion de cambios
+
+- Guia detallada: `docs/GUIA_MANTENIMIENTO.md`
+
 ## Despliegue
 
 El deploy está automatizado a GitHub Pages en cada push a `main` mediante `.github/workflows/deploy.yml`.
