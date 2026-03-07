@@ -47,10 +47,9 @@ El deploy está automatizado a GitHub Pages en cada push a `main` mediante `.git
 
 ## Generador IA
 
-- Modo recomendado por defecto: usa proveedor remoto compatible con CORS y no requiere backend local.
-- Modo opcional avanzado: puedes usar backend propio vía `POST /api/generate-image` en `server/index.js`.
-- Si usas backend propio, el token se guarda en backend (`HF_API_KEY`) y nunca se expone en cliente.
-- En GitHub Pages, si los proveedores públicos fallan, puedes guardar un token de Hugging Face en la UI del generador (se guarda solo en `localStorage` de tu navegador).
+- Modo recomendado: usar backend propio vía `POST /api/generate-image` en `server/index.js`.
+- El token se guarda en backend (`HF_API_KEY`) y nunca se expone en cliente.
+- Hay fallback visual para mantener la UX si el proveedor falla.
 
 ### Puesta en marcha local (paso a paso)
 
@@ -65,6 +64,14 @@ El deploy está automatizado a GitHub Pages en cada push a `main` mediante `.git
    - Solo backend: `npm run dev:api`
 
 Si algún proveedor falla, la UI usa fallback para no romper la experiencia.
+
+### Produccion (GitHub Pages + API en servidor propio)
+
+1. Despliega el backend `server/index.js` en tu servidor.
+2. Guarda `HF_API_KEY` como variable del sistema en el servidor, no en el frontend.
+3. En GitHub, define `Settings > Secrets and variables > Actions > Variables`:
+   - `VITE_API_BASE_URL=https://TU_DOMINIO_O_IP_API`
+4. Haz push a `main`; el workflow inyecta esa URL al build estático.
 
 ## Seguridad
 

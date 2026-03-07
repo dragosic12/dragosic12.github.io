@@ -100,11 +100,6 @@ export interface ImageStyleOption {
 export interface ImageLabContent {
   title: LocalizedText;
   intro: LocalizedText;
-  tokenLabel: LocalizedText;
-  tokenHint: LocalizedText;
-  rememberTokenLabel: LocalizedText;
-  showTokenLabel: LocalizedText;
-  hideTokenLabel: LocalizedText;
   promptLabel: LocalizedText;
   promptPlaceholder: LocalizedText;
   styleLabel: LocalizedText;
@@ -115,7 +110,6 @@ export interface ImageLabContent {
   note: LocalizedText;
   previewTitle: LocalizedText;
   emptyPreviewText: LocalizedText;
-  missingTokenError: LocalizedText;
   missingPromptError: LocalizedText;
   apiErrorPrefix: LocalizedText;
   styleOptions: ImageStyleOption[];

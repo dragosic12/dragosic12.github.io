@@ -75,8 +75,7 @@ Componente:
 - `src/components/ImageLabSection.tsx`
 
 Rutas/proveedores que usa:
-- Backend local opcional: `VITE_API_BASE_URL` (si existe)
-- Hugging Face Router con token guardado en navegador
+- Backend proxy propio: `VITE_API_BASE_URL` -> `POST /api/generate-image`
 - Fallback de vista local si todo falla
 
 Si quieres cambiar tiempos o estrategia:
@@ -91,8 +90,15 @@ Local real (no subir):
 - `.env`
 
 Variables utiles:
-- `HF_API_KEY` para backend local (`npm run dev:api`)
-- `VITE_API_BASE_URL` solo si quieres forzar backend propio desde frontend
+- `HF_API_KEY` para backend (`npm run dev:api` o servidor)
+- `HF_MODEL` para cambiar modelo de inferencia
+- `API_PORT` para puerto API
+- `CORS_ORIGINS` para permitir dominios concretos
+- `VITE_API_BASE_URL` para que frontend apunte a tu API publica en produccion
+
+Nota de seguridad:
+- `HF_API_KEY` nunca debe ir en `VITE_*` ni en codigo cliente.
+- En servidor, guardalo en un fichero de entorno del servicio (`EnvironmentFile`) o variable del sistema.
 
 ## 7) Comandos de desarrollo
 
@@ -112,6 +118,10 @@ Workflow:
 - `.github/workflows/deploy.yml`
 
 Cada push a `main` dispara deploy a GitHub Pages.
+El build toma `VITE_API_BASE_URL` desde `GitHub Actions Variables`.
+Para la API en servidor:
+- `docs/API_GENERADOR_SERVIDOR.md`
+- `server/scripts/install-api-service.sh`
 
 ## 9) Checklist rapido antes de publicar cambios
 

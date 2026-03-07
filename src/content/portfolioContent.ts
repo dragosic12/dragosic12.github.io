@@ -333,26 +333,6 @@ export const portfolioContent: PortfolioContent = {
       es: 'Genera imagen a partir de texto con fallback automatico para que siempre tengas resultado visible.',
       en: 'Generate images from text with automatic fallback so you always get a visible result.',
     },
-    tokenLabel: {
-      es: 'Token interno',
-      en: 'Internal token',
-    },
-    tokenHint: {
-      es: 'No necesitas introducir token para usar este modulo.',
-      en: 'No token input is needed for this module.',
-    },
-    rememberTokenLabel: {
-      es: 'Recordar token',
-      en: 'Remember token',
-    },
-    showTokenLabel: {
-      es: 'Mostrar',
-      en: 'Show',
-    },
-    hideTokenLabel: {
-      es: 'Ocultar',
-      en: 'Hide',
-    },
     promptLabel: {
       es: 'Prompt',
       en: 'Prompt',
@@ -392,10 +372,6 @@ export const portfolioContent: PortfolioContent = {
     emptyPreviewText: {
       es: 'Aqui aparecera la imagen generada.',
       en: 'Your generated image will appear here.',
-    },
-    missingTokenError: {
-      es: 'Servicio temporalmente no disponible.',
-      en: 'Service temporarily unavailable.',
     },
     missingPromptError: {
       es: 'Escribe un prompt antes de generar.',
