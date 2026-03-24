@@ -36,20 +36,20 @@ export const portfolioContent: PortfolioContent = {
     photo: '/assets/profile/Imagen-CV.png',
     insightLines: [
       {
-        es: 'Trabajo actual en Icaria Technology dentro del area de implantacion software.',
-        en: 'Current role at Icaria Technology in software implementation.',
+        es: 'Perfil mixto: implantacion en cliente, desarrollo y validacion funcional.',
+        en: 'Mixed profile: client implementation, development, and functional validation.',
       },
       {
-        es: 'Herramientas principales: Icaria TDM, GDPR, Java, Docker y YouTrack.',
-        en: 'Main tooling: Icaria TDM, GDPR, Java, Docker, and YouTrack.',
+        es: 'Testing con Vitest y Playwright: cobertura unitaria y e2e en proyectos propios.',
+        en: 'Testing with Vitest and Playwright: unit and e2e coverage in personal projects.',
       },
       {
-        es: 'Perfil mixto: desarrollo, validacion funcional y resolucion de incidencias.',
-        en: 'Mixed profile: development, functional validation, and incident resolution.',
+        es: 'Frontend con React, TypeScript y Vite; base en Node.js, MySQL y Docker.',
+        en: 'Frontend with React, TypeScript, and Vite; Node.js, MySQL, and Docker foundations.',
       },
       {
-        es: 'Base solida en TypeScript y JavaScript para frontend moderno.',
-        en: 'Strong TypeScript and JavaScript foundation for modern frontend work.',
+        es: 'Formacion en algoritmia (C++) y TFG full-stack con Nuxt, Vue y testing.',
+        en: 'Algorithm foundations in C++ and full-stack thesis with Nuxt, Vue, and testing.',
       },
     ],
   },
@@ -64,8 +64,8 @@ export const portfolioContent: PortfolioContent = {
         en: 'My goal is to build software that is useful for business, with strong technical foundations and real client-oriented execution.',
       },
       {
-        es: 'Estoy enfocado en seguir creciendo en Icaria Technology y escalar hacia responsabilidades de producto e integracion cada vez mas completas.',
-        en: 'I am focused on growing at Icaria Technology and moving toward broader product and integration responsibilities.',
+        es: 'Mi perfil combina desarrollo frontend, modelado de datos y testing automatizado, con exposicion real a implantacion empresarial orientada a cliente.',
+        en: 'My profile combines frontend development, data modeling, and automated testing, with real exposure to enterprise-level client-facing implementation.',
       },
     ],
   },
@@ -479,8 +479,8 @@ export const portfolioContent: PortfolioContent = {
     },
     paragraphs: [
       {
-        es: 'Mi foco principal es consolidar mi etapa en Icaria Technology dentro del area de implantacion software, creciendo en integracion, automatizacion, calidad tecnica y evolucion hacia desarrollo de producto con impacto real.',
-        en: 'My main focus is to consolidate my current stage at Icaria Technology in software implementation, growing in integration, automation, technical quality, and product development with real impact.',
+        es: 'Quiero crecer hacia integracion, automatizacion y desarrollo de producto con impacto real. Mi objetivo es combinar la base tecnica adquirida en implantacion con pensamiento de producto y capacidad de arquitectura.',
+        en: 'I want to grow into integration, automation, and product development with real impact. My goal is to combine the technical depth from software implementation with product thinking and architectural skills.',
       },
     ],
   },
