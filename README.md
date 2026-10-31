@@ -6,6 +6,8 @@ Escaparate público en **https://dragosic12.github.io/**: un menú (estilo TPV, 
 - `/reels-la-gatta/`: galería de reels de La Gatta.
 - `/swapcar/`: vídeos de SwapCar y las animaciones de match (`/swapcar/match/`). La tarjeta "SwapCar" del menú lleva a la app en producción (swapcar.app).
 
+La portada lleva un bloque "Sobre mí" (en `index.html`) con los CV de `assets/cv/`: se generan con el generador de CV del servidor pero SIN teléfono ni DNI (no publicar nunca los PDF normales). Las capturas de las webs de terceros están en `assets/capturas/`.
+
 Todo es estático (HTML, CSS, JS, imágenes y vídeos): GitHub Pages no ejecuta servidores ni bases de datos. Solo datos de ejemplo, nada real de nadie.
 
 El portfolio anterior (React) está guardado en la rama `portfolio-antiguo`.
@@ -29,7 +31,7 @@ El portfolio anterior (React) está guardado en la rama `portfolio-antiguo`.
    }
    ```
    - `icono`: nombre de [Material Symbols](https://fonts.google.com/icons).
-   - `categoria`: `proyectos`, `videos` o `juegos` (se pueden añadir más en `categorias`).
+   - `categoria`: `proyectos`, `webs`, `videos` o `juegos` (se pueden añadir más en `categorias`).
    - `estado`: `live` (en producción), `demo` (se puede probar), `web`, `videos` o `pronto` (sin `url`).
    - `url` puede ser externa (`https://...`): se abre en otra pestaña con el botón "Visitar".
    - La lista se ordena por `fecha`, lo más nuevo primero.

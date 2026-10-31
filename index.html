@@ -4,7 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Dragos · Proyectos</title>
-<meta name="description" content="Lo que voy haciendo: apps, webs, vídeos y algún juego.">
+<meta name="description" content="Dragos Camarasan, ingeniero informático y desarrollador full-stack: proyectos, webs, vídeos y CV.">
+<meta property="og:title" content="Dragos Camarasan · Proyectos">
+<meta property="og:description" content="Apps en producción, webs, vídeos y demos. Desarrollador full-stack: TypeScript, React, Node.js y Python.">
+<meta property="og:image" content="https://dragosic12.github.io/swapcar/videos/swapcar-promo-horizontal.jpg">
+<meta property="og:url" content="https://dragosic12.github.io/">
 <meta name="theme-color" content="#f9f9f9">
 <link rel="icon" href="assets/icono.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,9 +43,32 @@
   </header>
 
   <main class="main">
-    <section class="hero">
-      <h1>Lo que voy haciendo</h1>
-      <p>Apps, webs, vídeos y algún juego. Todo lo que sale aquí usa datos de ejemplo; entra en cualquiera para verlo o probarlo.</p>
+    <section class="about" id="sobre-mi" aria-label="Sobre mí">
+      <div class="about-main">
+        <div class="about-head">
+          <div class="avatar avatar-lg">DC</div>
+          <div>
+            <h1>Dragos Camarasan</h1>
+            <p class="role">Ingeniero informático · Desarrollador full-stack</p>
+          </div>
+        </div>
+        <p class="bio">Construyo aplicaciones de principio a fin y las llevo a producción: el TPV y la web de un restaurante, SwapCar, una app para intercambiar coches, y bastantes herramientas propias en un servidor que monto y mantengo yo. Trabajo con TypeScript, React, Node.js y Python, y ahora desarrollo en Java en Icaria. Aquí enseño lo que voy haciendo; todo usa datos de ejemplo.</p>
+        <div class="chips">
+          <span class="chip">TypeScript</span><span class="chip">React</span><span class="chip">Node.js</span><span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">Java</span><span class="chip">Docker</span><span class="chip">Linux</span><span class="chip">LLMs</span>
+        </div>
+        <div class="about-actions">
+          <a class="btn btn-primary" href="assets/cv/CV_Dragos_Camarasan.pdf" target="_blank" rel="noopener"><span class="ms" style="font-size:18px">description</span>Ver CV</a>
+          <a class="btn btn-second" href="assets/cv/CV_Dragos_Camarasan_EN.pdf" target="_blank" rel="noopener" lang="en">CV in English</a>
+          <a class="btn btn-second" href="mailto:dragosic12@gmail.com"><span class="ms" style="font-size:18px">mail</span>dragosic12@gmail.com</a>
+          <a class="btn btn-second" href="https://github.com/dragosic12" target="_blank" rel="noopener"><span class="ms" style="font-size:18px">code</span>GitHub</a>
+        </div>
+      </div>
+      <ol class="timeline" aria-label="Trayectoria">
+        <li><span class="when">2026 · ahora</span><b>Icaria</b><span>Implantación de software: Java, bases de datos de clientes y Docker</span></li>
+        <li><span class="when">2024 · 2025</span><b>Siemens</b><span>Prácticas en HMI y SCADA: software para entornos industriales</span></li>
+        <li><span class="when">2023 · 2024</span><b>Universidad Complutense</b><span>Soporte técnico en el laboratorio de informática</span></li>
+        <li><span class="when">2019 · 2026</span><b>Grado en Ingeniería Informática</b><span>Universidad Complutense de Madrid</span></li>
+      </ol>
     </section>
     <div class="section-head"><h2 id="title">Todo</h2><span class="muted" id="count"></span></div>
     <section class="grid" id="grid" aria-live="polite"></section>
@@ -103,6 +130,8 @@ function render() {
     .filter(p => cat === 'todo' || p.categoria === cat)
     .filter(p => !q || [p.nombre, p.desc, ...(p.etiquetas || [])].join(' ').toLowerCase().includes(q))
     .sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || '')))
+  // "Sobre mí" solo en la portada: al filtrar o buscar, primero los resultados.
+  $('#sobre-mi').hidden = cat !== 'todo' || !!q
   $('#title').textContent = items.find(c => c.id === cat).nombre
   $('#count').textContent = lista.length === 1 ? '1 proyecto' : `${lista.length} proyectos`
   $('#grid').innerHTML = lista.map(card).join('')

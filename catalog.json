@@ -1,6 +1,7 @@
 {
   "categorias": [
     { "id": "proyectos", "nombre": "Proyectos", "icono": "rocket_launch" },
+    { "id": "webs", "nombre": "Webs", "icono": "language" },
     { "id": "videos", "nombre": "Vídeos", "icono": "movie" },
     { "id": "juegos", "nombre": "Juegos", "icono": "sports_esports" }
   ],
@@ -40,6 +41,30 @@
       "estado": "web",
       "etiquetas": ["React", "Node", "Socket.IO"],
       "fecha": "2026-10-21"
+    },
+    {
+      "id": "lagatta-web",
+      "nombre": "La Gatta Trattoria",
+      "desc": "Web de un restaurante italiano en Foz (Galicia): historia, carta y ubicación, con modo claro y oscuro. En producción.",
+      "icono": "restaurant",
+      "categoria": "webs",
+      "url": "https://lagatta.es/",
+      "imagen": "assets/capturas/lagatta.jpg",
+      "estado": "live",
+      "etiquetas": ["React", "TypeScript", "Tailwind"],
+      "fecha": "2026-10-29"
+    },
+    {
+      "id": "golf",
+      "nombre": "XII Cup Golf Club",
+      "desc": "Web de un club de golf sin campo de Madrid: resultados, próximos eventos y el club. Rehecha en HTML y CSS a partir de su WordPress.",
+      "icono": "golf_course",
+      "categoria": "webs",
+      "url": "https://xiicupgolfclub.dragosic12.workers.dev/",
+      "imagen": "assets/capturas/golf.jpg",
+      "estado": "live",
+      "etiquetas": ["HTML", "CSS", "Cloudflare"],
+      "fecha": "2026-10-15"
     },
     {
       "id": "reels-la-gatta",
