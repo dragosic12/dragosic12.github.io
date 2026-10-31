@@ -1,0 +1,100 @@
+[
+  {
+    "id": "halloween-la-gatta",
+    "titulo": "Halloween en La Gatta",
+    "cuando": "Del 29 al 31 de octubre",
+    "cancion": "Graveyard Shift",
+    "mb": 12.8
+  },
+  {
+    "id": "navidad-la-gatta",
+    "titulo": "Navidad en La Gatta",
+    "cuando": "Desde principios de diciembre",
+    "cancion": "Jingle Bells",
+    "mb": 11.7
+  },
+  {
+    "id": "ano-nuevo-la-gatta",
+    "titulo": "Año Nuevo",
+    "cuando": "El 1 de enero",
+    "cancion": "Deuces",
+    "mb": 12.9
+  },
+  {
+    "id": "reyes-la-gatta",
+    "titulo": "Reyes",
+    "cuando": "Del 2 al 5 de enero",
+    "cancion": "Adeste Fideles Waltz",
+    "mb": 10.8
+  },
+  {
+    "id": "carnaval-la-gatta",
+    "titulo": "Carnaval (Entroido)",
+    "cuando": "Del 1 al 6 de febrero",
+    "cancion": "Electro Cabello",
+    "mb": 15.0
+  },
+  {
+    "id": "dia-pizza-la-gatta",
+    "titulo": "Día Mundial de la Pizza",
+    "cuando": "El 9 de febrero",
+    "cancion": "Meatball Parade",
+    "mb": 13.2
+  },
+  {
+    "id": "san-valentin-la-gatta",
+    "titulo": "San Valentín",
+    "cuando": "La semana antes del domingo 14 de febrero",
+    "cancion": "Night in Venice",
+    "mb": 11.5
+  },
+  {
+    "id": "dia-padre-la-gatta",
+    "titulo": "Día del Padre",
+    "cuando": "La semana antes del viernes 19 de marzo",
+    "cancion": "Hyperfun",
+    "mb": 13.7
+  },
+  {
+    "id": "dia-madre-la-gatta",
+    "titulo": "Día de la Madre",
+    "cuando": "La semana antes del domingo 2 de mayo",
+    "cancion": "Carefree",
+    "mb": 11.0
+  },
+  {
+    "id": "celebraciones-la-gatta",
+    "titulo": "Celebraciones",
+    "cuando": "Cuando queráis: cumpleaños, familia, amigos",
+    "cancion": "Fuzzball Parade",
+    "mb": 13.6
+  },
+  {
+    "id": "puentes-la-gatta",
+    "titulo": "Puentes y festivos",
+    "cuando": "Los días antes de un puente o festivo",
+    "cancion": "Surf Shimmy",
+    "mb": 15.6
+  },
+  {
+    "id": "san-xoan-la-gatta",
+    "titulo": "San Xoán",
+    "cuando": "Los días antes del miércoles 23 de junio",
+    "cancion": "Fiddles McGinty",
+    "mb": 12.4
+  },
+  {
+    "id": "verano-la-gatta",
+    "titulo": "Verano en Foz",
+    "cuando": "De junio a septiembre",
+    "cancion": "Paradise Found",
+    "mb": 12.7
+  },
+  {
+    "id": "esto-es-la-gatta-color",
+    "titulo": "Esto es La Gatta",
+    "cuando": "Cuando queráis: presenta el local y la carta",
+    "cancion": "Bushwick Tarantella",
+    "mb": 15.9
+  }
+]

@@ -1,38 +1,118 @@
-﻿<!doctype html>
-<html lang="es" data-theme="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dragos Camarasan | Portfolio Técnico</title>
-    <meta
-      name="description"
-      content="Portfolio técnico bilingüe de Dragos Camarasan. Proyectos de software, experiencia en Siemens HMI/SCADA y enfoque profesional en ingeniería de software."
-    />
-    <meta name="theme-color" content="#2b313b" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/avatar-favicon.png" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="canonical" href="https://dragosic12.github.io/" />
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dragos · Proyectos</title>
+<meta name="description" content="Lo que voy haciendo: apps, webs, vídeos y algún juego.">
+<meta name="theme-color" content="#f9f9f9">
+<link rel="icon" href="assets/icono.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block">
+<link rel="stylesheet" href="assets/estilo.css">
+<script src="assets/tema.js"></script>
+</head>
+<body>
 
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Dragos Camarasan | Portfolio Técnico" />
-    <meta
-      property="og:description"
-      content="Proyectos académicos y profesionales en desarrollo software, automatización industrial y sistemas."
-    />
-    <meta property="og:url" content="https://dragosic12.github.io/" />
-    <meta property="og:image" content="https://dragosic12.github.io/assets/profile/Imagen-CV.png" />
+<aside class="sidebar">
+  <div class="brand">
+    <div class="avatar">D</div>
+    <div><b>Dragos</b><small>Proyectos</small></div>
+  </div>
+  <nav class="nav" id="nav" aria-label="Categorías"></nav>
+  <div class="side-foot">
+    <a class="pill" href="https://github.com/dragosic12" target="_blank" rel="noopener"><span class="ms">code</span>GitHub</a>
+  </div>
+</aside>
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Dragos Camarasan | Portfolio Técnico" />
-    <meta
-      name="twitter:description"
-      content="Portfolio bilingüe con proyectos, skills y enfoque profesional en ingeniería de software."
-    />
-    <meta name="twitter:image" content="https://dragosic12.github.io/assets/profile/Imagen-CV.png" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<div class="shell">
+  <header class="topbar">
+    <div class="mobile-brand"><div class="avatar">D</div><b>Dragos</b></div>
+    <label class="search">
+      <span class="ms">search</span>
+      <input id="q" type="search" autocomplete="off" placeholder="Buscar proyectos..." aria-label="Buscar proyectos">
+    </label>
+    <div class="spacer"></div>
+    <button class="icon-btn" id="themeBtn" type="button" aria-label="Cambiar tema" title="Cambiar tema"><span class="ms" id="themeIcon">dark_mode</span></button>
+  </header>
+
+  <main class="main">
+    <section class="hero">
+      <h1>Lo que voy haciendo</h1>
+      <p>Apps, webs, vídeos y algún juego. Todo lo que sale aquí usa datos de ejemplo; entra en cualquiera para verlo o probarlo.</p>
+    </section>
+    <div class="section-head"><h2 id="title">Todo</h2><span class="muted" id="count"></span></div>
+    <section class="grid" id="grid" aria-live="polite"></section>
+    <div class="empty" id="empty" hidden><span class="ms">hourglass_empty</span><span id="emptyText">Pronto habrá algo aquí.</span></div>
+    <p class="page-foot">Hecho por Dragos Camarasan · <a href="https://github.com/dragosic12" target="_blank" rel="noopener">github.com/dragosic12</a></p>
+  </main>
+</div>
+
+<nav class="bottom-nav" id="bottomNav" aria-label="Categorías"></nav>
+
+<script>
+const ESTADOS = {
+  demo:   { txt: 'Pruébalo',     edge: 'rgb(var(--c-success))' },
+  web:    { txt: 'Web',          edge: 'rgb(var(--c-primary))' },
+  videos: { txt: 'Vídeos',       edge: 'rgb(var(--c-secondary))' },
+  pronto: { txt: 'Próximamente', edge: 'rgb(var(--c-outline))' },
+}
+const $ = s => document.querySelector(s)
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
+let data = { categorias: [], proyectos: [] }
+let cat = (location.hash.slice(1) || 'todo')
+
+function card(p) {
+  const st = ESTADOS[p.estado] || ESTADOS.web
+  const tag = p.url ? 'a' : 'article'
+  const href = p.url ? ` href="${esc(p.url)}"` : ''
+  return `<${tag} class="card"${href} style="--edge:${st.edge}">
+    ${p.imagen ? `<div class="thumb"><img src="${esc(p.imagen)}" alt="" loading="lazy"></div>` : ''}
+    <div class="body">
+      <div class="head">
+        <div class="ic"><span class="ms">${esc(p.icono || 'apps')}</span></div>
+        <div style="min-width:0"><h3>${esc(p.nombre)}</h3><span class="state">${st.txt}</span></div>
+      </div>
+      <p class="desc">${esc(p.desc)}</p>
+      <div class="foot">
+        <div class="chips">${(p.etiquetas || []).map(t => `<span class="chip">${esc(t)}</span>`).join('')}</div>
+        ${p.url ? '<span class="btn btn-primary">Abrir<span class="ms" style="font-size:18px">arrow_forward</span></span>' : ''}
+      </div>
+    </div>
+  </${tag}>`
+}
+
+function navItems() {
+  const todos = { id: 'todo', nombre: 'Todo', icono: 'apps' }
+  return [todos, ...data.categorias].map(c => ({ ...c, n: c.id === 'todo' ? data.proyectos.length : data.proyectos.filter(p => p.categoria === c.id).length }))
+}
+
+function render() {
+  const items = navItems()
+  if (!items.some(c => c.id === cat)) cat = 'todo'
+  $('#nav').innerHTML = items.map(c => `<button class="pill" data-cat="${c.id}" aria-current="${c.id === cat}"><span class="ms">${esc(c.icono)}</span>${esc(c.nombre)}<span class="count">${c.n}</span></button>`).join('')
+  $('#bottomNav').innerHTML = items.map(c => `<button data-cat="${c.id}" aria-current="${c.id === cat}"><span class="ms">${esc(c.icono)}</span>${esc(c.nombre)}</button>`).join('')
+  document.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { cat = b.dataset.cat; history.replaceState(null, '', cat === 'todo' ? location.pathname : '#' + cat); render(); scrollTo({ top: 0 }) })
+
+  const q = $('#q').value.trim().toLowerCase()
+  const lista = data.proyectos
+    .filter(p => cat === 'todo' || p.categoria === cat)
+    .filter(p => !q || [p.nombre, p.desc, ...(p.etiquetas || [])].join(' ').toLowerCase().includes(q))
+    .sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || '')))
+  $('#title').textContent = items.find(c => c.id === cat).nombre
+  $('#count').textContent = lista.length === 1 ? '1 proyecto' : `${lista.length} proyectos`
+  $('#grid').innerHTML = lista.map(card).join('')
+  $('#empty').hidden = lista.length > 0
+  $('#emptyText').textContent = q ? 'Nada coincide con la búsqueda.' : 'Pronto habrá algo aquí.'
+}
+
+$('#q').addEventListener('input', render)
+fetch('catalog.json', { cache: 'no-cache' })
+  .then(r => r.json())
+  .then(d => { data = d; render() })
+  .catch(() => { $('#empty').hidden = false; $('#emptyText').textContent = 'No se ha podido cargar la lista de proyectos.' })
+</script>
+</body>
 </html>
-

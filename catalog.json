@@ -1,0 +1,33 @@
+{
+  "categorias": [
+    { "id": "proyectos", "nombre": "Proyectos", "icono": "rocket_launch" },
+    { "id": "videos", "nombre": "Vídeos", "icono": "movie" },
+    { "id": "juegos", "nombre": "Juegos", "icono": "sports_esports" }
+  ],
+  "proyectos": [
+    {
+      "id": "tpv-global",
+      "nombre": "TPV Global",
+      "desc": "TPV para hostelería con 8 estilos: mesas, pedidos, cocina, cobro, reparto y fichaje. Web, capturas y vídeos.",
+      "icono": "point_of_sale",
+      "categoria": "proyectos",
+      "url": "tpv-global/",
+      "imagen": "tpv-global/img/tablet_clasico.webp",
+      "estado": "web",
+      "etiquetas": ["React", "Node", "Socket.IO"],
+      "fecha": "2026-10-21"
+    },
+    {
+      "id": "reels-la-gatta",
+      "nombre": "Reels de La Gatta",
+      "desc": "14 reels para el Instagram de una pizzería, hechos con HTML y renderizados fotograma a fotograma.",
+      "icono": "movie",
+      "categoria": "videos",
+      "url": "reels-la-gatta/",
+      "imagen": "reels-la-gatta/videos/esto-es-la-gatta-color.jpg",
+      "estado": "videos",
+      "etiquetas": ["HTML", "Chrome", "ffmpeg"],
+      "fecha": "2026-10-29"
+    }
+  ]
+}

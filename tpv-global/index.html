@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TPV Global</title>
+<meta name="description" content="El TPV para hostelería que se viste de tu negocio: 8 estilos, móvil, tablet y TPV de mostrador, cocina, cobro, reparto, fichaje e inventario.">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="stylesheet" href="fonts.css">
+<style>
+/* ---------- tokens (estilo TPV: marmol, tarjetas blancas, acento bronce) ---------- */
+:root {
+  color-scheme: light;
+  --bg: #f7f5f1; --bg-2: #efebe4; --card: #ffffff; --ink: #1a1c1c; --muted: #4d524d; --soft: #767b75;
+  --line: rgb(194 200 192 / .5); --shadow: 0 4px 20px rgb(26 28 28 / .06); --shadow-lg: 0 30px 80px rgb(60 45 30 / .16);
+  --acc: #8b6b4a; --on-acc: #ffffff; --acc-soft: #efe6dc; --terra: #944836;
+  --radius: 14px; --pad: clamp(16px, 4vw, 56px); --max: 1280px;
+  --serif: 'Playfair Display', Georgia, serif; --sans: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #161412; --bg-2: #1e1b18; --card: #1f1c19; --ink: #f3f0ed; --muted: #c9c1b8; --soft: #9d958c;
+    --line: rgb(90 82 74 / .55); --shadow: 0 4px 20px rgb(0 0 0 / .35); --shadow-lg: 0 30px 80px rgb(0 0 0 / .5);
+    --acc-soft: #2b241d; --terra: #ffb4a2;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #161412; --bg-2: #1e1b18; --card: #1f1c19; --ink: #f3f0ed; --muted: #c9c1b8; --soft: #9d958c;
+  --line: rgb(90 82 74 / .55); --shadow: 0 4px 20px rgb(0 0 0 / .35); --shadow-lg: 0 30px 80px rgb(0 0 0 / .5);
+  --acc-soft: #2b241d; --terra: #ffb4a2;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; transition: background-color .4s; }
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+.ms { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; font-size: 24px; line-height: 1; font-feature-settings: 'liga'; display: inline-block; }
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
+.it { font-family: var(--serif); font-style: italic; font-weight: 600; letter-spacing: -.01em; }
+.kicker { font-size: .78rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--acc); display: inline-flex; align-items: center; gap: 10px; }
+.kicker::before { content: ''; width: 28px; height: 2px; background: var(--acc); }
+h2.big { overflow-wrap: break-word; font-size: clamp(2.2rem, 6vw, 5.2rem); line-height: .98; letter-spacing: -.045em; font-weight: 800; margin: 18px 0 0; }
+.lead { font-size: clamp(1.05rem, 1.6vw, 1.3rem); line-height: 1.55; color: var(--muted); max-width: 640px; }
+.btn { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 26px; border-radius: 999px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-size: 1rem; transition: transform .2s, box-shadow .2s, background-color .4s; }
+.btn:active { transform: scale(.96); }
+.btn-p { background: var(--acc); color: var(--on-acc); box-shadow: 0 12px 30px color-mix(in srgb, var(--acc) 35%, transparent); }
+.btn-g { background: var(--card); color: var(--ink); border: 1px solid var(--line); }
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1); }
+.reveal.in { opacity: 1; transform: none; }
+
+/* ---------- barra superior ---------- */
+.bar { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 50; width: min(calc(100% - 24px), 1100px);
+  display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 16px; border-radius: 999px;
+  background: color-mix(in srgb, var(--card) 78%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--line); box-shadow: var(--shadow); }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: -.02em; text-decoration: none; margin-right: auto; white-space: nowrap; }
+.brand .lg { width: 34px; height: 34px; border-radius: 10px; background: var(--acc); color: var(--on-acc); display: flex; align-items: center; justify-content: center; transition: background-color .4s; }
+.brand .lg .ms { font-size: 20px; }
+.nav { display: flex; gap: 2px; }
+.nav a { text-decoration: none; padding: 10px 14px; border-radius: 999px; font-size: .9rem; font-weight: 600; color: var(--muted); }
+.nav a:hover { background: var(--bg-2); color: var(--ink); }
+.icon-btn { width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.bar .btn { min-height: 44px; padding: 0 18px; font-size: .9rem; }
+.progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--acc); z-index: 60; width: 0; transition: background-color .4s; }
+
+/* ---------- portada ---------- */
+.hero { position: relative; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; padding: 120px 0 60px; overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background: url(img/marble.webp) center/900px; opacity: .55; pointer-events: none; }
+:root[data-theme="dark"] .hero::before { opacity: .05; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hero::before { opacity: .05; } }
+.blob { position: absolute; width: 60vw; height: 60vw; max-width: 900px; max-height: 900px; border-radius: 50%; filter: blur(120px); opacity: .22; background: var(--acc); pointer-events: none; transition: background-color .6s; }
+.hero .grid { position: relative; display: grid; grid-template-columns: 1.05fr 1fr; gap: 40px; align-items: center; }
+.hero h1 { font-size: clamp(3rem, 8.4vw, 7.6rem); line-height: .92; letter-spacing: -.055em; font-weight: 800; margin: 22px 0 26px; }
+.hero h1 .line { display: block; overflow: hidden; padding-bottom: .06em; }
+.hero h1 .line > span { display: inline-block; transform: translateY(105%); animation: up 1s cubic-bezier(.2,.8,.2,1) forwards; }
+.hero h1 .line:nth-child(2) > span { animation-delay: .12s; } .hero h1 .line:nth-child(3) > span { animation-delay: .24s; }
+@keyframes up { to { transform: none; } }
+.hero .it { color: var(--acc); transition: color .4s; }
+.hero .ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+.chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 34px; }
+.chip { display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); font-size: .86rem; font-weight: 600; color: var(--muted); }
+.chip .ms { font-size: 18px; color: var(--acc); }
+.stage { position: relative; height: min(640px, 70vh); }
+.dev-tpv { position: absolute; right: 0; top: 6%; width: 92%; }
+.dev-phone { position: absolute; left: 0; bottom: 0; width: 34%; }
+
+/* ---------- dispositivos dibujados ---------- */
+.tpv { position: relative; }
+.tpv .scr { position: relative; aspect-ratio: 16/10; border-radius: 16px; padding: 2.2%; padding-bottom: 5%; background: linear-gradient(160deg, #3d3a35, #151412); box-shadow: var(--shadow-lg), inset 0 0 0 1.5px rgb(255 255 255 / .12); }
+.tpv .scr > div { position: relative; width: 100%; height: 100%; border-radius: 6px; overflow: hidden; background: #fff; }
+.tpv .scr img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .5s; }
+.tpv .neck { width: 13%; height: 46px; margin: 0 auto; background: linear-gradient(90deg, #2a2824, #4a463f 50%, #2a2824); }
+.tpv .base { width: 46%; height: 16px; margin: 0 auto; border-radius: 10px; background: linear-gradient(180deg, #4a463f, #1d1b18); box-shadow: 0 24px 40px rgb(60 45 30 / .25); }
+.phone { position: relative; aspect-ratio: 9/19.2; border-radius: 13%/6.2%; padding: 3.4%; background: linear-gradient(145deg, #3a3834, #141311); box-shadow: var(--shadow-lg), inset 0 0 0 1.5px rgb(255 255 255 / .14); }
+.phone > div { position: relative; width: 100%; height: 100%; border-radius: 10%/4.8%; overflow: hidden; background: #f9f9f9; }
+.phone img, .phone iframe { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border: 0; transition: opacity .5s; }
+.float { animation: float 7s ease-in-out infinite; }
+.float.b { animation-delay: -3.5s; }
+@keyframes float { 50% { transform: translateY(-14px); } }
+
+/* ---------- cinta ---------- */
+.marquee { overflow: hidden; border-block: 1px solid var(--line); padding: 26px 0; background: var(--card); }
+.marquee .row { display: flex; gap: 44px; width: max-content; animation: mq 38s linear infinite; }
+.marquee span { font-size: clamp(2rem, 5vw, 4.2rem); font-weight: 800; letter-spacing: -.04em; white-space: nowrap; }
+.marquee span:nth-child(odd) { -webkit-text-stroke: 1.5px var(--ink); color: transparent; }
+.marquee span.it { -webkit-text-stroke: 0; color: var(--acc); }
+@keyframes mq { to { transform: translateX(-50%); } }
+
+/* ---------- manifiesto ---------- */
+.manifesto { padding: clamp(90px, 14vw, 180px) 0; }
+.manifesto p { font-size: clamp(1.9rem, 4.6vw, 4rem); line-height: 1.12; letter-spacing: -.035em; font-weight: 700; margin: 26px 0 0; }
+.manifesto p span { opacity: .14; transition: opacity .25s; }
+.manifesto p span.on { opacity: 1; }
+
+/* ---------- estilos: galeria horizontal fija ---------- */
+.styles { position: relative; height: 820vh; }
+.styles .sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+.styles .head { position: absolute; top: 96px; left: 0; right: 0; z-index: 3; pointer-events: none; }
+.styles .count { position: absolute; right: var(--pad); top: 100px; z-index: 3; font-weight: 800; font-size: 1rem; letter-spacing: .1em; }
+.track { display: flex; height: 100%; will-change: transform; }
+.panel { position: relative; flex: 0 0 100vw; height: 100%; display: grid; grid-template-columns: 1fr 1.15fr; align-items: center; gap: 30px; padding: 150px var(--pad) 50px; overflow: hidden; }
+.panel .txt { position: relative; z-index: 2; max-width: 560px; }
+.panel .num { font-weight: 800; letter-spacing: .2em; font-size: .9rem; }
+.panel h3 { font-size: clamp(3rem, 7vw, 6.4rem); line-height: 1.05; margin: 14px 0 6px; letter-spacing: -.02em; white-space: nowrap; }
+.panel .sub { font-size: clamp(1.2rem, 2.4vw, 2rem); margin: 0 0 14px; opacity: .85; }
+.panel .vibe { font-size: 1.1rem; opacity: .8; margin: 0 0 20px; }
+.panel .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 26px; }
+.panel .tags span { padding: 8px 14px; border-radius: 999px; border: 2px solid currentColor; font-weight: 700; font-size: .86rem; }
+.panel .try { display: inline-flex; align-items: center; gap: 8px; min-height: 50px; padding: 0 22px; border-radius: 999px; border: 0; font-weight: 700; font-size: .95rem; cursor: pointer; }
+.panel .devs { position: relative; height: min(62vh, 560px); }
+.panel .devs .tpv { position: absolute; right: 0; top: 0; width: 88%; }
+.panel .devs .phone.p1 { position: absolute; left: 0; bottom: 0; width: 27%; transform: rotate(-5deg); }
+.panel .devs .phone.p2 { position: absolute; right: 4%; bottom: -4%; width: 23%; transform: rotate(5deg); }
+
+/* ---------- demo en vivo ---------- */
+.demo { padding: clamp(90px, 12vw, 150px) 0; background: var(--bg-2); transition: background-color .4s; }
+.demo .grid { display: grid; grid-template-columns: 1fr auto; gap: 60px; align-items: center; }
+.swatches { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 30px 0 20px; max-width: 560px; }
+.sw { display: flex; align-items: center; gap: 12px; padding: 10px 14px 10px 10px; border-radius: 16px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; text-align: left; font: inherit; transition: border-color .2s, transform .2s; }
+.sw:hover { transform: translateY(-2px); }
+.sw .e { width: 42px; height: 42px; flex: 0 0 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.sw b { display: block; font-size: .95rem; } .sw small { color: var(--soft); font-size: .78rem; }
+.sw[aria-pressed="true"] { border-color: var(--acc); box-shadow: 0 0 0 3px color-mix(in srgb, var(--acc) 25%, transparent); }
+.pins { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+.pins span { font-size: .82rem; padding: 7px 12px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); color: var(--muted); }
+.pins b { color: var(--acc); letter-spacing: .12em; }
+.live { width: min(380px, 86vw); }
+.live .phone > div { background: #fff; }
+.live-note { text-align: center; font-size: .85rem; color: var(--soft); margin-top: 14px; }
+.modes { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+
+/* ---------- funciones (bento) ---------- */
+.features { padding: clamp(90px, 12vw, 160px) 0; }
+.bento { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 260px; gap: 16px; margin-top: 50px; }
+.cell { position: relative; border-radius: 24px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow); overflow: hidden; padding: 24px; display: flex; flex-direction: column; transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s; }
+.cell:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+.cell .ic { width: 46px; height: 46px; border-radius: 14px; background: var(--acc-soft); color: var(--acc); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; transition: background-color .4s, color .4s; }
+.cell h4 { margin: 0 0 6px; font-size: 1.2rem; letter-spacing: -.02em; }
+.cell:has(.shot) p, .cell:has(.shot) h4 { max-width: 56%; }
+.cell.c2:has(.shot) p, .cell.c2:has(.shot) h4 { max-width: 44%; }
+.cell p { margin: 0; color: var(--muted); font-size: .94rem; line-height: 1.45; position: relative; z-index: 1; max-width: 32ch; }
+.cell .shot { position: absolute; right: -6%; bottom: -30%; width: 46%; border-radius: 18px; box-shadow: var(--shadow-lg); transform: rotate(-6deg); transition: transform .5s; }
+.cell:hover .shot { transform: rotate(-3deg) translateY(-12px); }
+.cell .shot.wide { width: 54%; bottom: -18%; right: -5%; border-radius: 10px; transform: rotate(-3deg); }
+.c2 { grid-column: span 2; } .r2 { grid-row: span 2; }
+.cell.dark { background: #161412; color: #f3f0ed; border-color: #2c2824; }
+.cell.dark p { color: #c9c1b8; }
+.cell.accent { background: var(--acc); color: var(--on-acc); border: 0; transition: background-color .4s; }
+.cell.accent p { color: color-mix(in srgb, var(--on-acc) 82%, transparent); }
+.cell.accent .ic { background: rgb(255 255 255 / .2); color: var(--on-acc); }
+.cell .stat { font-size: clamp(3rem, 6vw, 5rem); font-weight: 800; letter-spacing: -.05em; line-height: 1; margin-top: auto; }
+
+/* ---------- mostrador ---------- */
+.counter { padding: clamp(90px, 12vw, 150px) 0; background: #161412; color: #f3f0ed; overflow: hidden; }
+.counter .lead { color: #c9c1b8; }
+.counter .grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 60px; align-items: center; }
+.ticks { list-style: none; padding: 0; margin: 30px 0 0; display: grid; gap: 14px; }
+.ticks li { display: flex; gap: 12px; align-items: flex-start; font-size: 1.05rem; }
+.ticks .ms { color: var(--acc); }
+.counter .kicker { color: #d0b395; } .counter .kicker::before { background: #d0b395; }
+
+/* ---------- videos ---------- */
+.videos { padding: clamp(90px, 12vw, 150px) 0; }
+.vgrid { display: grid; grid-template-columns: 1.7fr 1fr; gap: 20px; margin-top: 46px; align-items: start; }
+.vcard { background: var(--card); border: 1px solid var(--line); border-radius: 24px; overflow: hidden; box-shadow: var(--shadow); }
+.vcard video { width: 100%; display: block; background: #000; }
+.vcard .vb { padding: 16px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.vcard .vb b { font-size: 1rem; } .vcard .vb small { display: block; color: var(--soft); }
+.vcard .btn { min-height: 46px; padding: 0 18px; font-size: .92rem; }
+
+/* ---------- pasos ---------- */
+.steps { padding: clamp(80px, 10vw, 130px) 0; background: var(--bg-2); transition: background-color .4s; }
+.sgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 46px; }
+.step { background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 28px; box-shadow: var(--shadow); }
+.step .n { font-family: var(--serif); font-style: italic; font-size: 4.2rem; line-height: 1; color: var(--acc); transition: color .4s; }
+.step h4 { font-size: 1.3rem; margin: 18px 0 8px; letter-spacing: -.02em; }
+.step p { margin: 0; color: var(--muted); line-height: 1.5; }
+
+/* ---------- preguntas ---------- */
+.faq { padding: clamp(80px, 10vw, 130px) 0; }
+.faq .grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 60px; }
+details { border-bottom: 1px solid var(--line); padding: 22px 0; }
+summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 16px; font-weight: 700; font-size: 1.15rem; letter-spacing: -.01em; }
+summary::-webkit-details-marker { display: none; }
+summary .ms { transition: transform .3s; color: var(--acc); }
+details[open] summary .ms { transform: rotate(45deg); }
+details p { color: var(--muted); line-height: 1.6; margin: 12px 0 0; max-width: 60ch; }
+
+/* ---------- cierre ---------- */
+.final { padding: clamp(100px, 14vw, 190px) 0; text-align: center; position: relative; overflow: hidden; }
+.final h2 { font-size: clamp(3rem, 10vw, 9rem); line-height: .9; letter-spacing: -.06em; font-weight: 800; margin: 20px 0 36px; }
+.final .it { color: var(--acc); }
+.final .ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+footer { border-top: 1px solid var(--line); padding: 30px 0 50px; color: var(--soft); font-size: .88rem; }
+footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+
+/* ---------- retoques del modo oscuro ---------- */
+:root { --acc-txt: var(--acc); }
+:root[data-theme="dark"] { --acc-txt: var(--acc-hi); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --acc-txt: var(--acc-hi); } }
+.kicker, .hero .it, .final .it, .step .n, .cell .ic, .pins b, .ticks .ms, h2.big .it, .marquee span.it { color: var(--acc-txt); }
+.kicker::before { background: var(--acc-txt); }
+:root[data-theme="dark"] .counter, :root[data-theme="dark"] .cell.dark { background: #0c0b0a; border-color: #2c2824; }
+:root[data-theme="dark"] .counter { border-block: 1px solid #2c2824; }
+:root[data-theme="dark"] .cell .ic { background: rgb(255 255 255 / .06); }
+:root[data-theme="dark"] .marquee span:nth-child(odd) { -webkit-text-stroke-color: #f3f0ed; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .counter, :root:not([data-theme="light"]) .cell.dark { background: #0c0b0a; border-color: #2c2824; }
+  :root:not([data-theme="light"]) .counter { border-block: 1px solid #2c2824; }
+  :root:not([data-theme="light"]) .cell .ic { background: rgb(255 255 255 / .06); }
+}
+
+/* ---------- movil ---------- */
+@media (max-width: 960px) {
+  .nav { display: none; }
+  .hero .grid, .demo .grid, .counter .grid, .faq .grid, .vgrid { grid-template-columns: 1fr; }
+  .stage { height: 440px; margin-top: 20px; }
+  .styles { height: auto; }
+  .styles .sticky { position: relative; height: auto; overflow: visible; }
+  .styles .head { position: relative; top: 0; padding: 90px 0 24px; }
+  .styles .count { display: none; }
+  .track { overflow-x: auto; scroll-snap-type: x mandatory; transform: none !important; -webkit-overflow-scrolling: touch; }
+  .panel { flex: 0 0 100%; scroll-snap-align: start; grid-template-columns: 1fr; padding: 40px var(--pad) 50px; height: auto; min-height: 0; }
+  .panel .devs { height: 330px; }
+  .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 230px; }
+  .sgrid { grid-template-columns: 1fr; }
+  .live { margin: 0 auto; }
+}
+@media (max-width: 560px) {
+  .bar .btn span.t { display: none; }
+  .bar .btn { padding: 0 14px; }
+  .bento { grid-template-columns: 1fr; grid-auto-rows: 220px; }
+  .c2 { grid-column: span 1; } .r2 { grid-row: span 1; }
+  .swatches { grid-template-columns: 1fr; }
+  .cell .shot { width: 36%; bottom: -36%; }
+  .cell .shot.wide { width: 50%; bottom: -10%; }
+  .cell.c2:has(.shot) p, .cell.c2:has(.shot) h4 { max-width: 56%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .reveal { opacity: 1; transform: none; }
+  .hero h1 .line > span { transform: none; }
+}
+/* ===== Pulido tras la revision (menos bordes, marcos finos, movil cuidado) ===== */
+/* 0. hairline token: borders become barely-there in both modes */
+:root { --line: rgb(26 28 28 / .08); --hair: rgb(26 28 28 / .06); }
+:root[data-theme="dark"] { --line: rgb(255 255 255 / .08); --hair: rgb(255 255 255 / .07); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --line: rgb(255 255 255 / .08); --hair: rgb(255 255 255 / .07); } }
+
+/* 1. top bar: one surface, no border-in-border, more opaque glass */
+.bar { padding: 6px 6px 6px 14px; gap: 6px; border: 0;
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+  backdrop-filter: blur(20px) saturate(1.6); -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  box-shadow: 0 0 0 1px var(--hair), 0 10px 30px -12px rgb(26 28 28 / .22);
+  transition: transform .4s cubic-bezier(.2,.7,.2,1), background-color .4s; }
+:root[data-theme="dark"] .bar { box-shadow: 0 0 0 1px var(--hair), 0 12px 32px -12px rgb(0 0 0 / .7); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .bar { box-shadow: 0 0 0 1px var(--hair), 0 12px 32px -12px rgb(0 0 0 / .7); } }
+.bar.hide { transform: translate(-50%, calc(-100% - 20px)); }
+.icon-btn { width: 40px; height: 40px; border: 0; background: transparent; }
+.icon-btn:hover { background: var(--bg-2); }
+.bar .btn { min-height: 40px; box-shadow: none; }
+@media (max-width: 560px) {
+  .bar { top: 8px; width: calc(100% - 16px); padding: 5px 5px 5px 12px; }
+  .brand { gap: 8px; font-size: .95rem; }
+  .brand .lg { width: 30px; height: 30px; border-radius: 9px; }
+  .brand .lg .ms { font-size: 18px; }
+  .bar .btn { width: 40px; padding: 0; justify-content: center; }
+}
+
+/* 2. type rhythm */
+h1, h2, h3, h4, summary { text-wrap: balance; }
+p, .lead, li { text-wrap: pretty; }
+.hero h1 { font-size: clamp(3rem, 6.6vw, 6.4rem); }
+.hero h1 .line > span { white-space: nowrap; }
+
+/* 3. device frames: thin bezels, light stand, fixed-px phone bezel */
+.tpv .scr { border-radius: 14px; padding: 1.3%; background: #1b1a18; box-shadow: var(--shadow-lg), inset 0 0 0 1px rgb(255 255 255 / .10); }
+.tpv .scr > div { border-radius: 7px; }
+.tpv .neck { width: 9%; height: 30px; background: linear-gradient(90deg, #a49e95, #d9d4cc 50%, #a49e95); }
+.tpv .base { width: 30%; height: 7px; border-radius: 2px 2px 8px 8px; background: linear-gradient(180deg, #e2ddd5, #a8a197); box-shadow: 0 16px 28px -10px rgb(60 45 30 / .35); }
+:root[data-theme="dark"] .tpv .neck { background: linear-gradient(90deg, #2c2925, #4a4540 50%, #2c2925); }
+:root[data-theme="dark"] .tpv .base { background: linear-gradient(180deg, #57514a, #2c2925); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .tpv .neck { background: linear-gradient(90deg, #2c2925, #4a4540 50%, #2c2925); } :root:not([data-theme="light"]) .tpv .base { background: linear-gradient(180deg, #57514a, #2c2925); } }
+.phone { padding: var(--bez, 6px); aspect-ratio: 9/16.7; border-radius: 15%/7.6%; background: #1b1a18; box-shadow: var(--shadow-lg), inset 0 0 0 1px rgb(255 255 255 / .14); }
+.phone > div { border-radius: 12%/6.2%; }
+.live .phone { --bez: 10px; aspect-ratio: 9/19.2; border-radius: 13%/6.2%; }
+.live .phone > div { border-radius: 10%/4.8%; }
+@media (max-width: 960px) { .stage .tpv .neck, .stage .tpv .base, .panel .tpv .neck, .panel .tpv .base { display: none; } .phone { --bez: 4px; } }
+
+/* 4. hero on phones: visual earlier, devices not fighting */
+@media (max-width: 560px) {
+  .hero { min-height: 0; padding: 96px 0 40px; }
+  .hero h1 { margin: 16px 0 18px; }
+  .hero .ctas { margin-top: 22px; gap: 10px; }
+  .hero .ctas .btn { flex: 1 1 100%; justify-content: center; min-height: 50px; }
+  .chips { flex-wrap: nowrap; overflow-x: auto; margin: 20px calc(var(--pad) * -1) 0; padding: 0 var(--pad); scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: 0 0 auto; }
+  .stage { height: auto; aspect-ratio: 1 / .8; margin-top: 32px; }
+  .dev-tpv { width: 100%; top: 0; right: 0; }
+  .dev-phone { width: 29%; left: auto; right: 5%; bottom: 0; }
+}
+
+/* 5. marquee: no stroked text (variable Inter shows overlapping contours), no border band */
+.marquee { border-block: 0; background: transparent; padding: clamp(18px, 3vw, 30px) 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.marquee span:nth-child(odd), :root[data-theme="dark"] .marquee span:nth-child(odd) { -webkit-text-stroke: 0; color: color-mix(in srgb, var(--ink) 18%, transparent); }
+
+/* 6. gallery: tag pills tinted instead of 2px outlines; one counter; dash follows the theme */
+.panel .tags span { border: 0; background: color-mix(in srgb, currentColor 11%, transparent); padding: 8px 14px; font-weight: 600; }
+.styles .kicker::before { background: var(--hk, var(--acc-txt)); }
+@media (min-width: 961px) { .panel .num { display: none; } }
+@media (max-width: 960px) {
+  .styles .head { padding: 84px 0 18px; }
+  .track { gap: 12px; padding: 0 var(--pad) 6px; scroll-padding-inline: var(--pad); scrollbar-width: none; }
+  .track::-webkit-scrollbar { display: none; }
+  .panel { flex: 0 0 86%; border-radius: 24px; padding: 28px 20px 22px; box-shadow: 0 0 0 1px var(--hair), var(--shadow); }
+  .panel .devs { height: auto; aspect-ratio: 1 / .86; margin-top: 6px; }
+  .panel .devs .tpv { width: 100%; top: 0; }
+  .panel .devs .phone.p1 { width: 26%; left: 3%; bottom: 0; transform: rotate(-4deg); }
+  .panel .devs .phone.p2 { width: 22%; right: 3%; bottom: -1%; transform: rotate(4deg); }
+}
+
+/* 7. demo: swatches as shadow cards, on phones a strip that floats over the live phone */
+.sw { border: 0; box-shadow: 0 0 0 1px var(--hair), var(--shadow); }
+.sw[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--acc), var(--shadow); }
+@media (max-width: 960px) {
+  .demo .grid { gap: 0; }
+  .demo .grid > div:first-child { display: contents; }
+  .demo .grid > div:last-child { order: 4; margin: 30px 0 0; }
+  .swatches { order: 5; } .modes { order: 6; } .pins { order: 7; }
+  .live { width: min(300px, 78vw); }
+}
+@media (max-width: 560px) {
+  .swatches { display: flex; overflow-x: auto; gap: 8px; max-width: none; margin: 16px calc(var(--pad) * -1) 14px; padding: 8px var(--pad);
+    position: sticky; bottom: 10px; z-index: 5; scroll-snap-type: x proximity; scrollbar-width: none;
+    background: color-mix(in srgb, var(--bg-2) 80%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  .swatches::-webkit-scrollbar { display: none; }
+  .sw { flex: 0 0 auto; scroll-snap-align: start; padding: 5px 14px 5px 5px; border-radius: 999px; gap: 10px; }
+  .sw .e { width: 34px; height: 34px; flex-basis: 34px; border-radius: 999px; font-size: 18px; }
+  .sw b { font-size: .88rem; white-space: nowrap; } .sw small { display: none; }
+}
+
+/* 8. bento: icon never squashes; text and screenshots get their own zones */
+.cell { border-radius: 20px; border-color: var(--hair); }
+.cell .ic { flex: 0 0 auto; }
+.cell .shot.tall { width: 44%; right: 6%; bottom: -14%; transform: rotate(-4deg); }
+.cell .shot.pair-a { width: 24%; right: 27%; bottom: -40%; transform: rotate(5deg); }
+.cell .shot.pair-b { width: 26%; }
+@media (max-width: 960px) and (min-width: 561px) { .bento { grid-auto-rows: minmax(240px, auto); } }
+@media (max-width: 560px) {
+  .bento { grid-auto-rows: auto; gap: 12px; }
+  .cell { min-height: 190px; }
+  .cell:has(.shot) { padding-bottom: 176px; }
+  .cell:has(.shot) p, .cell:has(.shot) h4, .cell.c2:has(.shot) p, .cell.c2:has(.shot) h4 { max-width: none; }
+  .cell .shot, .cell .shot.tall { width: 44%; right: 8%; bottom: -118px; transform: rotate(-4deg); }
+  .cell .shot.wide { width: 86%; right: -6%; bottom: -46px; transform: rotate(-2deg); }
+  .cell .shot.pair-a { width: 40%; right: auto; left: 8%; bottom: -128px; transform: rotate(-4deg); }
+  .cell .shot.pair-b { width: 40%; right: 8%; bottom: -118px; transform: rotate(4deg); }
+}
+.step, .vcard { border-color: var(--hair); border-radius: 20px; }
+
+/* 9. counter: tick icons readable on the dark band in light mode */
+.counter .ticks .ms { color: #d0b395; }
+
+/* 10. closing: no clipped blob seam */
+.final .blob { display: none; }
+.final { background: radial-gradient(60% 55% at 50% 45%, color-mix(in srgb, var(--acc) 14%, transparent), transparent 70%); }
+
+/* barra que se esconde al bajar y vuelve al subir (movil sobre todo) */
+@media (max-width: 560px) { .bar.hide { transform: translateY(calc(-100% - 20px)); } }
+/* en movil la barra va pegada a los lados, sin el truco del centrado con translate */
+@media (max-width: 560px) { .bar { left: 8px; right: 8px; transform: none; width: auto; } }
+
+/* foco visible al usar el teclado */
+a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--acc-txt); outline-offset: 3px; border-radius: 12px; }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<header class="bar">
+  <a class="brand" href="#top"><span class="lg"><span class="ms">point_of_sale</span></span>TPV Global</a>
+  <nav class="nav">
+    <a href="#estilos">Estilos</a><a href="#demo">Pruébalo</a><a href="#funciones">Funciones</a><a href="#videos">Vídeos</a><a href="#preguntas">Preguntas</a>
+  </nav>
+  <button class="icon-btn" id="modeBtn" aria-label="Cambiar entre modo claro y oscuro"><span class="ms" id="modeIcon">dark_mode</span></button>
+  <a class="btn btn-p" href="#contacto"><span class="ms">calendar_month</span><span class="t">Pide tu demo</span></a>
+</header>
+
+<!-- PORTADA -->
+<section class="hero" id="top">
+  <div class="blob" style="left:-18vw;top:-18vw"></div>
+  <div class="blob" style="right:-22vw;bottom:-30vw;opacity:.14"></div>
+  <div class="wrap grid">
+    <div>
+      <span class="kicker">TPV para hostelería</span>
+      <h1><span class="line"><span>El TPV que</span></span><span class="line"><span>se <span class="it">viste</span></span></span><span class="line"><span>de tu negocio.</span></span></h1>
+      <p class="lead">Comandas, cocina, cobro, reparto, fichaje e inventario en un solo sitio. Con ocho estilos para que tu TPV se parezca a tu local, no al de todos.</p>
+      <div class="ctas">
+        <a class="btn btn-p" href="#demo"><span class="ms">touch_app</span>Pruébalo ahora</a>
+        <a class="btn btn-g" href="#videos"><span class="ms">play_circle</span>Ver el vídeo</a>
+      </div>
+      <div class="chips">
+        <span class="chip"><span class="ms">palette</span>8 estilos</span>
+        <span class="chip"><span class="ms">devices</span>Móvil, tablet y TPV</span>
+        <span class="chip"><span class="ms">download_done</span>Sin instalar nada</span>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="dev-tpv float"><div class="tpv"><div class="scr"><div><img id="heroTpv" src="img/tablet_clasico.webp" alt="TPV de mostrador con el plano de mesas"></div></div><div class="neck"></div><div class="base"></div></div></div>
+      <div class="dev-phone float b"><div class="phone"><div><img id="heroPhone" src="img/mesas_clasico.webp" alt="El TPV en el móvil"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CINTA -->
+<div class="marquee" aria-hidden="true"><div class="row" id="mq"></div></div>
+
+<!-- MANIFIESTO -->
+<section class="manifesto">
+  <div class="wrap">
+    <span class="kicker reveal">La idea</span>
+    <p id="manifesto">Un TPV gris sirve para cobrar. El tuyo, además, tiene que parecerse a tu local: tu letra, tus colores, tus formas. Por eso TPV Global no tiene un diseño, tiene ocho.</p>
+  </div>
+</section>
+
+<!-- ESTILOS -->
+<section class="styles" id="estilos">
+  <div class="sticky">
+    <div class="head"><div class="wrap"><span class="kicker" style="color:var(--hk,var(--acc))">Ocho estilos</span></div></div>
+    <div class="count" id="count">01 / 08</div>
+    <div class="track" id="track"></div>
+  </div>
+</section>
+
+<!-- DEMO EN VIVO -->
+<section class="demo" id="demo">
+  <div class="wrap grid">
+    <div>
+      <span class="kicker reveal">Demo en vivo</span>
+      <h2 class="big reveal">Tócalo. Cobra. <span class="it">Cámbiale</span> el estilo.</h2>
+      <p class="lead reveal">Esto no es un vídeo: es el TPV de verdad, con datos de ejemplo. Entra con un PIN, abre una mesa, pide y cambia de estilo con un toque.</p>
+      <div class="swatches" id="swatches"></div>
+      <div class="modes">
+        <button class="btn btn-g" id="demoLight" style="min-height:44px"><span class="ms">light_mode</span>Claro</button>
+        <button class="btn btn-g" id="demoDark" style="min-height:44px"><span class="ms">dark_mode</span>Oscuro</button>
+        <a class="btn btn-g" id="demoFull" href="#" target="_blank" rel="noopener" style="min-height:44px"><span class="ms">open_in_new</span>Pantalla completa</a>
+      </div>
+      <div class="pins"><span>Admin <b>0000</b></span><span>Camarero <b>1111</b></span><span>Cocina <b>3333</b></span><span>Caja <b>4444</b></span><span>Barra <b>5555</b></span></div>
+    </div>
+    <div>
+      <div class="live"><div class="phone"><div><iframe id="live" title="Demo de TPV Global" loading="lazy" src="about:blank"></iframe><img id="liveShot" alt="TPV Global: plano de mesas" hidden style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></div></div></div>
+      <p class="live-note">Los datos son de ejemplo y se reinician de vez en cuando.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FUNCIONES -->
+<section class="features" id="funciones">
+  <div class="wrap">
+    <span class="kicker reveal">Todo lo que hace</span>
+    <h2 class="big reveal">Un TPV <span class="it">completo</span>,<br>de la mesa a la caja.</h2>
+    <div class="bento">
+      <article class="cell c2 r2 reveal">
+        <div class="ic"><span class="ms">table_restaurant</span></div>
+        <h4>Plano de mesas</h4>
+        <p>Libres, ocupadas, cobrando o en limpieza, con lo que lleva cada una. Zonas de interior, terraza y barra, y mover o juntar mesas.</p>
+        <img class="shot tall" src="img/mesas_cafe.webp" alt="" loading="lazy">
+      </article>
+      <article class="cell reveal">
+        <div class="ic"><span class="ms">receipt_long</span></div>
+        <h4>Comandas</h4>
+        <p>Tamaños, punto de la carne, extras, alérgenos y notas para cocina.</p>
+      </article>
+      <article class="cell accent reveal">
+        <div class="ic"><span class="ms">palette</span></div>
+        <h4>Ocho estilos</h4>
+        <p>Y tu logo y tu color si quieres ir más allá.</p>
+        <div class="stat">8</div>
+      </article>
+      <article class="cell c2 dark reveal">
+        <div class="ic" style="background:#2b241d;color:#f2a23a"><span class="ms">soup_kitchen</span></div>
+        <h4>Cocina y barra por separado</h4>
+        <p>Cada puesto recibe lo suyo con su tiempo, avisos de retraso y temporizador de cocción.</p>
+        <img class="shot wide" src="img/f_tpv_cocina.webp" alt="" loading="lazy">
+      </article>
+      <article class="cell reveal">
+        <div class="ic"><span class="ms">payments</span></div>
+        <h4>Cobro</h4>
+        <p>Efectivo, tarjeta, Bizum o mixto. El cambio, calculado.</p>
+        <img class="shot" src="img/f_cobro.webp" alt="" loading="lazy">
+      </article>
+      <article class="cell reveal">
+        <div class="ic"><span class="ms">delivery_dining</span></div>
+        <h4>Para llevar y reparto</h4>
+        <p>Pedidos por teléfono, repartos en el mapa y hora prometida.</p>
+        <img class="shot" src="img/f_reparto.webp" alt="" loading="lazy">
+      </article>
+      <article class="cell reveal">
+        <div class="ic"><span class="ms">badge</span></div>
+        <h4>Fichaje y horas</h4>
+        <p>Cada empleado ficha en el móvil. Horas y lo que cobra cada uno.</p>
+        <img class="shot" src="img/f_horas.webp" alt="" loading="lazy">
+      </article>
+      <article class="cell reveal">
+        <div class="ic"><span class="ms">inventory_2</span></div>
+        <h4>Inventario con recetas</h4>
+        <p>Cada venta descuenta sus ingredientes. Avisos de stock bajo.</p>
+        <img class="shot" src="img/f_compras.webp" alt="" loading="lazy">
+      </article>
+      <article class="cell c2 reveal">
+        <div class="ic"><span class="ms">monitoring</span></div>
+        <h4>Informes y cierre de caja</h4>
+        <p>Ventas por día y por categoría, lo más vendido, cierre de caja y exportar a Excel.</p>
+        <img class="shot wide" src="img/f_tpv_admin.webp" alt="" loading="lazy">
+      </article>
+      <article class="cell c2 reveal">
+        <div class="ic"><span class="ms">devices</span></div>
+        <h4>Móvil, tablet, ordenador o TPV</h4>
+        <p>Se abre en el navegador, sin instalar nada. Lo que cobra uno se ve al momento en el resto.</p>
+        <img class="shot pair-a" src="img/carta_taberna.webp" alt="" loading="lazy">
+        <img class="shot pair-b" src="img/mesas_pub.webp" alt="" loading="lazy">
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- MOSTRADOR -->
+<section class="counter">
+  <div class="wrap grid">
+    <div>
+      <span class="kicker reveal">TPV de mostrador</span>
+      <h2 class="big reveal">Y en el mostrador, <span class="it" style="color:#d0b395">a lo grande</span>.</h2>
+      <p class="lead reveal">En una pantalla táctil grande, la carta y el ticket se ven a la vez. Ideal para la barra, la caja o la cocina.</p>
+      <ul class="ticks reveal">
+        <li><span class="ms">check_circle</span>Carta, ticket y cobro en la misma pantalla</li>
+        <li><span class="ms">check_circle</span>Buscador de productos: escribe y listo</li>
+        <li><span class="ms">check_circle</span>Una pantalla para cada puesto: sala, cocina, barra y oficina</li>
+        <li><span class="ms">check_circle</span>Impresión de tickets en impresora térmica o normal</li>
+      </ul>
+    </div>
+    <div class="reveal"><div class="tpv"><div class="scr"><div><img src="img/f_tpv_pedido.webp" alt="Pedido en el TPV de mostrador" loading="lazy"></div></div><div class="neck"></div><div class="base"></div></div></div>
+  </div>
+</section>
+
+<!-- VIDEOS -->
+<section class="videos" id="videos">
+  <div class="wrap">
+    <span class="kicker reveal">Vídeos</span>
+    <h2 class="big reveal">Dos minutos para <span class="it">enamorarse</span>.</h2>
+    <div class="vgrid">
+      <div class="vcard reveal">
+        <video controls playsinline preload="none" poster="img/f_tpv_pedido.webp" src="videos/TPVGlobal_promo_horizontal_movil.mp4"></video>
+        <div class="vb"><div><b>Vídeo de presentación</b><small>Horizontal, para ordenador o TV</small></div>
+          <a class="btn btn-p" href="videos/TPVGlobal_promo_horizontal_movil.mp4" download><span class="ms">download</span>Descargar</a></div>
+      </div>
+      <div class="vcard reveal">
+        <video controls playsinline preload="none" poster="img/mesas_clasico.webp" src="videos/TPVGlobal_promo_vertical_movil.mp4"></video>
+        <div class="vb"><div><b>Versión vertical</b><small>Para el móvil y las redes</small></div>
+          <a class="btn btn-p" href="videos/TPVGlobal_promo_vertical_movil.mp4" download><span class="ms">download</span>Descargar</a></div>
+      </div>
+    </div>
+    <p class="reveal" style="margin-top:20px;color:var(--soft)">Más formatos (también uno ligero para enviar) en <a href="videos/">la página de vídeos</a>.</p>
+  </div>
+</section>
+
+<!-- PASOS -->
+<section class="steps">
+  <div class="wrap">
+    <span class="kicker reveal">Cómo empezamos</span>
+    <h2 class="big reveal">De la demo a cobrar,<br>en <span class="it">tres pasos</span>.</h2>
+    <div class="sgrid">
+      <div class="step reveal"><div class="n">01</div><h4>Elegimos tu estilo</h4><p>Pruebas los ocho y te quedas con el que va con tu local. Si quieres, con tu logo y tu color.</p></div>
+      <div class="step reveal"><div class="n">02</div><h4>Cargamos tu carta</h4><p>Tus platos, precios, extras y alérgenos, tus mesas y zonas, y tu equipo con su PIN.</p></div>
+      <div class="step reveal"><div class="n">03</div><h4>A vender</h4><p>Abres el TPV en tus móviles, tablets o pantalla de mostrador, y a trabajar.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PREGUNTAS -->
+<section class="faq" id="preguntas">
+  <div class="wrap grid">
+    <div>
+      <span class="kicker reveal">Preguntas</span>
+      <h2 class="big reveal">Lo que <span class="it">suelen</span> preguntar.</h2>
+    </div>
+    <div class="reveal">
+      <details open><summary>¿Qué necesito para usarlo?<span class="ms">add</span></summary><p>Un móvil, una tablet, un ordenador o una pantalla táctil con navegador. No hay que instalar ninguna aplicación; si quieres, se añade a la pantalla de inicio como una app más.</p></details>
+      <details><summary>¿Puedo cambiar el estilo cuando quiera?<span class="ms">add</span></summary><p>Sí. Hay ocho estilos y se cambia en un toque, en modo claro u oscuro. También se puede poner tu logo, tu nombre y tu color de marca.</p></details>
+      <details><summary>¿La cocina y la barra ven solo lo suyo?<span class="ms">add</span></summary><p>Sí. Cada categoría de la carta va a su puesto: la comida a cocina y las bebidas a barra, cada una en su pantalla y con su tiempo.</p></details>
+      <details><summary>¿Imprime tickets?<span class="ms">add</span></summary><p>Sí, desde cualquier impresora instalada en el dispositivo: una térmica de 80 mm o una normal de oficina.</p></details>
+      <details><summary>¿Controla el stock?<span class="ms">add</span></summary><p>Sí. Cada plato puede tener su receta y, al cobrar, se descuentan sus ingredientes. Avisa cuando algo baja del mínimo y se exporta a CSV.</p></details>
+      <details><summary>¿Y el control horario del personal?<span class="ms">add</span></summary><p>Cada empleado ficha entrada y salida desde el móvil. Tú ves las horas de cada uno y lo que hay que pagarle, listo para la gestoría.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- CIERRE -->
+<section class="final" id="contacto">
+  <div class="blob" style="left:20vw;top:-30vw;opacity:.16"></div>
+  <div class="wrap" style="position:relative">
+    <span class="kicker">¿Hablamos?</span>
+    <h2>¿Lo vemos en <span class="it">tu local</span>?</h2>
+    <p class="lead" style="margin:0 auto 34px">Te lo enseñamos con tu carta y en el estilo que elijas. Sin compromiso.</p>
+    <div class="ctas" id="contactCtas">
+      <a class="btn btn-p" href="#demo"><span class="ms">touch_app</span>Probar la demo</a>
+      <a class="btn btn-g" href="videos/"><span class="ms">smart_display</span>Ver y descargar los vídeos</a>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap"><span>TPV Global · TPV para hostelería · <a href="../" style="color:inherit">Más proyectos</a></span><span>Datos de la demo inventados</span></div></footer>
+
+<script>
+// Datos de contacto para el boton "Pide tu demo" (vacio = no se muestra). Rellenar para publicar.
+const CONTACT = { email: '', phone: '' }
+
+// Dirección de un TPV Global en marcha (p. ej. por Tailscale Funnel). Vacío = solo capturas.
+const DEMO_URL = ''
+
+const THEMES = [
+  { id: 'clasico', label: 'Clásico', sub: '', brand: 'Osteria Lume', vibe: 'El TPV de siempre, limpio y sin florituras', emoji: '🍽️', acc: '#8B6B4A', font: "'Inter'", w: 800, tags: ['Letra Inter', 'Tarjetas limpias', 'El de siempre'], bg: '#f9f9f9', ink: '#1a1c1c' },
+  { id: 'trattoria', wf: .54, label: 'Restaurante', sub: '', brand: 'Trattoria Bella', vibe: 'Serifa elegante y filetes finos', emoji: '🍝', acc: '#7A5C3E', font: "'Playfair Display'", w: 700, italic: true, tags: ['Serifa Playfair', 'Filetes finos', 'Papel marfil'], bg: 'radial-gradient(1200px 700px at 15% 0%, #efe3d3, #f8f4ee 65%)', ink: '#2a2420' },
+  { id: 'cafe', label: 'Cafetería', sub: 'y brunch', brand: 'Café Brote', vibe: 'Blando, redondo y con menú flotante', emoji: '☕', acc: '#4F7A5C', font: "'Nunito'", w: 900, tags: ['Letra redondeada', 'Menú flotante', 'Esquinas suaves'], bg: 'radial-gradient(#4F7A5C26 3px, transparent 3.5px) 0 0/44px 44px, #f2f6ec', ink: '#1f2a20' },
+  { id: 'pub', wf: .74, label: 'Coctelería', sub: 'y pub', brand: 'Noir Cocktail Bar', vibe: 'Neón, esquinas rectas y letra de terminal', emoji: '🍸', acc: '#E0922A', font: "'Space Grotesk'", w: 700, upper: true, tags: ['Oscuro con neón', 'Letra de terminal', 'Esquinas rectas'], bg: 'radial-gradient(900px 520px at 85% 0%, #F2A23A40, transparent 62%), linear-gradient(#ffffff0a 1px, transparent 1px) 0 0/48px 48px, linear-gradient(90deg, #ffffff0a 1px, transparent 1px) 0 0/48px 48px, #120f17', ink: '#f3eee6', dark: true },
+  { id: 'helados', label: 'Heladería', sub: 'y pastelería', brand: 'Dolce Gelato', vibe: 'Pegatinas, contornos gruesos y confeti', emoji: '🍦', acc: '#D6578A', font: "'Fredoka'", w: 700, tags: ['Estilo cómic', 'Iconos rellenos', 'Confeti'], bg: 'radial-gradient(#D6578A55 6px, transparent 7px) 0 0/96px 96px, radial-gradient(#2E9E8F55 5px, transparent 6px) 40px 60px/150px 150px, radial-gradient(#ffd16699 5px, transparent 6px) 90px 20px/190px 190px, #fbe9f1', ink: '#2b1a24' },
+  { id: 'gastro', wf: .82, label: 'Hamburguesería', sub: 'y gastrobar', brand: 'Bold Burger Co.', vibe: 'Estilo cómic con colores serios', emoji: '🍔', acc: '#23395B', font: "'Archivo Black'", w: 400, upper: true, tags: ['Cómic sobrio', 'Cabecera mostaza', 'Letra contundente'], bg: 'linear-gradient(#23395B12 1px, transparent 1px) 0 0/40px 40px, linear-gradient(90deg, #23395B12 1px, transparent 1px) 0 0/40px 40px, #f6f1e4', ink: '#1B2430' },
+  { id: 'playa', wf: .62, label: 'Chiringuito', sub: 'y playa', brand: 'Chiringuito Salitre', vibe: 'Cabecera con olas y títulos en cursiva', emoji: '🌴', acc: '#0E8FA8', font: "'Pacifico'", w: 400, tags: ['Cabecera con olas', 'Títulos en cursiva', 'Arena y mar'], bg: 'linear-gradient(180deg, #bfe6ee 0%, #e9f6f6 46%, #f4e2bd 100%)', ink: '#123b44' },
+  { id: 'taberna', wf: .56, label: 'Taberna', sub: 'y tapas', brand: 'Taberna El Azulejo', vibe: 'Azulejo, cobalto y letra de rótulo', emoji: '🍷', acc: '#1F4E9E', font: "'Zilla Slab'", w: 700, tags: ['Azulejo', 'Letra de rótulo', 'Mesas como baldosas'], bg: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 48 48'><g fill='none' stroke='%231F4E9E' stroke-opacity='.16' stroke-width='2'><circle cx='24' cy='24' r='8.5'/><path d='M24 1q9 11 0 22q-9-11 0-22zM24 47q9-11 0-22q-9 11 0 22zM1 24q11-9 22 0q-11 9-22 0zM47 24q-11-9-22 0q11 9 22 0z'/></g></svg>"), #f6f8fd`, ink: '#14284d' },
+]
+const $ = s => document.querySelector(s)
+const store = { get: k => { try { return localStorage.getItem(k) } catch { return null } }, set: (k, v) => { try { localStorage.setItem(k, v) } catch {} } }
+
+// ---------- modo claro / oscuro de la pagina ----------
+function applyMode(m) {
+  if (m) document.documentElement.setAttribute('data-theme', m); else document.documentElement.removeAttribute('data-theme')
+  const dark = m ? m === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches
+  $('#modeIcon').textContent = dark ? 'light_mode' : 'dark_mode'
+}
+applyMode(store.get('web_mode'))
+$('#modeBtn').onclick = () => {
+  const dark = document.documentElement.getAttribute('data-theme') ? document.documentElement.getAttribute('data-theme') === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches
+  const m = dark ? 'light' : 'dark'; store.set('web_mode', m); applyMode(m); demoMode(m)
+}
+
+// ---------- estilo elegido: cambia el acento de la web, la portada y la demo ----------
+let current = THEMES.find(t => t.id === store.get('web_tema')) || THEMES[0]
+function onAccent(hex) {
+  const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255
+  const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255
+  return lum > 0.6 ? '#1a1c1c' : '#ffffff'
+}
+function mixWhite(hex, k) {
+  const n = parseInt(hex.slice(1), 16), c = [n >> 16, (n >> 8) & 255, n & 255].map(v => Math.round(v + (255 - v) * k))
+  return '#' + c.map(v => v.toString(16).padStart(2, '0')).join('')
+}
+function pickTheme(id, { demo = true } = {}) {
+  current = THEMES.find(t => t.id === id) || THEMES[0]
+  store.set('web_tema', current.id)
+  const root = document.documentElement.style
+  root.setProperty('--acc', current.acc); root.setProperty('--on-acc', onAccent(current.acc))
+  root.setProperty('--acc-soft', current.acc + '1f')
+  root.setProperty('--acc-hi', mixWhite(current.acc, .45))
+  $('#heroTpv').src = `img/tablet_${current.id}.webp`; $('#heroPhone').src = `img/mesas_${current.id}.webp`
+  document.querySelectorAll('.sw').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.id === current.id)))
+  if (!DEMO_URL) { const s = $('#liveShot'); if (s) s.src = `img/mesas_${current.id}.webp` }
+  else if (demo) { try { const w = $('#live').contentWindow; w && w.__tpvTema && w.__tpvTema(current.id) } catch { liveLoad() } }
+}
+
+// ---------- cinta ----------
+const words = ['Restaurantes', 'Cafeterías', 'Coctelerías', 'Heladerías', 'Hamburgueserías', 'Chiringuitos', 'Tabernas', 'Pastelerías', 'Bares de tapas', 'Brunch']
+const mqHtml = words.map((w, i) => `<span class="${i % 3 === 2 ? 'it' : ''}">${w}</span>`).join('')
+$('#mq').innerHTML = mqHtml + mqHtml
+
+// ---------- manifiesto: las palabras se encienden al bajar ----------
+const man = $('#manifesto')
+man.innerHTML = man.textContent.split(' ').map(w => `<span>${w}</span>`).join(' ')
+const manWords = [...man.querySelectorAll('span')]
+
+// ---------- galeria de estilos ----------
+const track = $('#track')
+track.innerHTML = THEMES.map((t, i) => `
+  <div class="panel" style="background:${t.bg.replace(/"/g, '&quot;')};color:${t.ink}" data-acc="${t.acc}">
+    <div class="txt">
+      <div class="num" style="color:${t.acc}">${String(i + 1).padStart(2, '0')} / 08</div>
+      <h3 style="font-size:clamp(2.2rem, ${(78 / (t.label.length * (t.wf || .6))).toFixed(2)}vw, 6.4rem);font-family:${t.font};font-weight:${t.w};font-style:${t.italic ? 'italic' : 'normal'};text-transform:${t.upper ? 'uppercase' : 'none'};${t.dark ? `text-shadow:0 0 30px ${t.acc}aa;` : ''}">${t.label}</h3>
+      ${t.sub ? `<p class="sub" style="font-family:${t.font};font-weight:${t.w};font-style:${t.italic ? 'italic' : 'normal'};text-transform:${t.upper ? 'uppercase' : 'none'}">${t.sub}</p>` : ''}
+      <p class="vibe">${t.vibe}</p>
+      <div class="tags" style="color:${t.dark ? t.ink : t.acc}">${t.tags.map(x => `<span>${x}</span>`).join('')}</div>
+      <button class="try" data-id="${t.id}" style="background:${t.acc};color:${onAccent(t.acc)}"><span class="ms">touch_app</span>Probar este estilo</button>
+    </div>
+    <div class="devs">
+      <div class="tpv"><div class="scr"><div><img src="img/tablet_${t.id}.webp" alt="${t.label}: TPV de mostrador" loading="lazy"></div></div><div class="neck"></div><div class="base"></div></div>
+      <div class="phone p1"><div><img src="img/mesas_${t.id}.webp" alt="${t.label}: plano de mesas en el móvil" loading="lazy"></div></div>
+      <div class="phone p2"><div><img src="img/carta_${t.id}.webp" alt="${t.label}: carta en el móvil" loading="lazy"></div></div>
+    </div>
+  </div>`).join('')
+track.querySelectorAll('.try').forEach(b => b.onclick = () => { pickTheme(b.dataset.id); $('#demo').scrollIntoView({ behavior: 'smooth' }) })
+
+// ---------- botones de la demo ----------
+$('#swatches').innerHTML = THEMES.map(t => `<button class="sw" data-id="${t.id}" aria-pressed="false"><span class="e" style="background:${t.acc}">${t.emoji}</span><span><b>${t.label}${t.sub ? ' ' + t.sub : ''}</b><small>${t.brand}</small></span></button>`).join('')
+document.querySelectorAll('.sw').forEach(b => b.onclick = () => pickTheme(b.dataset.id))
+function demoMode(m) { if (!DEMO_URL) return; try { const w = $('#live').contentWindow; w && w.__tpvModo && w.__tpvModo(m) } catch { liveLoad(m) } }
+$('#demoLight').onclick = () => demoMode('light'); $('#demoDark').onclick = () => demoMode('dark')
+// La demo se carga al acercarse, con el estilo elegido y sin el selector propio de la app.
+const live = $('#live')
+const pageDark = () => document.documentElement.getAttribute('data-theme') ? document.documentElement.getAttribute('data-theme') === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches
+const demoSrc = (modo) => `${DEMO_URL}?selector=0&tema=${current.id}&modo=${modo || (pageDark() ? 'dark' : 'light')}`
+// Desde otro dominio no se puede llamar a __tpvTema dentro del iframe: se recarga con el estilo en la URL.
+function liveLoad(modo) { if (DEMO_URL) live.src = demoSrc(modo) }
+if (DEMO_URL) {
+  $('#demoFull').href = DEMO_URL
+  new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { liveLoad(); o.disconnect() } }, { rootMargin: '600px' }).observe(live)
+} else {
+  live.remove(); $('#liveShot').hidden = false; $('#liveShot').src = `img/mesas_${current.id}.webp`
+  $('.live .phone').style.aspectRatio = '9 / 16'  // las capturas son 540x960
+  document.querySelectorAll('#demoLight, #demoDark, #demoFull, .pins').forEach(el => el.remove())
+  $('#demo .lead').textContent = 'Elige un estilo y mira cómo queda el plano de mesas. La demo para tocarla, con PIN y pedidos de verdad, la enseño en persona.'
+  $('.live-note').textContent = 'Capturas del TPV con datos de ejemplo.'
+  const k = $('#demo .kicker'); if (k) k.textContent = 'Los 8 estilos'
+}
+
+// ---------- contacto ----------
+if (CONTACT.email || CONTACT.phone) {
+  const c = $('#contactCtas')
+  if (CONTACT.phone) c.insertAdjacentHTML('afterbegin', `<a class="btn btn-p" href="tel:${CONTACT.phone.replace(/\s/g, '')}"><span class="ms">call</span>${CONTACT.phone}</a>`)
+  if (CONTACT.email) c.insertAdjacentHTML('afterbegin', `<a class="btn btn-p" href="mailto:${CONTACT.email}?subject=Demo%20de%20TPV%20Global"><span class="ms">mail</span>Escríbenos</a>`)
+}
+
+// ---------- apariciones ----------
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }), { threshold: .15 })
+document.querySelectorAll('.reveal').forEach(el => io.observe(el))
+
+// ---------- scroll: barra de progreso, manifiesto y galeria horizontal ----------
+const styles = $('#estilos'), count = $('#count'), prog = $('#progress')
+const wide = () => matchMedia('(min-width: 961px)').matches
+let lastPanel = -1
+function onScroll() {
+  const y = scrollY, vh = innerHeight
+  prog.style.width = (y / (document.documentElement.scrollHeight - vh) * 100) + '%'
+  const mr = man.getBoundingClientRect()
+  const mp = Math.min(1, Math.max(0, (vh * .85 - mr.top) / (mr.height + vh * .3)))
+  const lit = Math.round(mp * manWords.length)
+  manWords.forEach((w, i) => w.classList.toggle('on', i < lit))
+  if (wide()) {
+    const r = styles.getBoundingClientRect()
+    const total = styles.offsetHeight - vh
+    const p = Math.min(1, Math.max(0, -r.top / total))
+    const max = track.scrollWidth - innerWidth
+    track.style.transform = `translate3d(${-p * max}px,0,0)`
+    const idx = Math.min(THEMES.length - 1, Math.round(p * (THEMES.length - 1)))
+    if (idx !== lastPanel) { lastPanel = idx; count.textContent = `${String(idx + 1).padStart(2, '0')} / 08`; count.style.color = THEMES[idx].dark ? '#f3eee6' : THEMES[idx].acc; styles.style.setProperty('--hk', THEMES[idx].dark ? '#f3eee6' : THEMES[idx].acc) }
+  }
+}
+// Cada nombre de estilo se encoge hasta caber en una linea, con su propia letra.
+function fitTitles() {
+  track.querySelectorAll('.panel h3').forEach(h => {
+    h.style.fontSize = h.dataset.fs || (h.dataset.fs = h.style.fontSize)
+    const max = h.parentElement.getBoundingClientRect().width
+    let fs = parseFloat(getComputedStyle(h).fontSize)
+    while (h.scrollWidth > max && fs > 22) { fs -= 2; h.style.fontSize = fs + 'px' }
+  })
+}
+// Esperar a las letras de los 8 estilos (solo se descargan cuando se usan) y volver a ajustar al cargar.
+Promise.all(THEMES.map(t => document.fonts.load(`${t.w} 64px ${t.font}`).catch(() => null))).then(fitTitles)
+addEventListener('load', () => { fitTitles(); setTimeout(fitTitles, 800) })
+const bar = document.querySelector('.bar'); let lastY = scrollY
+addEventListener('scroll', () => { const y = scrollY; bar.classList.toggle('hide', y > lastY && y > 160); lastY = y }, { passive: true })
+addEventListener('scroll', onScroll, { passive: true }); addEventListener('resize', () => { fitTitles(); onScroll() }); onScroll()
+
+pickTheme(current.id, { demo: false })
+</script>
+</body>
+</html>
