@@ -179,7 +179,7 @@ a.card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
 @media (max-width: 640px) {
   .hero h1 { font-size: 26px; line-height: 32px; }
   .grid { grid-template-columns: 1fr; gap: 16px; }
-  .topbar .mobile-brand b, .topbar .spacer { display: none; }
+  .topbar .mobile-brand b, .topbar .search ~ .spacer { display: none; }
   .search { max-width: none; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

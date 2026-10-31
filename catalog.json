@@ -6,6 +6,30 @@
   ],
   "proyectos": [
     {
+      "id": "swapcar",
+      "nombre": "SwapCar",
+      "desc": "App para cambiar tu coche sin venderlo: desliza, haz match y queda por el chat. En producción.",
+      "icono": "directions_car",
+      "categoria": "proyectos",
+      "url": "https://www.swapcar.app/",
+      "imagen": "swapcar/videos/swapcar-promo-horizontal.jpg",
+      "estado": "live",
+      "etiquetas": ["React", "FastAPI", "Cloudflare"],
+      "fecha": "2026-10-30"
+    },
+    {
+      "id": "swapcar-videos",
+      "nombre": "Vídeos de SwapCar",
+      "desc": "9 vídeos promocionales de la app y las animaciones de match, para tocarlas.",
+      "icono": "smart_display",
+      "categoria": "videos",
+      "url": "swapcar/",
+      "imagen": "swapcar/videos/swapcar-match.jpg",
+      "estado": "videos",
+      "etiquetas": ["Remotion", "Animación"],
+      "fecha": "2026-10-30"
+    },
+    {
       "id": "tpv-global",
       "nombre": "TPV Global",
       "desc": "TPV para hostelería con 8 estilos: mesas, pedidos, cocina, cobro, reparto y fichaje. Web, capturas y vídeos.",

@@ -4,6 +4,7 @@ Escaparate público en **https://dragosic12.github.io/**: un menú (estilo TPV, 
 
 - `/tpv-global/`: web de TPV Global con capturas de los 8 estilos y vídeos.
 - `/reels-la-gatta/`: galería de reels de La Gatta.
+- `/swapcar/`: vídeos de SwapCar y las animaciones de match (`/swapcar/match/`). La tarjeta "SwapCar" del menú lleva a la app en producción (swapcar.app).
 
 Todo es estático (HTML, CSS, JS, imágenes y vídeos): GitHub Pages no ejecuta servidores ni bases de datos. Solo datos de ejemplo, nada real de nadie.
 
@@ -29,19 +30,20 @@ El portfolio anterior (React) está guardado en la rama `portfolio-antiguo`.
    ```
    - `icono`: nombre de [Material Symbols](https://fonts.google.com/icons).
    - `categoria`: `proyectos`, `videos` o `juegos` (se pueden añadir más en `categorias`).
-   - `estado`: `demo` (se puede probar, borde verde), `web`, `videos` o `pronto` (sin `url`).
+   - `estado`: `live` (en producción), `demo` (se puede probar), `web`, `videos` o `pronto` (sin `url`).
+   - `url` puede ser externa (`https://...`): se abre en otra pestaña con el botón "Visitar".
    - La lista se ordena por `fecha`, lo más nuevo primero.
 3. Subir los cambios (ver abajo). Para un proyecto con build (Vite, Angular...), compilar con la base `/<nombre>/` y copiar el resultado a la carpeta.
 
 Límites de GitHub: 100 MB por archivo y unos 1 GB en total. Para vídeos, mejor versiones comprimidas para móvil.
 
-## Actualizar TPV Global y los reels
+## Actualizar TPV Global, los reels y SwapCar
 
-Viven en otras carpetas del PC (`D:\Dragos\TPVVideo`, `D:\Dragos\LagattaPanfleto`). Para traer lo último:
+Viven en otras carpetas del PC (`D:\Dragos\TPVVideo`, `D:\Dragos\LagattaPanfleto`, `D:\Dragos\SwapCarVideo`). Para traer lo último:
 
 ```
 python tools/sincronizar.py          # todo
-python tools/sincronizar.py reels    # solo los reels
+python tools/sincronizar.py reels    # solo los reels (también: tpv, swapcar)
 ```
 
 La web del TPV se adapta sola (rutas y demo). Si `DEMO_URL` (al principio del script de `tpv-global/index.html`, lo pone `sincronizar.py`) apunta a un TPV Global publicado, el móvil de la sección "Pruébalo" carga la demo en vivo; vacío, enseña capturas.

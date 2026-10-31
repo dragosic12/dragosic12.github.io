@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SwapCar</title>
+<meta name="description" content="SwapCar, la app para cambiar tu coche sin venderlo: vídeos promocionales y las animaciones de match.">
+<meta name="theme-color" content="#f9f9f9">
+<link rel="icon" href="../assets/icono.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block">
+<link rel="stylesheet" href="../assets/estilo.css">
+<script src="../assets/tema.js"></script>
+<style>
+  .page { max-width: 1200px; margin: 0 auto; padding: 0 32px 48px; }
+  .topbar { padding: 0 32px; }
+  .intro { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: end; padding: 24px 0 8px; }
+  .intro h1 { margin: 0 0 6px; font-size: 32px; line-height: 40px; font-weight: 700; letter-spacing: -.02em; }
+  .intro p { margin: 0; max-width: 660px; color: rgb(var(--c-onSurfaceVar)); }
+  .ctas { display: flex; gap: 8px; flex-wrap: wrap; }
+  .ctas .btn { min-height: 48px; padding: 0 20px; }
+  .how { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0 8px; }
+  .how .item { display: flex; gap: 12px; align-items: flex-start; background: rgb(var(--c-scl)); border: 1px solid rgb(var(--c-outlineVar) / .4); border-left: 4px solid rgb(var(--c-primary)); box-shadow: var(--shadow-card); border-radius: 12px; padding: 16px; }
+  .how .ic { width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: rgb(var(--c-primaryFixed)); color: rgb(var(--c-onPrimaryFixed)); }
+  .how b { display: block; font-size: 14px; font-weight: 600; }
+  .how p { margin: 2px 0 0; font-size: 13px; line-height: 18px; color: rgb(var(--c-onSurfaceVar)); }
+
+  h2.sec { margin: 40px 0 4px; font-size: 20px; line-height: 28px; font-weight: 600; }
+  .sec-sub { margin: 0 0 16px; color: rgb(var(--c-onSurfaceVar)); font-size: 14px; }
+
+  .match { display: grid; grid-template-columns: 200px 1fr; text-decoration: none; border-radius: 12px; overflow: hidden; background: rgb(var(--c-scl)); border: 1px solid rgb(var(--c-outlineVar) / .4); border-left: 4px solid rgb(var(--c-success)); box-shadow: var(--shadow-card); transition: transform .18s, box-shadow .18s; }
+  .match:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
+  .match .thumb { position: relative; background: rgb(var(--c-sc)); min-height: 180px; }
+  .match .thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .match .body { padding: 20px; display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+  .match h3 { margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; }
+  .match p { margin: 0; font-size: 14px; line-height: 20px; color: rgb(var(--c-onSurfaceVar)); }
+  .match .btn { align-self: flex-start; }
+
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .filters button { min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid rgb(var(--c-outlineVar)); background: rgb(var(--c-scl)); color: rgb(var(--c-onSurfaceVar)); font-size: 14px; font-weight: 600; cursor: pointer; }
+  .filters button[aria-pressed="true"] { background: rgb(var(--c-primary)); border-color: rgb(var(--c-primary)); color: rgb(var(--c-onPrimary)); }
+  .vids { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+  .vid { border: 0; padding: 0; text-align: left; cursor: pointer; border-radius: 12px; overflow: hidden; background: rgb(var(--c-scl)); border: 1px solid rgb(var(--c-outlineVar) / .4); box-shadow: var(--shadow-card); transition: transform .18s, box-shadow .18s; display: flex; flex-direction: column; }
+  .vid:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
+  .vid:focus-visible { outline: 2px solid rgb(var(--c-primary)); outline-offset: 2px; }
+  .vid.horizontal { grid-column: span 2; }
+  .vid .poster { position: relative; aspect-ratio: 9 / 16; background: #0b1530; }
+  .vid.horizontal .poster { aspect-ratio: auto; flex: 1; min-height: 0; }
+  .vid .poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vid.horizontal .poster img { object-fit: contain; }
+  .vid .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 56px; height: 56px; border-radius: 999px; background: rgb(0 0 0 / .45); color: #fff; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+  .vid .play .ms { font-size: 32px; font-variation-settings: 'FILL' 1; }
+  .vid .dur { position: absolute; right: 8px; bottom: 8px; padding: 2px 8px; border-radius: 999px; background: rgb(0 0 0 / .6); color: #fff; font-size: 12px; font-weight: 600; }
+  .vid .meta { padding: 12px 14px 14px; }
+  .vid b { display: block; font-size: 14px; font-weight: 600; line-height: 20px; }
+  .vid small { display: block; font-size: 12px; line-height: 16px; color: rgb(var(--c-onSurfaceVar)); margin-top: 4px; }
+
+  dialog { border: 0; padding: 0; background: transparent; max-width: 100vw; max-height: 100dvh; overflow: visible; }
+  dialog::backdrop { background: rgb(0 0 0 / .9); }
+  .player { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .player video { max-height: min(78vh, 78dvh); max-width: 92vw; border-radius: 12px; background: #000; display: block; }
+  .player .bar { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+  .player .name { color: #fff; font-weight: 600; margin-right: 8px; }
+  .player .close { position: fixed; top: 16px; right: 16px; width: 44px; height: 44px; border-radius: 999px; border: 0; background: rgb(255 255 255 / .15); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+  @media (max-width: 900px) { .how { grid-template-columns: 1fr; } .intro { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) {
+    .page { padding: 0 16px 40px; } .topbar { padding: 0 16px; }
+    .intro h1 { font-size: 26px; line-height: 32px; }
+    .ctas .btn { flex: 1; }
+    .match { grid-template-columns: 1fr; } .match .thumb { min-height: 0; aspect-ratio: 16 / 9; }
+    .vids { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .vid.horizontal .poster { aspect-ratio: 16 / 9; flex: none; }
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="btn btn-second" href="../"><span class="ms" style="font-size:18px">arrow_back</span>Proyectos</a>
+  <div class="spacer"></div>
+  <button class="icon-btn" id="themeBtn" type="button" aria-label="Cambiar tema" title="Cambiar tema"><span class="ms" id="themeIcon">dark_mode</span></button>
+</header>
+
+<main class="page">
+  <section class="intro">
+    <div>
+      <h1>SwapCar</h1>
+      <p>La app para cambiar tu coche sin venderlo. Subes el tuyo, deslizas entre los de otros, y cuando os gustáis los dos hay match: habláis por el chat y quedáis para probarlos.</p>
+    </div>
+    <div class="ctas">
+      <a class="btn btn-primary" href="https://www.swapcar.app/" target="_blank" rel="noopener"><span class="ms" style="font-size:18px">open_in_new</span>Ir a SwapCar</a>
+      <a class="btn btn-second" href="#videos"><span class="ms" style="font-size:18px">play_circle</span>Ver vídeos</a>
+    </div>
+  </section>
+
+  <section class="how">
+    <div class="item"><div class="ic"><span class="ms">swipe</span></div><div><b>Desliza y haz match</b><p>Como una app de citas, pero con coches: a la derecha si te gusta, a la izquierda si no.</p></div></div>
+    <div class="item"><div class="ic"><span class="ms">chat</span></div><div><b>Chat y garaje</b><p>Chat integrado para quedar, filtros por marca, kilómetros o año, y tu garaje con tus coches.</p></div></div>
+    <div class="item"><div class="ic"><span class="ms">cloud_done</span></div><div><b>En producción</b><p>React y FastAPI en un servidor propio, publicada con Cloudflare. Vídeos hechos con Remotion grabando la app de verdad.</p></div></div>
+  </section>
+
+  <h2 class="sec">Animaciones de match</h2>
+  <p class="sec-sub">Propuestas para la pantalla que sale cuando dos personas se gustan el coche.</p>
+  <a class="match" href="match/">
+    <div class="thumb"><img src="videos/swapcar-match.jpg" alt="" loading="lazy"></div>
+    <div class="body">
+      <h3>¡Es un match!</h3>
+      <p>Cinco variantes con los dos coches chocando, letras que caen, destellos y confeti. Se pueden tocar: cambia de variante y repite la animación las veces que quieras.</p>
+      <span class="btn btn-primary"><span class="ms" style="font-size:18px">touch_app</span>Probar las animaciones</span>
+    </div>
+  </a>
+
+  <h2 class="sec" id="videos">Vídeos</h2>
+  <p class="sec-sub">Cortos para redes, píldoras de una sola idea y el promo completo. Todos se pueden descargar.</p>
+  <div class="filters" id="filters"></div>
+  <section class="vids" id="vids" aria-label="Vídeos"></section>
+</main>
+
+<dialog id="dlg" aria-label="Reproductor">
+  <div class="player">
+    <button class="close" id="close" type="button" aria-label="Cerrar"><span class="ms">close</span></button>
+    <video id="video" controls playsinline preload="metadata"></video>
+    <div class="bar">
+      <span class="name" id="vname"></span>
+      <a class="btn btn-primary" id="vdl" download><span class="ms" style="font-size:18px">download</span>Descargar</a>
+    </div>
+  </div>
+</dialog>
+
+<script>
+const $ = s => document.querySelector(s)
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
+const dlg = $('#dlg'), video = $('#video')
+let lista = [], filtro = 'Todos'
+
+function abrir(v) {
+  video.src = `videos/${v.id}.mp4`
+  video.poster = `videos/${v.id}.jpg`
+  $('#vname').textContent = v.titulo
+  $('#vdl').href = `videos/${v.id}.mp4`
+  $('#vdl').setAttribute('download', `${v.id}.mp4`)
+  dlg.showModal()
+  video.play().catch(() => {})
+}
+function cerrar() { video.pause(); video.removeAttribute('src'); video.load(); dlg.close() }
+$('#close').onclick = cerrar
+dlg.addEventListener('cancel', e => { e.preventDefault(); cerrar() })
+dlg.addEventListener('click', e => { if (e.target === dlg) cerrar() })
+
+function render() {
+  const cats = ['Todos', ...new Set(lista.map(v => v.cat))]
+  $('#filters').innerHTML = cats.map(c => `<button type="button" aria-pressed="${c === filtro}" data-c="${esc(c)}">${esc(c)}</button>`).join('')
+  $('#filters').querySelectorAll('button').forEach(b => b.onclick = () => { filtro = b.dataset.c; render() })
+  const vis = lista.filter(v => filtro === 'Todos' || v.cat === filtro)
+  $('#vids').innerHTML = vis.map(v => `
+    <button class="vid ${v.formato === 'horizontal' ? 'horizontal' : ''}" type="button" data-id="${esc(v.id)}">
+      <div class="poster"><img src="videos/${esc(v.id)}.jpg" alt="" loading="lazy"><span class="play"><span class="ms">play_arrow</span></span>${v.dur ? `<span class="dur">${esc(v.dur)}</span>` : ''}</div>
+      <div class="meta"><b>${esc(v.titulo)}</b><small>${esc(v.texto)}</small></div>
+    </button>`).join('')
+  $('#vids').querySelectorAll('.vid').forEach(b => b.onclick = () => abrir(lista.find(v => v.id === b.dataset.id)))
+}
+
+fetch('videos.json', { cache: 'no-cache' }).then(r => r.json()).then(d => { lista = d; render() })
+</script>
+</body>
+</html>

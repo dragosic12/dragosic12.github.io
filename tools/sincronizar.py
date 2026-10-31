@@ -1,12 +1,15 @@
 """Copia al escaparate lo que vive en otras carpetas del PC.
 
-Uso: python tools/sincronizar.py [tpv] [reels]   (sin argumentos, todo)
+Uso: python tools/sincronizar.py [tpv] [reels] [swapcar]   (sin argumentos, todo)
 
 - tpv:   web de venta de D:\\Dragos\\TPVVideo\\web -> tpv-global/ (con las rutas
          adaptadas para GitHub Pages) y los vídeos de D:\\Dragos\\TPVVideo\\movil.
 - reels: vídeos con música y portadas de D:\\Dragos\\LagattaPanfleto\\public\\reels
          -> reels-la-gatta/videos, y reels.json con títulos y canciones sacados
          de LagattaPanfleto/src/Reels.tsx.
+- swapcar: vídeos ligeros y portadas de D:\\Dragos\\SwapCarVideo\\web\\videos (la lista
+         sale del array VIDEOS de su index.html) -> swapcar/videos, y la propuesta de
+         match (D:\\Dragos\\SwapCarVideo\\match-propuesta) -> swapcar/match/.
 
 Después: revisar con `python -m http.server` y subir (ver README).
 """
@@ -21,6 +24,8 @@ TPV_WEB = Path(r"D:\Dragos\TPVVideo\web")
 TPV_VIDEOS = Path(r"D:\Dragos\TPVVideo\movil")
 REELS_DIR = Path(r"D:\Dragos\LagattaPanfleto\public\reels")
 REELS_TSX = Path(r"D:\Dragos\LagattaPanfleto\src\Reels.tsx")
+SWAPCAR_VIDEOS = Path(r"D:\Dragos\SwapCarVideo\web\videos")
+SWAPCAR_MATCH = Path(r"D:\Dragos\SwapCarVideo\match-propuesta")
 
 
 def copiar_si_cambia(src: Path, dst: Path) -> bool:
@@ -127,9 +132,33 @@ def reels():
     print(f"reels: {len(lista)} reels en reels.json")
 
 
+def swapcar():
+    """Vídeos ligeros (con portada) y la propuesta de match de D:\\Dragos\\SwapCarVideo -> swapcar/."""
+    dst = RAIZ / "swapcar"
+    html = (SWAPCAR_VIDEOS / "index.html").read_text(encoding="utf-8")
+    bloque = html.split("var VIDEOS = [")[1].split("];")[0]
+    lista = []
+    for m in re.finditer(r"\{(.*?)\}\s*,?\s*(?=\{|$)", bloque, re.S):
+        campo = lambda k: (re.search(k + r":\s*'([^']*)'", m.group(1)) or [None, ""])[1]
+        f = campo("f")
+        video, portada = SWAPCAR_VIDEOS / f"{f}.mp4", SWAPCAR_VIDEOS / f"{f}.jpg"
+        if not f or not video.exists() or not portada.exists():
+            print(f"swapcar: falta el vídeo o la portada de {f!r}, lo salto")
+            continue
+        copiar_si_cambia(video, dst / "videos" / video.name)
+        copiar_si_cambia(portada, dst / "videos" / portada.name)
+        lista.append({"id": f, "cat": campo("cat"), "titulo": campo("titulo"), "formato": campo("formato") or "vertical",
+                      "dur": campo("dur"), "texto": campo("texto"), "mb": round(video.stat().st_size / 1048576, 1)})
+    (dst / "videos.json").write_text(json.dumps(lista, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    n = sum(copiar_si_cambia(f, dst / "match" / f.name) for f in SWAPCAR_MATCH.iterdir() if f.suffix in (".html", ".jpg", ".png"))
+    print(f"swapcar: {len(lista)} vídeos en videos.json, {n} archivos del match copiados")
+
+
 if __name__ == "__main__":
-    que = sys.argv[1:] or ["tpv", "reels"]
+    que = sys.argv[1:] or ["tpv", "reels", "swapcar"]
     if "tpv" in que:
         tpv()
     if "reels" in que:
         reels()
+    if "swapcar" in que:
+        swapcar()

@@ -1,0 +1,83 @@
+[
+  {
+    "id": "swapcar-20-segundos",
+    "cat": "Cortos",
+    "titulo": "SwapCar en 20 segundos",
+    "formato": "vertical",
+    "dur": "26 s",
+    "texto": "Directo al grano: desliza, match, filtros, chat y garaje. Para Reels, TikTok y anuncios.",
+    "mb": 6.6
+  },
+  {
+    "id": "swapcar-20-segundos-oscuro",
+    "cat": "Cortos",
+    "titulo": "SwapCar en 20 segundos (oscuro)",
+    "formato": "vertical",
+    "dur": "26 s",
+    "texto": "El mismo corto con la app en modo oscuro, el aspecto de siempre de SwapCar.",
+    "mb": 7.1
+  },
+  {
+    "id": "swapcar-sin-vender",
+    "cat": "Cortos",
+    "titulo": "Sin vender tu coche",
+    "formato": "vertical",
+    "dur": "13 s",
+    "texto": "Anuncio rápido en estilo cartel: «¿Venderlo? ¿Regatear? Mejor: cámbialo». Se entiende sin sonido.",
+    "mb": 2.2
+  },
+  {
+    "id": "swapcar-3-pasos",
+    "cat": "Cortos",
+    "titulo": "SwapCar en 3 pasos",
+    "formato": "vertical",
+    "dur": "17 s",
+    "texto": "Cómo funciona, paso a paso: sube tu coche, desliza y habla. Estilo limpio de revista.",
+    "mb": 3.0
+  },
+  {
+    "id": "swapcar-filtros",
+    "cat": "Píldoras",
+    "titulo": "Filtra lo que buscas",
+    "formato": "vertical",
+    "dur": "8 s",
+    "texto": "Una sola idea: buscar por marca, kilómetros, año y cambio. Ideal para historias.",
+    "mb": 1.6
+  },
+  {
+    "id": "swapcar-match",
+    "cat": "Píldoras",
+    "titulo": "Es un match",
+    "formato": "vertical",
+    "dur": "10 s",
+    "texto": "Desliza, da «me gusta» y salta el match con confeti.",
+    "mb": 3.3
+  },
+  {
+    "id": "swapcar-chat",
+    "cat": "Píldoras",
+    "titulo": "Habla y quedad",
+    "formato": "vertical",
+    "dur": "8 s",
+    "texto": "El chat integrado: quedad para probar los coches y cerrad el cambio.",
+    "mb": 1.7
+  },
+  {
+    "id": "swapcar-promo-vertical",
+    "cat": "Promos",
+    "titulo": "Promo completo",
+    "formato": "vertical",
+    "dur": "53 s",
+    "texto": "Recorrido por toda la app: descubrir coches, la ficha, los filtros, el match, el chat y tu garaje.",
+    "mb": 13.7
+  },
+  {
+    "id": "swapcar-promo-horizontal",
+    "cat": "Promos",
+    "titulo": "Promo completo en horizontal",
+    "formato": "horizontal",
+    "dur": "53 s",
+    "texto": "El mismo recorrido en formato apaisado, para YouTube, la web o una presentación.",
+    "mb": 13.8
+  }
+]

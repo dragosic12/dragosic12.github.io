@@ -54,6 +54,7 @@
 
 <script>
 const ESTADOS = {
+  live:   { txt: 'En producción', edge: 'rgb(var(--c-success))' },
   demo:   { txt: 'Pruébalo',     edge: 'rgb(var(--c-success))' },
   web:    { txt: 'Web',          edge: 'rgb(var(--c-primary))' },
   videos: { txt: 'Vídeos',       edge: 'rgb(var(--c-secondary))' },
@@ -67,7 +68,8 @@ let cat = (location.hash.slice(1) || 'todo')
 function card(p) {
   const st = ESTADOS[p.estado] || ESTADOS.web
   const tag = p.url ? 'a' : 'article'
-  const href = p.url ? ` href="${esc(p.url)}"` : ''
+  const fuera = /^https?:/.test(p.url || '')
+  const href = p.url ? ` href="${esc(p.url)}"${fuera ? ' target="_blank" rel="noopener"' : ''}` : ''
   return `<${tag} class="card"${href} style="--edge:${st.edge}">
     ${p.imagen ? `<div class="thumb"><img src="${esc(p.imagen)}" alt="" loading="lazy"></div>` : ''}
     <div class="body">
@@ -78,7 +80,7 @@ function card(p) {
       <p class="desc">${esc(p.desc)}</p>
       <div class="foot">
         <div class="chips">${(p.etiquetas || []).map(t => `<span class="chip">${esc(t)}</span>`).join('')}</div>
-        ${p.url ? '<span class="btn btn-primary">Abrir<span class="ms" style="font-size:18px">arrow_forward</span></span>' : ''}
+        ${p.url ? `<span class="btn btn-primary">${fuera ? 'Visitar' : 'Abrir'}<span class="ms" style="font-size:18px">${fuera ? 'open_in_new' : 'arrow_forward'}</span></span>` : ''}
       </div>
     </div>
   </${tag}>`
